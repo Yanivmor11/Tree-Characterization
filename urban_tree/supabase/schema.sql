@@ -1,5 +1,5 @@
--- UrbanTree: run in Supabase SQL Editor (or migrate) before end-to-end testing.
--- Adjust RLS policies for production; the insert/select policies below are for local/demo use.
+-- UrbanTree: optional one-off run in Supabase SQL Editor. For CLI deploys, the same DDL lives in
+-- supabase/migrations/20260401100000_initial_schema.sql (keep in sync when editing).
 
 create extension if not exists "pgcrypto";
 
@@ -90,3 +90,6 @@ values
   ('a0000003-0000-4000-8000-000000000003'::uuid, 'kkl', 'Example KKL zone', 32.08, 32.10, 34.775, 34.795, 5),
   ('a0000004-0000-4000-8000-000000000004'::uuid, 'abandoned', 'Example abandoned parcel', 32.065, 32.075, 34.765, 34.775, 2)
 on conflict (id) do nothing;
+
+-- Extended schema (profiles, gamification, pest hotspots, quality flags, views): see
+-- migrations/20260413100000_gamification_platform.sql (requires Supabase Auth, anonymous sign-in).

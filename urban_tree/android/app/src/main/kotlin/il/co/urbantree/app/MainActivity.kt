@@ -1,4 +1,4 @@
-package com.example.urban_tree
+package il.co.urbantree.app
 
 import io.flutter.embedding.android.FlutterActivity
 

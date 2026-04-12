@@ -1,0 +1,20 @@
+[
+  {
+    "scientific": "Cercis siliquastrum",
+    "aliases": ["judas tree", "cercis", "love tree"],
+    "floweringMonths": [2, 3, 4, 5],
+    "fruitingMonths": [5, 6, 7, 8]
+  },
+  {
+    "scientific": "Jacaranda mimosifolia",
+    "aliases": ["jacaranda"],
+    "floweringMonths": [4, 5, 6, 7],
+    "fruitingMonths": [8, 9, 10]
+  },
+  {
+    "scientific": "Phoenix dactylifera",
+    "aliases": ["date palm"],
+    "floweringMonths": [2, 3, 4],
+    "fruitingMonths": [8, 9, 10, 11]
+  }
+]

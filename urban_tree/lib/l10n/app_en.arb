@@ -1,0 +1,259 @@
+{
+  "@@locale": "en",
+  "appTitle": "UrbanTree",
+  "@appTitle": {
+    "description": "Application name in AppBar where brand is kept Latin"
+  },
+
+  "navHome": "Home",
+  "navMap": "Map",
+  "navResearch": "Research",
+  "navProfile": "Profile",
+
+  "appLanguageTitle": "App language",
+  "useDeviceLanguage": "Use device language",
+
+  "homeWelcomeTitle": "Urban tree mapping",
+  "homeWelcomeSubtitle": "Help ecological research with accurate reports and quality GPS.",
+  "totalTreesMapped": "Total trees mapped",
+  "startReporting": "Start reporting",
+  "couldNotLoadStats": "Could not load statistics",
+
+  "researchDashboardTitle": "Research dashboard",
+  "researchDashboardSubtitle": "Recent reports from the database",
+  "exportCsv": "Export to CSV",
+  "shareCsvSubject": "UrbanTree report export",
+  "noReportsYet": "No reports yet",
+  "loadReportsError": "Error loading reports",
+  "retry": "Retry",
+  "reportListItemSubtitle": "{date} · {landType} · score {health}",
+  "@reportListItemSubtitle": {
+    "placeholders": {
+      "date": {"type": "String"},
+      "landType": {"type": "String"},
+      "health": {"type": "int"}
+    }
+  },
+
+  "profileTitle": "Profile",
+  "profilePlaceholder": "User settings and preferences will appear here in the future.",
+
+  "splashTagline": "Mapping trees for research",
+
+  "mapLayersTooltip": "Land-use layers",
+  "mapMyLocationTooltip": "My location",
+  "reportTreeFab": "Report tree",
+  "landUseLayersTitle": "Land-use layers",
+  "landUseLayersDescription": "GIS rectangles from Supabase (highest priority + smallest area wins at a point).",
+  "tintBlue": "Blue",
+  "tintAmber": "Amber",
+  "tintGreen": "Green",
+  "tintBrown": "Brown",
+  "layerTintLabel": "Tint: {colorName}",
+  "@layerTintLabel": {
+    "placeholders": {
+      "colorName": {"type": "String"}
+    }
+  },
+
+  "locationPermissionRequired": "Location permission is required.",
+  "locationServicesOff": "Turn on device location services.",
+  "couldNotGetLocation": "Could not get location: {error}",
+  "@couldNotGetLocation": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "locationPermissionRequiredToReport": "Location permission is required to report.",
+  "locationBlockedTitle": "Location blocked",
+  "locationBlockedBody": "Enable location for UrbanTree in system settings for accurate reporting.",
+  "cancel": "Cancel",
+  "openSettings": "Open settings",
+  "enableLocationBrowser": "Enable location in the browser site settings, then try again.",
+  "reportSubmitted": "Report submitted",
+  "couldNotStartReport": "Could not start report: {error}",
+  "@couldNotStartReport": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+
+  "osmContributors": "OpenStreetMap contributors",
+
+  "treeReportTitle": "Tree report",
+  "gpsAccuracyWarning": "GPS accuracy is {accuracy} m (target ≤ {target} m). Move to open sky if possible before classifying land use.",
+  "@gpsAccuracyWarning": {
+    "placeholders": {
+      "accuracy": {"type": "String"},
+      "target": {"type": "String"}
+    }
+  },
+  "landUseSection": "Land use",
+  "landTypeLabel": "Land type",
+  "landTypeSuggestedFromGis": "Suggested from GIS layers. Change if needed.",
+  "landUsePublic": "Public",
+  "landUsePrivate": "Private",
+  "landUseKkl": "KKL",
+  "landUseAbandoned": "Abandoned",
+
+  "back": "Back",
+  "next": "Next",
+  "submitReport": "Submit report",
+  "addFlowerStageOrRemove": "Add flower/fruit stage and abundance, or remove those photos.",
+  "couldNotSaveReport": "Could not save report: {error}",
+  "@couldNotSaveReport": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "reportValidationWholeTreePhotos": "Add at least one whole-tree photo before submitting.",
+  "reportValidationLeavesPhotos": "Add at least one leaves photo before submitting.",
+  "reportValidationFlowerIncomplete": "Add flower/fruit stage and abundance, or remove those photos.",
+  "reportValidationGpsAccuracyBlocked": "GPS accuracy is {accuracy} m; this build requires ≤ {target} m. Move to open sky and try again.",
+  "@reportValidationGpsAccuracyBlocked": {
+    "placeholders": {
+      "accuracy": {"type": "String"},
+      "target": {"type": "String"}
+    }
+  },
+
+  "step1WholeTree": "Step 1 — Whole tree",
+  "step1WholeTreeDescription": "1–3 photos of the full crown and architecture (at least one required to submit).",
+  "gallery": "Gallery",
+  "camera": "Camera",
+  "healthScoreLabel": "Health score: {score} / 5",
+  "@healthScoreLabel": {
+    "placeholders": {
+      "score": {"type": "int"}
+    }
+  },
+  "canopyDensity": "Canopy density",
+  "canopySparse": "Sparse",
+  "canopyModerate": "Moderate",
+  "canopyDense": "Dense",
+  "structuralIssues": "Structural issues",
+  "structuralDeadBranches": "Dead branches",
+  "structuralLeaning": "Leaning",
+  "structuralCracks": "Cracks / splits",
+  "structuralExposedRoots": "Exposed roots",
+  "structuralCavity": "Cavity / decay",
+  "structuralOther": "Other",
+
+  "step2FlowerFruit": "Step 2 — Flower / fruit",
+  "step2FlowerFruitDescription": "Optional. If bud, open flower, and fruit are mixed, photograph each separately.",
+  "phenologicalStage": "Phenological stage",
+  "stageBud": "Bud",
+  "stageOpen": "Open flower",
+  "stageFruit": "Fruit",
+  "abundance": "Abundance",
+  "abundanceLow": "Low",
+  "abundanceMedium": "Medium",
+  "abundanceHigh": "High",
+
+  "step3Leaves": "Step 3 — Leaves",
+  "step3LeavesDescription": "1–3 photos of leaves and attachment (at least one required to submit). Note yellowing, spots, holes, or curling in the condition below.",
+  "generalCondition": "General condition",
+  "conditionHealthy": "Healthy",
+  "conditionStressed": "Stressed",
+  "damageExtent": "Extent of damage",
+  "damageMinimal": "Minimal (<5%)",
+  "damageLow": "Low",
+  "damageModerate": "Moderate",
+  "damageHigh": "High (>50%)",
+
+  "assistantTitle": "Characterization assistant (AI)",
+  "assistantDescription": "Describe what you see (stress symptoms, flowering stage, etc.). The assistant only suggests values — confirm before saving.",
+  "assistantNotesLabel": "Free-text description",
+  "assistantNotesHint": "e.g. yellowing leaves on the upper crown…",
+  "assistantSuggest": "Get suggestion",
+  "assistantWorking": "Working…",
+  "assistantError": "Error: {message}",
+  "@assistantError": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+  "assistantApply": "Apply",
+  "assistantDismiss": "Dismiss",
+  "assistantSuggestedHealth": "Suggested health score: {score}",
+  "@assistantSuggestedHealth": {
+    "placeholders": {
+      "score": {"type": "int"}
+    }
+  },
+  "assistantSuggestedStageBud": "Suggested stage: bud",
+  "assistantSuggestedStageOpen": "Suggested stage: open flower",
+  "assistantSuggestedStageFruit": "Suggested stage: fruit",
+  "assistantNoStructuredSuggestion": "No structured suggestion. Rephrase or continue manually.",
+
+  "speciesLabel": "Species (common name)",
+  "speciesHint": "e.g. Olive, Jacaranda",
+  "visionSuggestionsTitle": "Image suggestions (AI)",
+  "visionSuggestionsSubtitle": "Suggestions only — review and validate.",
+  "suggestedSpeciesLine": "Species: {common} ({scientific})",
+  "@suggestedSpeciesLine": {
+    "placeholders": {
+      "common": {"type": "String"},
+      "scientific": {"type": "String"}
+    }
+  },
+  "validateCompleteSuggestions": "Validate & complete suggestions",
+  "phenologyUnusualTitle": "Unusual for this season",
+  "phenologyUnusualBody": "{message}",
+  "@phenologyUnusualBody": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+  "phenologyImSure": "I'm sure",
+  "phenologyGoBack": "Review",
+  "treeInsightsTitle": "Tree insights",
+  "treeInsightsClose": "Done",
+  "pointsPreview": "Estimated points: {points}",
+  "@pointsPreview": {
+    "placeholders": {
+      "points": {"type": "int"}
+    }
+  },
+  "nearbyMappedTreesWarning": "{count} mapped trees within ~{meters} m — avoid duplicate entries.",
+  "@nearbyMappedTreesWarning": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "meters": {"type": "int"}
+    }
+  },
+  "leaderboardTitle": "Top guardians",
+  "leaderboardNational": "National",
+  "leaderboardMyCity": "My city",
+  "leaderboardEmpty": "No leaderboard entries yet",
+  "leaderboardCityEmpty": "No entries for your city yet",
+  "yourCityMissing": "Your city is set after your first geocoded report.",
+  "pestNearbyBanner": "{pest} reported nearby (~{meters} m)",
+  "@pestNearbyBanner": {
+    "placeholders": {
+      "pest": {"type": "String"},
+      "meters": {"type": "int"}
+    }
+  },
+  "mapGemRare": "Rare species",
+  "mapGemAbandoned": "Abandoned · needs care",
+  "researchQualityTab": "Quality flags",
+  "qualityFlagsEmpty": "No open quality flags",
+  "qualityFlagSubtitle": "{reason} · {cluster}",
+  "@qualityFlagSubtitle": {
+    "placeholders": {
+      "reason": {"type": "String"},
+      "cluster": {"type": "String"}
+    }
+  },
+  "openLeaderboard": "Leaderboard",
+  "cameraNearbyTitle": "Nearby mapped trees",
+  "cameraNearbyBody": "{count} reports within {meters} m of this spot.",
+  "@cameraNearbyBody": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "meters": {"type": "int"}
+    }
+  },
+  "continueLabel": "Continue"
+}

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-/// Material 3 baseline aligned with Google’s Stitch-style product UI: clear hierarchy,
-/// rounded shapes, accessible contrast, and consistent component theming.
+/// Material 3 with Hebrew-capable typography (Noto Sans Hebrew).
 ThemeData buildUrbanTreeTheme({Brightness brightness = Brightness.light}) {
   final seed = const Color(0xFF2E7D32);
   final colorScheme = ColorScheme.fromSeed(
@@ -9,10 +9,20 @@ ThemeData buildUrbanTreeTheme({Brightness brightness = Brightness.light}) {
     brightness: brightness,
   );
 
+  final baseTextTheme = ThemeData(
+    useMaterial3: true,
+    colorScheme: colorScheme,
+    brightness: brightness,
+  ).textTheme;
+
+  // Noto Sans covers Latin, Hebrew, Arabic, Cyrillic, and more for multi-language UI.
+  final textTheme = GoogleFonts.notoSansTextTheme(baseTextTheme);
+
   return ThemeData(
     useMaterial3: true,
     colorScheme: colorScheme,
     brightness: brightness,
+    textTheme: textTheme,
     visualDensity: VisualDensity.standard,
     appBarTheme: AppBarTheme(
       centerTitle: false,

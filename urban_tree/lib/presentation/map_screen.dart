@@ -3,17 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../core/constants.dart';
+import '../core/geo_utils.dart';
+import '../l10n/app_localizations.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/land_use.dart';
-import '../models/tree_report_draft.dart';
+import '../models/tree_report_row.dart';
 import '../services/land_use_service.dart';
 import '../services/location_service.dart';
-import 'report/report_wizard_screen.dart';
+import '../services/pest_hotspot_service.dart';
+import '../services/species_rarity_service.dart';
+import '../services/tree_report_repository.dart';
+import 'report/report_flow_launcher.dart';
 
-/// OpenStreetMap base map with optional land-use overlays and report entry.
+/// OpenStreetMap base map with land-use overlays, report pins, and report entry.
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  const MapScreen({super.key, this.onReportFlowComplete});
+
+  final VoidCallback? onReportFlowComplete;
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -25,21 +35,33 @@ class _MapScreenState extends State<MapScreen> {
   final MapController _mapController = MapController();
   final LandUseService _landUseService = LandUseService();
   final LocationService _locationService = const LocationService();
+  final TreeReportRepository _reportRepo = TreeReportRepository();
+  final ReportFlowLauncher _reportLauncher = ReportFlowLauncher();
+  final PestHotspotService _pestHotspots = PestHotspotService();
+  final SpeciesRarityService _speciesRarity = SpeciesRarityService();
 
   List<LandZone> _zones = [];
+  List<TreeReportRow> _reportPins = [];
+  List<PestHotspot> _hotspots = [];
+  Map<String, int> _speciesCounts = {};
   LatLng? _userPoint;
   final Map<LandUseType, bool> _layerVisible = {
     for (final t in LandUseType.values) t: true,
   };
 
+  RealtimeChannel? _reportsChannel;
+
   @override
   void initState() {
     super.initState();
     _loadZones();
+    _loadMapContext();
+    _subscribeReports();
   }
 
   @override
   void dispose() {
+    _reportsChannel?.unsubscribe();
     _mapController.dispose();
     super.dispose();
   }
@@ -47,6 +69,37 @@ class _MapScreenState extends State<MapScreen> {
   Future<void> _loadZones() async {
     final zones = await _landUseService.fetchZones();
     if (mounted) setState(() => _zones = zones);
+  }
+
+  Future<void> _loadMapContext() async {
+    final rows = await _reportRepo.fetchRecentReports(limit: 500);
+    final counts = await _speciesRarity.fetchCounts();
+    final hot = await _pestHotspots.fetchActive();
+    if (!mounted) return;
+    setState(() {
+      _reportPins = rows;
+      _speciesCounts = counts;
+      _hotspots = hot;
+    });
+  }
+
+  void _subscribeReports() {
+    final client = Supabase.instance.client;
+    _reportsChannel = client
+        .channel('tree_reports_inserts')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.insert,
+          schema: 'public',
+          table: 'tree_reports',
+          callback: (payload) {
+            final parsed = TreeReportRow.fromMap(payload.newRecord);
+            if (parsed == null || !mounted) return;
+            setState(() {
+              _reportPins = [parsed, ..._reportPins.where((r) => r.id != parsed.id)];
+            });
+          },
+        )
+        ..subscribe();
   }
 
   Future<void> _openOsmCopyright() async {
@@ -72,19 +125,68 @@ class _MapScreenState extends State<MapScreen> {
     return out;
   }
 
+  String? _pestBannerText(AppLocalizations l10n) {
+    if (_userPoint == null || _hotspots.isEmpty) return null;
+    for (final h in _hotspots) {
+      final d = haversineMeters(
+        _userPoint!.latitude,
+        _userPoint!.longitude,
+        h.latitude,
+        h.longitude,
+      );
+      if (d <= h.radiusM) {
+        return l10n.pestNearbyBanner(h.label, h.radiusM.round());
+      }
+    }
+    return null;
+  }
+
+  bool _isHiddenGem(TreeReportRow r) {
+    if (_userPoint == null) return false;
+    final d = haversineMeters(
+      _userPoint!.latitude,
+      _userPoint!.longitude,
+      r.latitude,
+      r.longitude,
+    );
+    if (d > kGemProximityMeters) return false;
+    final key = r.species?.toLowerCase().trim();
+    final cnt = key != null && key.isNotEmpty
+        ? (_speciesCounts[key] ?? _speciesCounts[key.replaceAll(' ', '')] ?? 999)
+        : 999;
+    final rare = key != null && key.isNotEmpty && cnt <= kRareSpeciesMaxCount;
+    final abandoned =
+        r.landType == LandUseType.abandoned && r.healthScore <= 2;
+    return rare || abandoned;
+  }
+
+  String? _gemTooltip(AppLocalizations l10n, TreeReportRow r) {
+    if (!_isHiddenGem(r)) return null;
+    final key = r.species?.toLowerCase().trim();
+    final cnt = key != null && key.isNotEmpty
+        ? (_speciesCounts[key] ?? 999)
+        : 999;
+    if (cnt <= kRareSpeciesMaxCount && key != null) {
+      return l10n.mapGemRare;
+    }
+    return l10n.mapGemAbandoned;
+  }
+
   Future<void> _recenterOnUser() async {
     final perm = await _locationService.ensureForegroundPermission();
     if (!mounted) return;
+    final l10n = AppLocalizations.of(context);
     if (perm == LocationPermission.denied ||
         perm == LocationPermission.deniedForever) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Location permission is required.')),
+        SnackBar(content: Text(l10n.locationPermissionRequired)),
       );
       return;
     }
     if (!kIsWeb && !await _locationService.isLocationServiceEnabled()) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Turn on device location services.')),
+        SnackBar(content: Text(l10n.locationServicesOff)),
       );
       return;
     }
@@ -97,12 +199,13 @@ class _MapScreenState extends State<MapScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not get location: $e')),
+        SnackBar(content: Text(l10n.couldNotGetLocation(e.toString()))),
       );
     }
   }
 
   Future<void> _openLayerSheet() async {
+    final l10n = AppLocalizations.of(context);
     await showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
@@ -116,20 +219,20 @@ class _MapScreenState extends State<MapScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Land-use layers',
+                    l10n.landUseLayersTitle,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'GIS boxes from Supabase `land_zones` (priority + smallest area wins at a point).',
+                    l10n.landUseLayersDescription,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 12),
                   ...LandUseType.values.map((t) {
                     return SwitchListTile(
-                      title: Text(t.displayLabel),
+                      title: Text(l10n.landUseTypeLabel(t)),
                       subtitle: Text(
-                        'Tint: ${_layerColorName(t)}',
+                        l10n.layerTintLabel(l10n.layerTintName(t)),
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       value: _layerVisible[t] ?? true,
@@ -148,114 +251,40 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  static String _layerColorName(LandUseType t) => switch (t) {
-        LandUseType.public => 'Blue',
-        LandUseType.private => 'Amber',
-        LandUseType.kkl => 'Green',
-        LandUseType.abandoned => 'Brown',
-      };
-
   Future<void> _startReport() async {
-    final perm = await _locationService.ensureForegroundPermission();
-    if (!mounted) return;
-
-    if (perm == LocationPermission.deniedForever) {
-      if (kIsWeb) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Enable location in the browser site settings, then try again.',
-            ),
-          ),
-        );
-        return;
-      }
-      final open = await showDialog<bool>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Location blocked'),
-          content: const Text(
-            'Enable location for UrbanTree in system settings for high-accuracy reporting.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Cancel'),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Open settings'),
-            ),
-          ],
-        ),
-      );
-      if (open == true) await Geolocator.openAppSettings();
-      return;
-    }
-
-    if (perm == LocationPermission.denied) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Location permission is required to report.')),
-      );
-      return;
-    }
-
-    if (!kIsWeb && !await _locationService.isLocationServiceEnabled()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Turn on device location services.')),
-      );
-      return;
-    }
-
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
+    await _reportLauncher.start(
+      context,
+      onReportComplete: () {
+        widget.onReportFlowComplete?.call();
+        _loadMapContext();
+      },
     );
-
-    try {
-      final pos = await _locationService.getHighAccuracyPosition();
-      if (!mounted) return;
-      Navigator.of(context).pop();
-
-      final point = LatLng(pos.latitude, pos.longitude);
-      final classification = _landUseService.classify(point, _zones);
-      final draft = TreeReportDraft(
-        latitude: pos.latitude,
-        longitude: pos.longitude,
-        accuracyMeters: pos.accuracy,
-        landType: classification?.type ?? LandUseType.public,
-        landTypeAuto: classification != null,
-      );
-
-      if (mounted) {
-        setState(() => _userPoint = point);
-        _mapController.move(point, 17);
-      }
-
-      final submitted = await Navigator.of(context).push<bool>(
-        MaterialPageRoute(
-          builder: (_) => ReportWizardScreen(draft: draft),
-        ),
-      );
-      if (!mounted) return;
-      if (submitted == true) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Report submitted')),
-        );
-      }
-    } catch (e) {
-      if (mounted) Navigator.of(context).pop();
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not start report: $e')),
-      );
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
     final markers = <Marker>[];
+
+    for (final r in _reportPins) {
+      final gem = _isHiddenGem(r);
+      final tip = _gemTooltip(l10n, r);
+      final icon = Icon(
+        gem ? Icons.auto_awesome : Icons.forest_rounded,
+        color: gem ? Colors.amber.shade800 : r.landType.layerColor(1),
+        size: gem ? 36 : 34,
+      );
+      markers.add(
+        Marker(
+          point: LatLng(r.latitude, r.longitude),
+          width: 40,
+          height: 40,
+          child: tip != null ? Tooltip(message: tip, child: icon) : icon,
+        ),
+      );
+    }
+
     if (_userPoint != null) {
       markers.add(
         Marker(
@@ -263,49 +292,86 @@ class _MapScreenState extends State<MapScreen> {
           width: 44,
           height: 44,
           child: Icon(
-            Icons.location_on,
-            color: Theme.of(context).colorScheme.primary,
+            Icons.person_pin_circle,
+            color: theme.colorScheme.primary,
             size: 44,
           ),
         ),
       );
     }
 
+    final circles = _hotspots
+        .map(
+          (h) => CircleMarker(
+            point: LatLng(h.latitude, h.longitude),
+            radius: h.radiusM,
+            useRadiusInMeter: true,
+            color: Colors.deepOrange.withValues(alpha: 0.14),
+            borderStrokeWidth: 2,
+            borderColor: Colors.deepOrange.shade800,
+          ),
+        )
+        .toList();
+
+    final pestBanner = _pestBannerText(l10n);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('UrbanTree'),
+        title: Text(l10n.appTitle),
         actions: [
           IconButton(
-            tooltip: 'Land-use layers',
+            tooltip: l10n.mapLayersTooltip,
             onPressed: _openLayerSheet,
             icon: const Icon(Icons.layers_outlined),
           ),
         ],
       ),
-      body: FlutterMap(
-        mapController: _mapController,
-        options: MapOptions(
-          initialCenter: _userPoint ?? _defaultCenter,
-          initialZoom: 13,
-          minZoom: 3,
-          maxZoom: 19,
-        ),
+      body: Column(
         children: [
-          TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-            userAgentPackageName: 'com.example.urban_tree',
-          ),
-          if (_visiblePolygons.isNotEmpty)
-            PolygonLayer(polygons: _visiblePolygons),
-          if (markers.isNotEmpty) MarkerLayer(markers: markers),
-          RichAttributionWidget(
-            showFlutterMapAttribution: true,
-            attributions: [
-              TextSourceAttribution(
-                'OpenStreetMap contributors',
-                onTap: _openOsmCopyright,
+          if (pestBanner != null)
+            Material(
+              color: theme.colorScheme.errorContainer,
+              child: ListTile(
+                dense: true,
+                leading: Icon(
+                  Icons.warning_amber_rounded,
+                  color: theme.colorScheme.onErrorContainer,
+                ),
+                title: Text(
+                  pestBanner,
+                  style: TextStyle(color: theme.colorScheme.onErrorContainer),
+                ),
               ),
-            ],
+            ),
+          Expanded(
+            child: FlutterMap(
+              mapController: _mapController,
+              options: MapOptions(
+                initialCenter: _userPoint ?? _defaultCenter,
+                initialZoom: 13,
+                minZoom: 3,
+                maxZoom: 19,
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  userAgentPackageName: 'com.example.urban_tree',
+                ),
+                if (_visiblePolygons.isNotEmpty)
+                  PolygonLayer(polygons: _visiblePolygons),
+                if (circles.isNotEmpty) CircleLayer(circles: circles),
+                if (markers.isNotEmpty) MarkerLayer(markers: markers),
+                RichAttributionWidget(
+                  showFlutterMapAttribution: true,
+                  attributions: [
+                    TextSourceAttribution(
+                      l10n.osmContributors,
+                      onTap: _openOsmCopyright,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -315,7 +381,7 @@ class _MapScreenState extends State<MapScreen> {
         children: [
           FloatingActionButton.small(
             heroTag: 'loc',
-            tooltip: 'My location',
+            tooltip: l10n.mapMyLocationTooltip,
             onPressed: _recenterOnUser,
             child: const Icon(Icons.my_location_outlined),
           ),
@@ -324,7 +390,7 @@ class _MapScreenState extends State<MapScreen> {
             heroTag: 'report',
             onPressed: _startReport,
             icon: const Icon(Icons.park_outlined),
-            label: const Text('Report Tree'),
+            label: Text(l10n.reportTreeFab),
           ),
         ],
       ),

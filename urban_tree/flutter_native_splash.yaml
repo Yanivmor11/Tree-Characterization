@@ -1,0 +1,8 @@
+# Regenerate: dart run flutter_native_splash:create
+# Swap `image` when design delivers final splash artwork.
+flutter_native_splash:
+  color: "#2E7D32"
+  image: assets/images/logo.png
+  android_12:
+    color: "#2E7D32"
+    image: assets/images/logo.png

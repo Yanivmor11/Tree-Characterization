@@ -1,5 +1,9 @@
 # Local secrets (copy from .env.example)
 .env
+secrets.json
+
+# Supabase CLI (linked project; may contain credentials)
+.supabase/
 
 # Miscellaneous
 *.class

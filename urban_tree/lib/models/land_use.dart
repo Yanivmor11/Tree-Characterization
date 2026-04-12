@@ -26,10 +26,10 @@ enum LandUseType {
       };
 
   Color layerColor(double opacity) => switch (this) {
-        LandUseType.public => Colors.blue.withOpacity(opacity),
-        LandUseType.private => Colors.amber.withOpacity(opacity),
-        LandUseType.kkl => Colors.green.withOpacity(opacity),
-        LandUseType.abandoned => Colors.brown.withOpacity(opacity),
+        LandUseType.public => Colors.blue.withValues(alpha: opacity),
+        LandUseType.private => Colors.amber.withValues(alpha: opacity),
+        LandUseType.kkl => Colors.green.withValues(alpha: opacity),
+        LandUseType.abandoned => Colors.brown.withValues(alpha: opacity),
       };
 }
 

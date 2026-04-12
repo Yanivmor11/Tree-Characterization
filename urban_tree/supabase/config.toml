@@ -1,0 +1,11 @@
+# Supabase local / deploy config. Weekly cron: see scripts/schedule_data_quality_weekly.sql
+# (header x-data-quality-secret must match Edge secret DATA_QUALITY_CRON_SECRET).
+
+[functions.openai-suggest]
+verify_jwt = true
+
+[functions.openai-tree-insights]
+verify_jwt = true
+
+[functions.data-quality-weekly]
+verify_jwt = false

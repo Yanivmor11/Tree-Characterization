@@ -1,5 +1,6 @@
 import 'package:image_picker/image_picker.dart';
 
+import '../core/constants.dart';
 import 'land_use.dart';
 
 enum CanopyDensity { sparse, moderate, dense }
@@ -98,6 +99,11 @@ class TreeReportDraft {
   bool landTypeAuto;
 
   final List<XFile> wholeTreeImages = [];
+  String? speciesCommon;
+  String? speciesScientific;
+  double? speciesConfidence;
+  /// Optional audit payload persisted with the report (vision/text AI output).
+  Map<String, dynamic>? aiSuggestionAudit;
   int healthScore = 3;
   CanopyDensity canopyDensity = CanopyDensity.moderate;
   final Set<StructuralIssue> structuralIssues = {};
@@ -111,5 +117,6 @@ class TreeReportDraft {
   DamageExtent damageExtent = DamageExtent.minimal;
 
   bool get hasLowAccuracyWarning =>
-      accuracyMeters != null && accuracyMeters! > 2.0;
+      accuracyMeters != null &&
+      accuracyMeters! > kTargetLocationAccuracyMeters;
 }

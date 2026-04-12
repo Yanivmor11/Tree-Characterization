@@ -1,0 +1,256 @@
+{
+  "@@locale": "ru",
+  "appTitle": "UrbanTree",
+
+  "navHome": "Главная",
+  "navMap": "Карта",
+  "navResearch": "Исследования",
+  "navProfile": "Профиль",
+
+  "appLanguageTitle": "Язык приложения",
+  "useDeviceLanguage": "Как на устройстве",
+
+  "homeWelcomeTitle": "Картирование городских деревьев",
+  "homeWelcomeSubtitle": "Помогите экологическим исследованиям точными отчётами и качественным GPS.",
+  "totalTreesMapped": "Всего отмечено деревьев",
+  "startReporting": "Начать отчёт",
+  "couldNotLoadStats": "Не удалось загрузить статистику",
+
+  "researchDashboardTitle": "Панель исследователя",
+  "researchDashboardSubtitle": "Последние отчёты из базы данных",
+  "exportCsv": "Экспорт в CSV",
+  "shareCsvSubject": "Экспорт отчётов UrbanTree",
+  "noReportsYet": "Пока нет отчётов",
+  "loadReportsError": "Ошибка загрузки отчётов",
+  "retry": "Повторить",
+  "reportListItemSubtitle": "{date} · {landType} · оценка {health}",
+  "@reportListItemSubtitle": {
+    "placeholders": {
+      "date": {"type": "String"},
+      "landType": {"type": "String"},
+      "health": {"type": "int"}
+    }
+  },
+
+  "profileTitle": "Профиль",
+  "profilePlaceholder": "Здесь позже появятся настройки пользователя и предпочтения.",
+
+  "splashTagline": "Картирование деревьев для науки",
+
+  "mapLayersTooltip": "Слои землепользования",
+  "mapMyLocationTooltip": "Моё местоположение",
+  "reportTreeFab": "Сообщить о дереве",
+  "landUseLayersTitle": "Слои землепользования",
+  "landUseLayersDescription": "Прямоугольники GIS из Supabase (приоритет + меньшая площадь побеждает в точке).",
+  "tintBlue": "Синий",
+  "tintAmber": "Янтарный",
+  "tintGreen": "Зелёный",
+  "tintBrown": "Коричневый",
+  "layerTintLabel": "Оттенок: {colorName}",
+  "@layerTintLabel": {
+    "placeholders": {
+      "colorName": {"type": "String"}
+    }
+  },
+
+  "locationPermissionRequired": "Нужно разрешение на геолокацию.",
+  "locationServicesOff": "Включите службы геолокации на устройстве.",
+  "couldNotGetLocation": "Не удалось получить местоположение: {error}",
+  "@couldNotGetLocation": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "locationPermissionRequiredToReport": "Для отчёта нужна геолокация.",
+  "locationBlockedTitle": "Геолокация заблокирована",
+  "locationBlockedBody": "Разрешите геолокацию для UrbanTree в настройках системы для точных отчётов.",
+  "cancel": "Отмена",
+  "openSettings": "Открыть настройки",
+  "enableLocationBrowser": "Разрешите геолокацию в настройках сайта в браузере и попробуйте снова.",
+  "reportSubmitted": "Отчёт сохранён",
+  "couldNotStartReport": "Не удалось начать отчёт: {error}",
+  "@couldNotStartReport": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+
+  "osmContributors": "Участники OpenStreetMap",
+
+  "treeReportTitle": "Отчёт о дереве",
+  "gpsAccuracyWarning": "Точность GPS: {accuracy} м (цель ≤ {target} м). По возможности выйдите под открытое небо перед классификацией землепользования.",
+  "@gpsAccuracyWarning": {
+    "placeholders": {
+      "accuracy": {"type": "String"},
+      "target": {"type": "String"}
+    }
+  },
+  "landUseSection": "Землепользование",
+  "landTypeLabel": "Тип земли",
+  "landTypeSuggestedFromGis": "Предложено по слоям GIS. При необходимости измените.",
+  "landUsePublic": "Общественная",
+  "landUsePrivate": "Частная",
+  "landUseKkl": "ККЛ",
+  "landUseAbandoned": "Заброшенная",
+
+  "back": "Назад",
+  "next": "Далее",
+  "submitReport": "Отправить отчёт",
+  "addFlowerStageOrRemove": "Укажите стадию и обилие цветов/плодов или удалите эти фото.",
+  "couldNotSaveReport": "Не удалось сохранить отчёт: {error}",
+  "@couldNotSaveReport": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "reportValidationWholeTreePhotos": "Добавьте хотя бы одно фото дерева целиком перед отправкой.",
+  "reportValidationLeavesPhotos": "Добавьте хотя бы одно фото листьев перед отправкой.",
+  "reportValidationFlowerIncomplete": "Укажите стадию и обилие цветов/плодов или удалите эти фото.",
+  "reportValidationGpsAccuracyBlocked": "Точность GPS {accuracy} м; в этой сборке требуется ≤ {target} м. Выйдите на открытое место и повторите.",
+  "@reportValidationGpsAccuracyBlocked": {
+    "placeholders": {
+      "accuracy": {"type": "String"},
+      "target": {"type": "String"}
+    }
+  },
+
+  "step1WholeTree": "Шаг 1 — Дерево целиком",
+  "step1WholeTreeDescription": "1–3 фото кроны и архитектуры (для отправки нужно минимум одно).",
+  "gallery": "Галерея",
+  "camera": "Камера",
+  "healthScoreLabel": "Оценка состояния: {score} из 5",
+  "@healthScoreLabel": {
+    "placeholders": {
+      "score": {"type": "int"}
+    }
+  },
+  "canopyDensity": "Плотность кроны",
+  "canopySparse": "Редкая",
+  "canopyModerate": "Средняя",
+  "canopyDense": "Плотная",
+  "structuralIssues": "Структурные проблемы",
+  "structuralDeadBranches": "Сухие ветви",
+  "structuralLeaning": "Наклон",
+  "structuralCracks": "Трещины / расколы",
+  "structuralExposedRoots": "Оголённые корни",
+  "structuralCavity": "Дупло / гниль",
+  "structuralOther": "Другое",
+
+  "step2FlowerFruit": "Шаг 2 — Цветок / плод",
+  "step2FlowerFruitDescription": "По желанию. Если смешаны бутон, открытый цветок и плод — снимайте отдельно.",
+  "phenologicalStage": "Фенологическая стадия",
+  "stageBud": "Бутон",
+  "stageOpen": "Открытый цветок",
+  "stageFruit": "Плод",
+  "abundance": "Обилие",
+  "abundanceLow": "Низкое",
+  "abundanceMedium": "Среднее",
+  "abundanceHigh": "Высокое",
+
+  "step3Leaves": "Шаг 3 — Листья",
+  "step3LeavesDescription": "1–3 фото листьев и прикрепления к ветви (для отправки нужно минимум одно). Укажите пожелтение, пятна, дыры, скручивание ниже.",
+  "generalCondition": "Общее состояние",
+  "conditionHealthy": "Здоровые",
+  "conditionStressed": "Стресс",
+  "damageExtent": "Степень повреждения",
+  "damageMinimal": "Минимальная (<5%)",
+  "damageLow": "Низкая",
+  "damageModerate": "Умеренная",
+  "damageHigh": "Высокая (>50%)",
+
+  "assistantTitle": "Помощник описания (ИИ)",
+  "assistantDescription": "Опишите, что видите (стресс, стадия цветения и т.д.). Помощник только предлагает — подтвердите перед сохранением.",
+  "assistantNotesLabel": "Свободное описание",
+  "assistantNotesHint": "Например: пожелтение листьев в верхней части кроны…",
+  "assistantSuggest": "Получить предложение",
+  "assistantWorking": "Обработка…",
+  "assistantError": "Ошибка: {message}",
+  "@assistantError": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+  "assistantApply": "Применить",
+  "assistantDismiss": "Закрыть",
+  "assistantSuggestedHealth": "Предлагаемая оценка: {score}",
+  "@assistantSuggestedHealth": {
+    "placeholders": {
+      "score": {"type": "int"}
+    }
+  },
+  "assistantSuggestedStageBud": "Предлагаемая стадия: бутон",
+  "assistantSuggestedStageOpen": "Предлагаемая стадия: открытый цветок",
+  "assistantSuggestedStageFruit": "Предлагаемая стадия: плод",
+  "assistantNoStructuredSuggestion": "Нет структурированного предложения. Переформулируйте или продолжите вручную.",
+
+  "speciesLabel": "Species (common name)",
+  "speciesHint": "e.g. Olive, Jacaranda",
+  "visionSuggestionsTitle": "Image suggestions (AI)",
+  "visionSuggestionsSubtitle": "Suggestions only — review and validate.",
+  "suggestedSpeciesLine": "Species: {common} ({scientific})",
+  "@suggestedSpeciesLine": {
+    "placeholders": {
+      "common": {"type": "String"},
+      "scientific": {"type": "String"}
+    }
+  },
+  "validateCompleteSuggestions": "Validate & complete suggestions",
+  "phenologyUnusualTitle": "Unusual for this season",
+  "phenologyUnusualBody": "{message}",
+  "@phenologyUnusualBody": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+  "phenologyImSure": "I'm sure",
+  "phenologyGoBack": "Review",
+  "treeInsightsTitle": "Tree insights",
+  "treeInsightsClose": "Done",
+  "pointsPreview": "Estimated points: {points}",
+  "@pointsPreview": {
+    "placeholders": {
+      "points": {"type": "int"}
+    }
+  },
+  "nearbyMappedTreesWarning": "{count} mapped trees within ~{meters} m — avoid duplicate entries.",
+  "@nearbyMappedTreesWarning": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "meters": {"type": "int"}
+    }
+  },
+  "leaderboardTitle": "Top guardians",
+  "leaderboardNational": "National",
+  "leaderboardMyCity": "My city",
+  "leaderboardEmpty": "No leaderboard entries yet",
+  "leaderboardCityEmpty": "No entries for your city yet",
+  "yourCityMissing": "Your city is set after your first geocoded report.",
+  "pestNearbyBanner": "{pest} reported nearby (~{meters} m)",
+  "@pestNearbyBanner": {
+    "placeholders": {
+      "pest": {"type": "String"},
+      "meters": {"type": "int"}
+    }
+  },
+  "mapGemRare": "Rare species",
+  "mapGemAbandoned": "Abandoned · needs care",
+  "researchQualityTab": "Quality flags",
+  "qualityFlagsEmpty": "No open quality flags",
+  "qualityFlagSubtitle": "{reason} · {cluster}",
+  "@qualityFlagSubtitle": {
+    "placeholders": {
+      "reason": {"type": "String"},
+      "cluster": {"type": "String"}
+    }
+  },
+  "openLeaderboard": "Leaderboard",
+  "cameraNearbyTitle": "Nearby mapped trees",
+  "cameraNearbyBody": "{count} reports within {meters} m of this spot.",
+  "@cameraNearbyBody": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "meters": {"type": "int"}
+    }
+  },
+  "continueLabel": "Continue"
+}

@@ -1,0 +1,6 @@
+# Python deps for scripts/import_tel_aviv_trees.py (run: pip install -r scripts/requirements-import.txt)
+httpx>=0.27.0
+python-dotenv>=1.0.1
+supabase>=2.6.0
+openai>=1.40.0
+pyproj>=3.6.0

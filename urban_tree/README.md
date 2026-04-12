@@ -5,7 +5,7 @@ Flutter client for citizen science tree reporting (OpenStreetMap + Supabase). Se
 ## Prerequisites
 
 - Flutter SDK (stable), Chrome (web), Xcode/Android Studio (mobile).
-- A Supabase project. Apply `supabase/schema.sql` in the SQL editor, then create the public storage bucket `tree-report-media` if the script could not insert it.
+- A Supabase project. Prefer `./scripts/supabase_backend_deploy.sh` (after `supabase login`) or `supabase db push` so migrations apply in order (`20260401100000_initial_schema.sql` replaces a manual `schema.sql` run). You can still paste `supabase/schema.sql` in the SQL Editor for a one-off bootstrap.
 - `urban_tree/.env` with `SUPABASE_URL` and `SUPABASE_ANON_KEY` (see `.env.example`).
 
 ## Run & test
