@@ -49,6 +49,21 @@ class ProfileScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.emoji_events_outlined),
+            title: Text(l10n.openLeaderboard),
+            subtitle: Text(l10n.leaderboardTitle),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.of(context).push<void>(
+                MaterialPageRoute<void>(
+                  builder: (_) => const TopGuardiansScreen(),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 12),
           Text(
             l10n.appLanguageTitle,
             style: theme.textTheme.titleMedium,

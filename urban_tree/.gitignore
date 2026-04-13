@@ -4,6 +4,7 @@ secrets.json
 
 # Supabase CLI (linked project; may contain credentials)
 .supabase/
+supabase/.temp/
 
 # Miscellaneous
 *.class

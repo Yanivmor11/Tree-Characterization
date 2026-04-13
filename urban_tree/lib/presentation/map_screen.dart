@@ -18,6 +18,7 @@ import '../services/pest_hotspot_service.dart';
 import '../services/species_rarity_service.dart';
 import '../services/tree_report_repository.dart';
 import 'report/report_flow_launcher.dart';
+import 'top_guardians_screen.dart';
 
 /// OpenStreetMap base map with land-use overlays, report pins, and report entry.
 class MapScreen extends StatefulWidget {
@@ -319,6 +320,17 @@ class _MapScreenState extends State<MapScreen> {
       appBar: AppBar(
         title: Text(l10n.appTitle),
         actions: [
+          IconButton(
+            tooltip: l10n.openLeaderboard,
+            onPressed: () {
+              Navigator.of(context).push<void>(
+                MaterialPageRoute<void>(
+                  builder: (_) => const TopGuardiansScreen(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.emoji_events_outlined),
+          ),
           IconButton(
             tooltip: l10n.mapLayersTooltip,
             onPressed: _openLayerSheet,

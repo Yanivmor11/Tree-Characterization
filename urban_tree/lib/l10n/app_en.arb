@@ -222,7 +222,7 @@
       "meters": {"type": "int"}
     }
   },
-  "leaderboardTitle": "Top guardians",
+  "leaderboardTitle": "Top Guardians",
   "leaderboardNational": "National",
   "leaderboardMyCity": "My city",
   "leaderboardEmpty": "No leaderboard entries yet",
@@ -246,7 +246,7 @@
       "cluster": {"type": "String"}
     }
   },
-  "openLeaderboard": "Leaderboard",
+  "openLeaderboard": "Top Guardians",
   "cameraNearbyTitle": "Nearby mapped trees",
   "cameraNearbyBody": "{count} reports within {meters} m of this spot.",
   "@cameraNearbyBody": {

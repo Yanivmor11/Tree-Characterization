@@ -382,25 +382,24 @@ class AppLocalizationsHe extends AppLocalizations {
       'לא התקבלה הצעה מובנית. נסחו מחדש או המשיכו ידנית.';
 
   @override
-  String get speciesLabel => 'Species (common name)';
+  String get speciesLabel => 'מין (שם עממי)';
 
   @override
-  String get speciesHint => 'e.g. Olive, Jacaranda';
+  String get speciesHint => 'למשל: Olive, Jacaranda';
 
   @override
-  String get visionSuggestionsTitle => 'Image suggestions (AI)';
+  String get visionSuggestionsTitle => 'הצעות תמונה (AI)';
 
   @override
-  String get visionSuggestionsSubtitle =>
-      'Suggestions only — review and validate.';
+  String get visionSuggestionsSubtitle => 'הצעות בלבד — בדקו ואשרו.';
 
   @override
   String suggestedSpeciesLine(String common, String scientific) {
-    return 'Species: $common ($scientific)';
+    return 'מין: $common ($scientific)';
   }
 
   @override
-  String get validateCompleteSuggestions => 'Validate & complete suggestions';
+  String get validateCompleteSuggestions => 'אישור והשלמת הצעות';
 
   @override
   String get phenologyUnusualTitle => 'Unusual for this season';
@@ -433,23 +432,22 @@ class AppLocalizationsHe extends AppLocalizations {
   }
 
   @override
-  String get leaderboardTitle => 'Top guardians';
+  String get leaderboardTitle => 'מובילים';
 
   @override
-  String get leaderboardNational => 'National';
+  String get leaderboardNational => 'ארצי';
 
   @override
-  String get leaderboardMyCity => 'My city';
+  String get leaderboardMyCity => 'העיר שלי';
 
   @override
   String get leaderboardEmpty => 'No leaderboard entries yet';
 
   @override
-  String get leaderboardCityEmpty => 'No entries for your city yet';
+  String get leaderboardCityEmpty => 'עדיין אין תוצאות לעיר שלך';
 
   @override
-  String get yourCityMissing =>
-      'Your city is set after your first geocoded report.';
+  String get yourCityMissing => 'העיר תתעדכן אחרי הדיווח הראשון עם מיקום.';
 
   @override
   String pestNearbyBanner(String pest, int meters) {
@@ -474,7 +472,7 @@ class AppLocalizationsHe extends AppLocalizations {
   }
 
   @override
-  String get openLeaderboard => 'Leaderboard';
+  String get openLeaderboard => 'מובילים';
 
   @override
   String get cameraNearbyTitle => 'Nearby mapped trees';

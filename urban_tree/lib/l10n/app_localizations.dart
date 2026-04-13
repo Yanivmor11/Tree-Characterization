@@ -867,7 +867,7 @@ abstract class AppLocalizations {
   /// No description provided for @leaderboardTitle.
   ///
   /// In en, this message translates to:
-  /// **'Top guardians'**
+  /// **'Top Guardians'**
   String get leaderboardTitle;
 
   /// No description provided for @leaderboardNational.
@@ -939,7 +939,7 @@ abstract class AppLocalizations {
   /// No description provided for @openLeaderboard.
   ///
   /// In en, this message translates to:
-  /// **'Leaderboard'**
+  /// **'Top Guardians'**
   String get openLeaderboard;
 
   /// No description provided for @cameraNearbyTitle.

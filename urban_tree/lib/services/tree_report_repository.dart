@@ -123,6 +123,7 @@ class TreeReportRepository {
       files: draft.leavesImages,
     );
 
+    // Persist canonical species values only to prevent localization fragmentation.
     final species = draft.speciesCommon?.trim();
     final speciesSci = draft.speciesScientific?.trim();
 

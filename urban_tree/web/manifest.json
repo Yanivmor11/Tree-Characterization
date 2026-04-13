@@ -1,11 +1,13 @@
 {
     "name": "UrbanTree",
     "short_name": "UrbanTree",
-    "start_url": ".",
+    "start_url": "/",
+    "scope": "/",
     "display": "standalone",
     "background_color": "#2E7D32",
     "theme_color": "#2E7D32",
-    "description": "Citizen science tree mapping with accurate GPS and land-use context.",
+    "description": "UrbanTree helps researchers and citizens map urban trees with research-grade geospatial observations.",
+    "categories": ["education", "science", "productivity"],
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

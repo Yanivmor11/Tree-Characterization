@@ -435,7 +435,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get leaderboardTitle => 'Top guardians';
+  String get leaderboardTitle => 'Top Guardians';
 
   @override
   String get leaderboardNational => 'National';
@@ -476,7 +476,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get openLeaderboard => 'Leaderboard';
+  String get openLeaderboard => 'Top Guardians';
 
   @override
   String get cameraNearbyTitle => 'Nearby mapped trees';

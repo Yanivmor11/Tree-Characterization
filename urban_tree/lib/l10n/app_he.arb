@@ -186,18 +186,18 @@
   "assistantSuggestedStageFruit": "הצעת שלב: פרי",
   "assistantNoStructuredSuggestion": "לא התקבלה הצעה מובנית. נסחו מחדש או המשיכו ידנית.",
 
-  "speciesLabel": "Species (common name)",
-  "speciesHint": "e.g. Olive, Jacaranda",
-  "visionSuggestionsTitle": "Image suggestions (AI)",
-  "visionSuggestionsSubtitle": "Suggestions only — review and validate.",
-  "suggestedSpeciesLine": "Species: {common} ({scientific})",
+  "speciesLabel": "מין (שם עממי)",
+  "speciesHint": "למשל: Olive, Jacaranda",
+  "visionSuggestionsTitle": "הצעות תמונה (AI)",
+  "visionSuggestionsSubtitle": "הצעות בלבד — בדקו ואשרו.",
+  "suggestedSpeciesLine": "מין: {common} ({scientific})",
   "@suggestedSpeciesLine": {
     "placeholders": {
       "common": {"type": "String"},
       "scientific": {"type": "String"}
     }
   },
-  "validateCompleteSuggestions": "Validate & complete suggestions",
+  "validateCompleteSuggestions": "אישור והשלמת הצעות",
   "phenologyUnusualTitle": "Unusual for this season",
   "phenologyUnusualBody": "{message}",
   "@phenologyUnusualBody": {
@@ -222,12 +222,12 @@
       "meters": {"type": "int"}
     }
   },
-  "leaderboardTitle": "Top guardians",
-  "leaderboardNational": "National",
-  "leaderboardMyCity": "My city",
+  "leaderboardTitle": "מובילים",
+  "leaderboardNational": "ארצי",
+  "leaderboardMyCity": "העיר שלי",
   "leaderboardEmpty": "No leaderboard entries yet",
-  "leaderboardCityEmpty": "No entries for your city yet",
-  "yourCityMissing": "Your city is set after your first geocoded report.",
+  "leaderboardCityEmpty": "עדיין אין תוצאות לעיר שלך",
+  "yourCityMissing": "העיר תתעדכן אחרי הדיווח הראשון עם מיקום.",
   "pestNearbyBanner": "{pest} reported nearby (~{meters} m)",
   "@pestNearbyBanner": {
     "placeholders": {
@@ -246,7 +246,7 @@
       "cluster": {"type": "String"}
     }
   },
-  "openLeaderboard": "Leaderboard",
+  "openLeaderboard": "מובילים",
   "cameraNearbyTitle": "Nearby mapped trees",
   "cameraNearbyBody": "{count} reports within {meters} m of this spot.",
   "@cameraNearbyBody": {
