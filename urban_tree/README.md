@@ -82,3 +82,37 @@ In Supabase dashboard:
 
 - Ensure `SUPABASE_URL` and `SUPABASE_ANON_KEY` are configured in `urban_tree/.env` (or `--dart-define-from-file` on web).
 - Google OAuth will fail if redirect URLs are missing or if credentials belong to a different Google Cloud project.
+
+## Vercel (production web)
+
+The repo includes [`vercel.json`](vercel.json) and [`scripts/vercel_build.sh`](scripts/vercel_build.sh) so Vercel runs a real **`flutter build web`** and publishes **`build/web`** (fixes empty deployments and `404 NOT_FOUND` on the live URL).
+
+### Project settings
+
+- **Root Directory:** `urban_tree` (if the Vercel project is linked to this monorepo).
+- **Framework preset:** Other (Vercel reads `buildCommand` / `outputDirectory` from `vercel.json`).
+
+### Required environment variables (Production)
+
+Set these in Vercel → Project → **Settings** → **Environment Variables** → **Production**:
+
+| Name | Notes |
+|------|--------|
+| `SUPABASE_URL` | Same as in `.env` |
+| `SUPABASE_ANON_KEY` | Publishable anon key |
+| `APP_ENV` | Optional; default `prod` if unset |
+| `OPENAI_API_KEY` | Optional; web assistant uses Edge Functions, so often omitted |
+
+Without `SUPABASE_URL` and `SUPABASE_ANON_KEY`, the build **fails on purpose** (release web cannot read `.env` in the browser).
+
+### Supabase CORS
+
+In Supabase → **Project Settings** → **API**, add your production site origin to allowed **CORS** origins (e.g. `https://urbantree.vercel.app`).
+
+### Deploy
+
+From `urban_tree/`:
+
+```bash
+npx vercel --prod
+```
