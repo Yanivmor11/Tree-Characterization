@@ -183,18 +183,18 @@
   "assistantSuggestedStageFruit": "Предлагаемая стадия: плод",
   "assistantNoStructuredSuggestion": "Нет структурированного предложения. Переформулируйте или продолжите вручную.",
 
-  "speciesLabel": "Species (common name)",
-  "speciesHint": "e.g. Olive, Jacaranda",
-  "visionSuggestionsTitle": "Image suggestions (AI)",
-  "visionSuggestionsSubtitle": "Suggestions only — review and validate.",
-  "suggestedSpeciesLine": "Species: {common} ({scientific})",
+  "speciesLabel": "Вид (обычное название)",
+  "speciesHint": "Например: Olive, Jacaranda",
+  "visionSuggestionsTitle": "Подсказки по фото (AI)",
+  "visionSuggestionsSubtitle": "Это только подсказки — проверьте и подтвердите.",
+  "suggestedSpeciesLine": "Вид: {common} ({scientific})",
   "@suggestedSpeciesLine": {
     "placeholders": {
       "common": {"type": "String"},
       "scientific": {"type": "String"}
     }
   },
-  "validateCompleteSuggestions": "Validate & complete suggestions",
+  "validateCompleteSuggestions": "Проверить и применить подсказки",
   "phenologyUnusualTitle": "Unusual for this season",
   "phenologyUnusualBody": "{message}",
   "@phenologyUnusualBody": {

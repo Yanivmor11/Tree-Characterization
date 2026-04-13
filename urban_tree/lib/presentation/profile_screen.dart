@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../core/app_locale_controller.dart';
 import '../l10n/app_localizations.dart';
+import '../services/profile_service.dart';
+import '../state/auth_controller.dart';
 import 'top_guardians_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -29,6 +32,8 @@ class ProfileScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final current = localeController.locale;
+    final auth = context.watch<AuthController>();
+    final profileService = ProfileService();
 
     return Scaffold(
       appBar: AppBar(
@@ -49,6 +54,43 @@ class ProfileScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
+          FutureBuilder<UserProfileSnapshot?>(
+            future: profileService.myProfile(),
+            builder: (context, snapshot) {
+              final profile = snapshot.data;
+              return Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        profile?.displayName ?? auth.user?.email ?? 'Guardian',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        auth.user?.email ?? '',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Points: ${profile?.totalPoints ?? 0} · Trust: ${(profile?.trustScore ?? 0).toStringAsFixed(1)}',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 12),
           ListTile(
             contentPadding: EdgeInsets.zero,
             leading: const Icon(Icons.emoji_events_outlined),
@@ -64,6 +106,12 @@ class ProfileScreen extends StatelessWidget {
             },
           ),
           const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: auth.loading ? null : auth.signOut,
+            icon: const Icon(Icons.logout),
+            label: const Text('Sign out'),
+          ),
+          const SizedBox(height: 16),
           Text(
             l10n.appLanguageTitle,
             style: theme.textTheme.titleMedium,

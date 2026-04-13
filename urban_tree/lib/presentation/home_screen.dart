@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../l10n/app_localizations.dart';
-import '../services/tree_report_repository.dart';
+import '../state/report_feed_controller.dart';
 import 'report/report_flow_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,33 +20,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _repo = TreeReportRepository();
   final _launcher = ReportFlowLauncher();
-  int? _totalTrees;
-  bool _loading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadCount();
-  }
 
   @override
   void didUpdateWidget(HomeScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.refreshTick != widget.refreshTick) {
-      _loadCount();
+      context.read<ReportFeedController>().refreshCount();
     }
-  }
-
-  Future<void> _loadCount() async {
-    setState(() => _loading = true);
-    final n = await _repo.countReports();
-    if (!mounted) return;
-    setState(() {
-      _totalTrees = n;
-      _loading = false;
-    });
   }
 
   Future<void> _startReport() async {
@@ -53,13 +35,16 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       onReportComplete: widget.onReportComplete,
     );
-    if (mounted) _loadCount();
+    if (mounted) {
+      context.read<ReportFeedController>().refreshCount();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
+    final feed = context.watch<ReportFeedController>();
 
     return Scaffold(
       body: SafeArea(
@@ -92,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: theme.textTheme.titleMedium,
                     ),
                     const SizedBox(height: 8),
-                    if (_loading)
+                    if (feed.loading)
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 8),
                         child: Center(
@@ -105,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       )
                     else
                       Text(
-                        '${_totalTrees ?? 0}',
+                        '${feed.totalReports}',
                         style: theme.textTheme.displaySmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),

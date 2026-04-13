@@ -6,9 +6,11 @@ Proxies the characterization assistant to OpenAI so **web** clients avoid browse
 
 ```bash
 cd urban_tree
-supabase secrets set OPENAI_API_KEY=sk-...
-supabase functions deploy openai-suggest --project-ref YOUR_PROJECT_REF
+npx supabase@latest secrets set --project-ref YOUR_PROJECT_REF OPENAI_API_KEY=sk-...
+npx supabase@latest functions deploy openai-suggest --project-ref YOUR_PROJECT_REF --use-api
 ```
+
+Use an OpenAI API key (`sk-...`) for `OPENAI_API_KEY`. Do not use a Supabase personal access token here.
 
 The Flutter app calls `Supabase.functions.invoke('openai-suggest', body: {'text': '...'})` on web. Mobile still uses direct OpenAI when `OPENAI_API_KEY` is supplied via `--dart-define` (consider moving all clients to this function to keep keys server-side only).
 

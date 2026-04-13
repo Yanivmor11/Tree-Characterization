@@ -19,6 +19,7 @@ import '../../services/profile_service.dart';
 import '../../services/report_scoring_service.dart';
 import '../../services/tree_report_repository.dart';
 import '../../services/tree_report_validator.dart';
+import '../../services/auth_bootstrap.dart';
 
 /// Three-step flow per `MAPPING_PROTOCOL.md`, synced to Supabase `tree_reports`.
 class ReportWizardScreen extends StatefulWidget {
@@ -54,6 +55,8 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
   bool _aiLoadingWhole = false;
   bool _aiLoadingFlower = false;
   bool _visionLoading = false;
+  bool _authReady = false;
+  bool _authChecking = true;
   Timer? _visionDebounce;
   PhenologyWarning? _phenologyBanner;
 
@@ -62,11 +65,14 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
   @override
   void initState() {
     super.initState();
-    if (_d.speciesCommon != null) {
+    unawaited(_ensureAuthReady());
+    if (_d.speciesDisplayName != null) {
+      _speciesController.text = _d.speciesDisplayName!;
+    } else if (_d.speciesCommon != null) {
       _speciesController.text = _d.speciesCommon!;
     }
     _speciesController.addListener(() {
-      _d.speciesCommon = _speciesController.text.trim().isEmpty
+      _d.speciesDisplayName = _speciesController.text.trim().isEmpty
           ? null
           : _speciesController.text.trim();
     });
@@ -89,15 +95,33 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
   }
 
   void _scheduleVisionAnalysis() {
-    if (_d.wholeTreeImages.isEmpty) return;
+    if (_d.wholeTreeImages.isEmpty || !_authReady) return;
     _visionDebounce?.cancel();
     _visionDebounce = Timer(const Duration(milliseconds: 700), () {
       unawaited(_runVisionOnFirstPhoto());
     });
   }
 
+  Future<void> _ensureAuthReady() async {
+    try {
+      await ensureSupabaseSignedIn();
+      if (!mounted) return;
+      final hasSession = Supabase.instance.client.auth.currentSession != null;
+      setState(() {
+        _authReady = hasSession;
+        _authChecking = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _authReady = false;
+        _authChecking = false;
+      });
+    }
+  }
+
   Future<void> _runVisionOnFirstPhoto() async {
-    if (!mounted || _d.wholeTreeImages.isEmpty) return;
+    if (!mounted || _d.wholeTreeImages.isEmpty || !_authReady) return;
     final l10n = AppLocalizations.of(context);
     setState(() {
       _visionLoading = true;
@@ -207,6 +231,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
   }
 
   Future<void> _runAssistantWhole() async {
+    if (!_authReady) return;
     final l10n = AppLocalizations.of(context);
     setState(() {
       _aiLoadingWhole = true;
@@ -227,6 +252,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
   }
 
   Future<void> _runAssistantFlower() async {
+    if (!_authReady) return;
     final l10n = AppLocalizations.of(context);
     setState(() {
       _aiLoadingFlower = true;
@@ -300,9 +326,14 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     final phenologyOk = await _confirmPhenologyIfNeeded();
     if (!phenologyOk || !mounted) return;
 
-    _d.speciesCommon = _speciesController.text.trim().isEmpty
+    _d.speciesDisplayName = _speciesController.text.trim().isEmpty
         ? null
         : _speciesController.text.trim();
+    if ((_d.speciesCommon == null || _d.speciesCommon!.isEmpty) &&
+        _d.speciesDisplayName != null &&
+        _d.speciesDisplayName!.isNotEmpty) {
+      _d.speciesCommon = _d.speciesDisplayName;
+    }
 
     setState(() => _submitting = true);
     try {
@@ -365,7 +396,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
       }
 
       if (!mounted) return;
-      Navigator.of(context).pop(true);
+      Navigator.of(context).pop(reportId);
     } on PostgrestException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -546,7 +577,12 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     };
     setState(() {
       if (s.speciesCommon != null && s.speciesCommon!.isNotEmpty) {
-        _speciesController.text = s.speciesCommon!;
+        _d.speciesCommon = s.speciesCommon;
+      }
+      final displayName = s.translatedDisplayName ?? s.speciesCommon;
+      if (displayName != null && displayName.isNotEmpty) {
+        _speciesController.text = displayName;
+        _d.speciesDisplayName = displayName;
       }
       if (s.speciesScientific != null && s.speciesScientific!.isNotEmpty) {
         _d.speciesScientific = s.speciesScientific;
@@ -601,7 +637,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
       );
     }
     final sci = s.speciesScientific ?? '—';
-    final com = s.speciesCommon ?? '—';
+    final com = s.translatedDisplayName ?? s.speciesCommon ?? '—';
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -658,7 +694,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
             ),
             const SizedBox(height: 12),
             FilledButton.tonal(
-              onPressed: _aiLoadingWhole ? null : _runAssistantWhole,
+              onPressed: (_aiLoadingWhole || !_authReady) ? null : _runAssistantWhole,
               child: _aiLoadingWhole
                   ? Row(
                       mainAxisSize: MainAxisSize.min,
@@ -705,7 +741,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
         if (s.speciesCommon != null || s.speciesScientific != null)
           Text(
             l10n.suggestedSpeciesLine(
-              s.speciesCommon ?? '—',
+              s.translatedDisplayName ?? s.speciesCommon ?? '—',
               s.speciesScientific ?? '—',
             ),
           ),
@@ -717,7 +753,12 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
           onPressed: () {
             setState(() {
               if (s.speciesCommon != null && s.speciesCommon!.isNotEmpty) {
-                _speciesController.text = s.speciesCommon!;
+                _d.speciesCommon = s.speciesCommon;
+              }
+              final displayName = s.translatedDisplayName ?? s.speciesCommon;
+              if (displayName != null && displayName.isNotEmpty) {
+                _speciesController.text = displayName;
+                _d.speciesDisplayName = displayName;
               }
               if (s.speciesScientific != null && s.speciesScientific!.isNotEmpty) {
                 _d.speciesScientific = s.speciesScientific;
@@ -761,7 +802,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
             ),
             const SizedBox(height: 12),
             FilledButton.tonal(
-              onPressed: _aiLoadingFlower ? null : _runAssistantFlower,
+              onPressed: (_aiLoadingFlower || !_authReady) ? null : _runAssistantFlower,
               child: _aiLoadingFlower
                   ? Row(
                       mainAxisSize: MainAxisSize.min,
@@ -901,17 +942,35 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
           runSpacing: 8,
           children: [
             FilledButton.tonalIcon(
-              onPressed: () => _pickImages(_d.wholeTreeImages),
+              onPressed: !_authReady ? null : () => _pickImages(_d.wholeTreeImages),
               icon: const Icon(Icons.photo_library_outlined),
               label: Text(l10n.gallery),
             ),
             FilledButton.tonalIcon(
-              onPressed: () => _pickFromCamera(_d.wholeTreeImages),
+              onPressed: !_authReady ? null : () => _pickFromCamera(_d.wholeTreeImages),
               icon: const Icon(Icons.photo_camera_outlined),
               label: Text(l10n.camera),
             ),
           ],
         ),
+        if (_authChecking)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              'Connecting assistant...',
+              style: theme.textTheme.bodySmall,
+            ),
+          )
+        else if (!_authReady)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              'Assistant temporarily unavailable: no Supabase session.',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.error,
+              ),
+            ),
+          ),
         const SizedBox(height: 12),
         _thumbStrip(_d.wholeTreeImages, (i) => _removeAt(_d.wholeTreeImages, i)),
         const SizedBox(height: 20),

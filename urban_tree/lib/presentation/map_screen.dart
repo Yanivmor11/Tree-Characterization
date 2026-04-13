@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -12,11 +13,11 @@ import '../l10n/app_localizations.dart';
 import '../l10n/l10n_extensions.dart';
 import '../models/land_use.dart';
 import '../models/tree_report_row.dart';
+import '../state/report_feed_controller.dart';
 import '../services/land_use_service.dart';
 import '../services/location_service.dart';
 import '../services/pest_hotspot_service.dart';
 import '../services/species_rarity_service.dart';
-import '../services/tree_report_repository.dart';
 import 'report/report_flow_launcher.dart';
 import 'top_guardians_screen.dart';
 
@@ -36,13 +37,11 @@ class _MapScreenState extends State<MapScreen> {
   final MapController _mapController = MapController();
   final LandUseService _landUseService = LandUseService();
   final LocationService _locationService = const LocationService();
-  final TreeReportRepository _reportRepo = TreeReportRepository();
   final ReportFlowLauncher _reportLauncher = ReportFlowLauncher();
   final PestHotspotService _pestHotspots = PestHotspotService();
   final SpeciesRarityService _speciesRarity = SpeciesRarityService();
 
   List<LandZone> _zones = [];
-  List<TreeReportRow> _reportPins = [];
   List<PestHotspot> _hotspots = [];
   Map<String, int> _speciesCounts = {};
   LatLng? _userPoint;
@@ -73,12 +72,14 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Future<void> _loadMapContext() async {
-    final rows = await _reportRepo.fetchRecentReports(limit: 500);
+    final feed = context.read<ReportFeedController>();
+    if (feed.recentReports.isEmpty) {
+      await feed.loadInitial(limit: 500);
+    }
     final counts = await _speciesRarity.fetchCounts();
     final hot = await _pestHotspots.fetchActive();
     if (!mounted) return;
     setState(() {
-      _reportPins = rows;
       _speciesCounts = counts;
       _hotspots = hot;
     });
@@ -95,9 +96,7 @@ class _MapScreenState extends State<MapScreen> {
           callback: (payload) {
             final parsed = TreeReportRow.fromMap(payload.newRecord);
             if (parsed == null || !mounted) return;
-            setState(() {
-              _reportPins = [parsed, ..._reportPins.where((r) => r.id != parsed.id)];
-            });
+            context.read<ReportFeedController>().mergeRealtimeReport(parsed);
           },
         )
         ..subscribe();
@@ -266,9 +265,10 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final reportPins = context.watch<ReportFeedController>().recentReports;
     final markers = <Marker>[];
 
-    for (final r in _reportPins) {
+    for (final r in reportPins) {
       final gem = _isHiddenGem(r);
       final tip = _gemTooltip(l10n, r);
       final icon = Icon(

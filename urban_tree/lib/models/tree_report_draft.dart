@@ -99,7 +99,11 @@ class TreeReportDraft {
   bool landTypeAuto;
 
   final List<XFile> wholeTreeImages = [];
+  /// Localized/common display value for UI text fields.
+  String? speciesDisplayName;
+  /// Canonical English common name persisted to database.
   String? speciesCommon;
+  /// Canonical Latin scientific name persisted to database.
   String? speciesScientific;
   double? speciesConfidence;
   /// Optional audit payload persisted with the report (vision/text AI output).

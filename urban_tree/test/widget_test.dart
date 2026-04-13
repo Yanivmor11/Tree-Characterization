@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:urban_tree/l10n/app_localizations.dart';
 import 'package:urban_tree/presentation/map_screen.dart';
+import 'package:urban_tree/state/report_feed_controller.dart';
 
 class _MemoryPkceStorage extends GotrueAsyncStorage {
   final Map<String, String> _m = {};
@@ -51,7 +53,10 @@ void main() {
           GlobalCupertinoLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
         ],
-        home: const MapScreen(),
+        home: ChangeNotifierProvider(
+          create: (_) => ReportFeedController(),
+          child: const MapScreen(),
+        ),
       ),
     );
     await tester.pump();

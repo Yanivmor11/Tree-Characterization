@@ -383,25 +383,24 @@ class AppLocalizationsAr extends AppLocalizations {
       'لا يوجد اقتراح منظم. أعد الصياغة أو تابع يدويًا.';
 
   @override
-  String get speciesLabel => 'Species (common name)';
+  String get speciesLabel => 'النوع (الاسم الشائع)';
 
   @override
-  String get speciesHint => 'e.g. Olive, Jacaranda';
+  String get speciesHint => 'مثال: Olive, Jacaranda';
 
   @override
-  String get visionSuggestionsTitle => 'Image suggestions (AI)';
+  String get visionSuggestionsTitle => 'اقتراحات الصور (AI)';
 
   @override
-  String get visionSuggestionsSubtitle =>
-      'Suggestions only — review and validate.';
+  String get visionSuggestionsSubtitle => 'اقتراحات فقط — راجعها ثم أكّدها.';
 
   @override
   String suggestedSpeciesLine(String common, String scientific) {
-    return 'Species: $common ($scientific)';
+    return 'النوع: $common ($scientific)';
   }
 
   @override
-  String get validateCompleteSuggestions => 'Validate & complete suggestions';
+  String get validateCompleteSuggestions => 'تحقّق وأكمل الاقتراحات';
 
   @override
   String get phenologyUnusualTitle => 'Unusual for this season';

@@ -2,10 +2,10 @@
 # (header x-data-quality-secret must match Edge secret DATA_QUALITY_CRON_SECRET).
 
 [functions.openai-suggest]
-verify_jwt = true
+verify_jwt = false
 
 [functions.openai-tree-insights]
-verify_jwt = true
+verify_jwt = false
 
 [functions.data-quality-weekly]
 verify_jwt = false

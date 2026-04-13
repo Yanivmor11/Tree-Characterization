@@ -12,6 +12,8 @@ class CharacterizationSuggestion {
   CharacterizationSuggestion({
     this.speciesCommon,
     this.speciesScientific,
+    this.translatedDisplayName,
+    this.sourceLanguage,
     this.speciesConfidence,
     this.healthScore,
     this.phenologicalStage,
@@ -20,6 +22,8 @@ class CharacterizationSuggestion {
 
   final String? speciesCommon;
   final String? speciesScientific;
+  final String? translatedDisplayName;
+  final String? sourceLanguage;
   final double? speciesConfidence;
   final int? healthScore;
   final String? phenologicalStage;
@@ -29,6 +33,11 @@ class CharacterizationSuggestion {
     return {
       if (speciesCommon != null) 'species_common': speciesCommon,
       if (speciesScientific != null) 'species_scientific': speciesScientific,
+      if (speciesCommon != null) 'species_common_en': speciesCommon,
+      if (speciesScientific != null) 'species_scientific_latin': speciesScientific,
+      if (translatedDisplayName != null)
+        'translated_display_name': translatedDisplayName,
+      if (sourceLanguage != null) 'source_language': sourceLanguage,
       if (speciesConfidence != null) 'species_confidence': speciesConfidence,
       if (healthScore != null) 'health_score': healthScore,
       if (phenologicalStage != null) 'phenological_stage': phenologicalStage,
@@ -49,6 +58,35 @@ class AIService {
   static const _openAiEndpoint = 'https://api.openai.com/v1/chat/completions';
   static const _edgeSuggest = 'openai-suggest';
   static const _edgeInsights = 'openai-tree-insights';
+
+  Future<dynamic> _invokeEdgeFunction(
+    String functionName, {
+    required Map<String, dynamic> body,
+  }) async {
+    final accessToken = _supabase.auth.currentSession?.accessToken;
+    final headers = <String, String>{
+      'Content-Type': 'application/json',
+      'apikey': AppEnv.supabaseAnonKey,
+      if (accessToken != null && accessToken.isNotEmpty)
+        'Authorization': 'Bearer $accessToken',
+    };
+    try {
+      return await _supabase.functions.invoke(
+        functionName,
+        body: body,
+        headers: headers,
+      );
+    } on FunctionException catch (e) {
+      final details = e.details?.toString().trim() ?? '';
+      if (kIsWeb && details.isEmpty) {
+        throw StateError(
+          'Edge call failed in browser (likely CORS/origin issue). '
+          'Confirm OPTIONS handling in the function and allow your web origin in Supabase API settings.',
+        );
+      }
+      rethrow;
+    }
+  }
 
   Uint8List _resizeForVision(Uint8List bytes) {
     final decoded = img.decodeImage(bytes);
@@ -103,7 +141,7 @@ class AIService {
     required Map<String, dynamic> context,
   }) async {
     try {
-      final res = await _supabase.functions.invoke(
+      final res = await _invokeEdgeFunction(
         _edgeInsights,
         body: {'context': context},
       );
@@ -131,7 +169,7 @@ class AIService {
     String mimeType,
   ) async {
     try {
-      final res = await _supabase.functions.invoke(
+      final res = await _invokeEdgeFunction(
         _edgeSuggest,
         body: {'image_base64': b64, 'mime_type': mimeType},
       );
@@ -146,7 +184,7 @@ class AIService {
 
   Future<CharacterizationSuggestion> _suggestTextViaEdge(String trimmed) async {
     try {
-      final res = await _supabase.functions.invoke(
+      final res = await _invokeEdgeFunction(
         _edgeSuggest,
         body: {'text': trimmed},
       );
@@ -175,7 +213,11 @@ class AIService {
           'role': 'system',
           'content':
               'You assist urban tree citizen science. Output ONLY valid JSON with keys: '
-              'species_common (short common name or null), species_scientific (Latin binomial or null), '
+              'species_common_en (canonical English common name or null), '
+              'species_scientific_latin (canonical Latin binomial or null), '
+              'translated_display_name (localized display name for UI or null), '
+              'species_common (same as species_common_en), species_scientific (same as species_scientific_latin), '
+              'source_language (BCP-47 language code or null), '
               'species_confidence (number 0-1 or null), health_score (integer 1-5 or null), '
               'phenological_stage (string "bud", "open", "fruit", or null), '
               'notes (short Hebrew summary of reasoning or null). '
@@ -234,7 +276,11 @@ class AIService {
           'role': 'system',
           'content':
               'You assist urban tree citizen science. Given a resident description in any language, '
-              'output ONLY valid JSON with keys: species_common (or null), species_scientific (or null), '
+              'output ONLY valid JSON with keys: species_common_en (canonical English common name or null), '
+              'species_scientific_latin (canonical Latin binomial or null), '
+              'translated_display_name (localized display name for UI or null), '
+              'species_common (same as species_common_en), species_scientific (same as species_scientific_latin), '
+              'source_language (BCP-47 language code or null), '
               'species_confidence (0-1 or null), health_score (integer 1-5 or null), '
               'phenological_stage (string "bud", "open", "fruit", or null), '
               'notes (short Hebrew summary of reasoning or null). '
@@ -304,15 +350,29 @@ class AIService {
 
     final notes = obj['notes'];
 
-    String? common = obj['species_common'] is String
+    String? common = obj['species_common_en'] is String
+        ? obj['species_common_en'] as String
+        : obj['species_common'] is String
         ? obj['species_common'] as String
         : null;
     if (common != null && common.isEmpty) common = null;
 
-    String? scientific = obj['species_scientific'] is String
+    String? scientific = obj['species_scientific_latin'] is String
+        ? obj['species_scientific_latin'] as String
+        : obj['species_scientific'] is String
         ? obj['species_scientific'] as String
         : null;
     if (scientific != null && scientific.isEmpty) scientific = null;
+
+    String? translated = obj['translated_display_name'] is String
+        ? obj['translated_display_name'] as String
+        : null;
+    if (translated != null && translated.isEmpty) translated = null;
+
+    String? sourceLanguage = obj['source_language'] is String
+        ? obj['source_language'] as String
+        : null;
+    if (sourceLanguage != null && sourceLanguage.isEmpty) sourceLanguage = null;
 
     double? conf;
     final c = obj['species_confidence'];
@@ -323,6 +383,8 @@ class AIService {
     return CharacterizationSuggestion(
       speciesCommon: common,
       speciesScientific: scientific,
+      translatedDisplayName: translated,
+      sourceLanguage: sourceLanguage,
       speciesConfidence: conf,
       healthScore: health,
       phenologicalStage: stage,

@@ -50,6 +50,26 @@ class TreeReportRepository {
     }
   }
 
+  Future<TreeReportRow?> fetchReportById(String id) async {
+    try {
+      final row = await _client
+          .from('tree_reports')
+          .select(
+            'id, created_at, latitude, longitude, accuracy_meters, land_type, '
+            'land_type_auto, health_score, canopy_density, structural_issues, '
+            'whole_tree_image_urls, flower_image_urls, phenological_stage, '
+            'flower_abundance, leaves_image_urls, leaf_condition, damage_extent, '
+            'species, species_scientific',
+          )
+          .eq('id', id)
+          .maybeSingle();
+      if (row == null) return null;
+      return TreeReportRow.fromMap(Map<String, dynamic>.from(row));
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// UTF-8 CSV with English headers for analysis tools.
   String reportsToCsv(List<TreeReportRow> rows) {
     const headers = [

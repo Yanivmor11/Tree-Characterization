@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -15,8 +16,11 @@ ThemeData buildUrbanTreeTheme({Brightness brightness = Brightness.light}) {
     brightness: brightness,
   ).textTheme;
 
-  // Noto Sans covers Latin, Hebrew, Arabic, Cyrillic, and more for multi-language UI.
-  final textTheme = GoogleFonts.notoSansTextTheme(baseTextTheme);
+  // Web: skip runtime font fetch (avoids blank first paint if fonts.gstatic.com is blocked).
+  // Mobile/desktop: Noto Sans for Hebrew, Arabic, Cyrillic, etc.
+  final textTheme = kIsWeb
+      ? baseTextTheme
+      : GoogleFonts.notoSansTextTheme(baseTextTheme);
 
   return ThemeData(
     useMaterial3: true,

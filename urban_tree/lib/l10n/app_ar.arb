@@ -183,18 +183,18 @@
   "assistantSuggestedStageFruit": "مرحلة مقترحة: ثمرة",
   "assistantNoStructuredSuggestion": "لا يوجد اقتراح منظم. أعد الصياغة أو تابع يدويًا.",
 
-  "speciesLabel": "Species (common name)",
-  "speciesHint": "e.g. Olive, Jacaranda",
-  "visionSuggestionsTitle": "Image suggestions (AI)",
-  "visionSuggestionsSubtitle": "Suggestions only — review and validate.",
-  "suggestedSpeciesLine": "Species: {common} ({scientific})",
+  "speciesLabel": "النوع (الاسم الشائع)",
+  "speciesHint": "مثال: Olive, Jacaranda",
+  "visionSuggestionsTitle": "اقتراحات الصور (AI)",
+  "visionSuggestionsSubtitle": "اقتراحات فقط — راجعها ثم أكّدها.",
+  "suggestedSpeciesLine": "النوع: {common} ({scientific})",
   "@suggestedSpeciesLine": {
     "placeholders": {
       "common": {"type": "String"},
       "scientific": {"type": "String"}
     }
   },
-  "validateCompleteSuggestions": "Validate & complete suggestions",
+  "validateCompleteSuggestions": "تحقّق وأكمل الاقتراحات",
   "phenologyUnusualTitle": "Unusual for this season",
   "phenologyUnusualBody": "{message}",
   "@phenologyUnusualBody": {

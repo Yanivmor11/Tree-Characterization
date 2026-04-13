@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../models/land_use.dart';
 import '../../models/tree_report_draft.dart';
+import '../../state/auth_controller.dart';
+import '../../state/report_feed_controller.dart';
 import '../../services/land_use_service.dart';
 import '../../services/location_service.dart';
 import '../../services/tree_report_repository.dart';
@@ -30,6 +33,15 @@ class ReportFlowLauncher {
     BuildContext context, {
     VoidCallback? onReportComplete,
   }) async {
+    final auth = context.read<AuthController>();
+    final reportFeed = context.read<ReportFeedController>();
+    if (!auth.isAuthenticated) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please sign in to submit reports.')),
+      );
+      return;
+    }
+
     final ok = await _ensureLocationAndZones(context);
     if (!ok || !context.mounted) return;
 
@@ -59,7 +71,7 @@ class ReportFlowLauncher {
       final contextual = await _reportRepository.fetchRecentReports(limit: 500);
 
       if (!context.mounted) return;
-      final submitted = await Navigator.of(context).push<bool>(
+      final reportId = await Navigator.of(context).push<String>(
         MaterialPageRoute(
           builder: (_) => ReportWizardScreen(
             draft: draft,
@@ -68,10 +80,13 @@ class ReportFlowLauncher {
         ),
       );
       if (!context.mounted) return;
-      if (submitted == true) {
+      if (reportId != null && reportId.isNotEmpty) {
+        final submittedText = AppLocalizations.of(context).reportSubmitted;
+        await reportFeed.recordSubmittedReport(reportId);
+        if (!context.mounted) return;
         onReportComplete?.call();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context).reportSubmitted)),
+          SnackBar(content: Text(submittedText)),
         );
       }
     } catch (e) {
@@ -90,6 +105,15 @@ class ReportFlowLauncher {
     BuildContext context, {
     VoidCallback? onReportComplete,
   }) async {
+    final auth = context.read<AuthController>();
+    final reportFeed = context.read<ReportFeedController>();
+    if (!auth.isAuthenticated) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please sign in to submit reports.')),
+      );
+      return;
+    }
+
     final ok = await _ensureLocationAndZones(context);
     if (!ok || !context.mounted) return;
 
@@ -127,7 +151,7 @@ class ReportFlowLauncher {
       final contextual = await _reportRepository.fetchRecentReports(limit: 500);
 
       if (!context.mounted) return;
-      final submitted = await Navigator.of(context).push<bool>(
+      final reportId = await Navigator.of(context).push<String>(
         MaterialPageRoute(
           builder: (_) => ReportWizardScreen(
             draft: draft,
@@ -136,10 +160,13 @@ class ReportFlowLauncher {
         ),
       );
       if (!context.mounted) return;
-      if (submitted == true) {
+      if (reportId != null && reportId.isNotEmpty) {
+        final submittedText = AppLocalizations.of(context).reportSubmitted;
+        await reportFeed.recordSubmittedReport(reportId);
+        if (!context.mounted) return;
         onReportComplete?.call();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context).reportSubmitted)),
+          SnackBar(content: Text(submittedText)),
         );
       }
     } catch (e) {

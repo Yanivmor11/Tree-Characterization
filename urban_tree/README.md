@@ -42,3 +42,43 @@ Enable developer mode / USB debugging on Android; trust the computer on iOS.
 ## Reporting flow
 
 Three steps map to `tree_reports`: whole tree (health, canopy, structure), optional flower/fruit, leaves (condition + damage extent). Images upload to the `tree-report-media` bucket; metadata is inserted in one row after uploads complete.
+
+## Auth and OAuth setup
+
+UrbanTree uses Supabase Auth with:
+- Email/password
+- Google OAuth
+
+Apple Sign-In is intentionally disabled for now.
+
+### Supabase CLI deployment commands
+
+Run from `urban_tree/`:
+
+```bash
+supabase login
+supabase link --project-ref <your_project_ref>
+supabase db push
+```
+
+If your team uses explicit migration apply workflows:
+
+```bash
+supabase migration up
+```
+
+### Google provider configuration
+
+In Supabase dashboard:
+1. Open `Authentication` -> `Providers` -> `Google`.
+2. Enable Google provider.
+3. Set Google OAuth client ID + client secret.
+4. Add redirect URL(s):
+   - Supabase callback: `https://<your-project-ref>.supabase.co/auth/v1/callback`
+   - Flutter local callback (mobile deep link): `io.supabase.flutter://login-callback/`
+5. Save and test sign-in from the app.
+
+### Client-side notes
+
+- Ensure `SUPABASE_URL` and `SUPABASE_ANON_KEY` are configured in `urban_tree/.env` (or `--dart-define-from-file` on web).
+- Google OAuth will fail if redirect URLs are missing or if credentials belong to a different Google Cloud project.

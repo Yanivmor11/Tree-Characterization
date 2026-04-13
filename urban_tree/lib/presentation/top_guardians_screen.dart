@@ -115,16 +115,29 @@ class _TopGuardiansScreenState extends State<TopGuardiansScreen>
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           tileColor: Theme.of(context).colorScheme.surfaceContainerHighest,
           leading: CircleAvatar(
+            foregroundImage: (e.avatarUrl != null && e.avatarUrl!.isNotEmpty)
+                ? NetworkImage(e.avatarUrl!)
+                : null,
             child: Text('${i + 1}'),
           ),
           title: Text(e.displayName),
           subtitle: e.cityLabel != null ? Text(e.cityLabel!) : null,
-          trailing: Text(
-            '${e.totalPoints} pts',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w600,
-                ),
+          trailing: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                e.leaderboardScore.toStringAsFixed(1),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+              Text(
+                '${e.totalPoints} pts · T${e.trustScore.toStringAsFixed(1)}',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
           ),
         );
       },

@@ -1,10 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-
-const corsHeaders: Record<string, string> = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
+import { corsHeaders } from "../_shared/cors.ts";
 
 type InsightContext = {
   species?: string | null;
@@ -24,7 +19,10 @@ Deno.serve(async (req: Request) => {
   const apiKey = Deno.env.get("OPENAI_API_KEY");
   if (!apiKey) {
     return new Response(
-      JSON.stringify({ error: "Server misconfiguration: OPENAI_API_KEY" }),
+      JSON.stringify({
+        error:
+          "Missing OPENAI_API_KEY secret in Supabase Edge Functions environment (set your OpenAI key, not a Supabase access token).",
+      }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

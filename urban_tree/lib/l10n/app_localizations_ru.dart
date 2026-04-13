@@ -386,25 +386,25 @@ class AppLocalizationsRu extends AppLocalizations {
       'Нет структурированного предложения. Переформулируйте или продолжите вручную.';
 
   @override
-  String get speciesLabel => 'Species (common name)';
+  String get speciesLabel => 'Вид (обычное название)';
 
   @override
-  String get speciesHint => 'e.g. Olive, Jacaranda';
+  String get speciesHint => 'Например: Olive, Jacaranda';
 
   @override
-  String get visionSuggestionsTitle => 'Image suggestions (AI)';
+  String get visionSuggestionsTitle => 'Подсказки по фото (AI)';
 
   @override
   String get visionSuggestionsSubtitle =>
-      'Suggestions only — review and validate.';
+      'Это только подсказки — проверьте и подтвердите.';
 
   @override
   String suggestedSpeciesLine(String common, String scientific) {
-    return 'Species: $common ($scientific)';
+    return 'Вид: $common ($scientific)';
   }
 
   @override
-  String get validateCompleteSuggestions => 'Validate & complete suggestions';
+  String get validateCompleteSuggestions => 'Проверить и применить подсказки';
 
   @override
   String get phenologyUnusualTitle => 'Unusual for this season';
