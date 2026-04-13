@@ -87,6 +87,15 @@ In Supabase dashboard:
 
 The repo includes [`vercel.json`](vercel.json) and [`scripts/vercel_build.sh`](scripts/vercel_build.sh) so Vercel runs a real **`flutter build web`** and publishes **`build/web`** (fixes empty deployments and `404 NOT_FOUND` on the live URL).
 
+### Which URL to share (important)
+
+- **Share this (stable production):** `https://urbantree.vercel.app`
+- **Do not treat as permanent:** `https://urbantree-<random>-yairazrielis-projects.vercel.app`
+
+Every `vercel deploy` / Git integration build creates a **new** deployment with a **new** random hostname segment (`kbqgj2x5f`, `5idzypedm`, …). Older links point at an **old frozen build** (often still broken if that build had no Flutter output). They are meant for debugging in the Vercel dashboard, not for end users.
+
+If a `*-yairazrielis-projects.vercel.app` link shows **Authentication Required** (HTTP 401), your team has **Deployment Protection** enabled on Vercel. Anonymous visitors cannot open those URLs; use **`urbantree.vercel.app`** instead, or change **Project → Settings → Deployment Protection** if you truly need public access to per-deployment URLs (usually unnecessary).
+
 ### Project settings
 
 - **Root Directory:** `urban_tree` (if the Vercel project is linked to this monorepo).
