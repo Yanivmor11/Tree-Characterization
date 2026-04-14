@@ -16,6 +16,7 @@ class CharacterizationSuggestion {
     this.sourceLanguage,
     this.speciesConfidence,
     this.healthScore,
+    this.stressSymptoms,
     this.phenologicalStage,
     this.notes,
   });
@@ -26,6 +27,7 @@ class CharacterizationSuggestion {
   final String? sourceLanguage;
   final double? speciesConfidence;
   final int? healthScore;
+  final List<String>? stressSymptoms;
   final String? phenologicalStage;
   final String? notes;
 
@@ -40,6 +42,7 @@ class CharacterizationSuggestion {
       if (sourceLanguage != null) 'source_language': sourceLanguage,
       if (speciesConfidence != null) 'species_confidence': speciesConfidence,
       if (healthScore != null) 'health_score': healthScore,
+      if (stressSymptoms != null) 'stress_symptoms': stressSymptoms,
       if (phenologicalStage != null) 'phenological_stage': phenologicalStage,
       if (notes != null) 'notes': notes,
     };
@@ -219,6 +222,7 @@ class AIService {
               'species_common (same as species_common_en), species_scientific (same as species_scientific_latin), '
               'source_language (BCP-47 language code or null), '
               'species_confidence (number 0-1 or null), health_score (integer 1-5 or null), '
+              'stress_symptoms (array with any of: "chlorosis","necrosis","wilting","leaf_spot","defoliation","gummosis","pest_damage","none","other", or null), '
               'phenological_stage (string "bud", "open", "fruit", or null), '
               'notes (short Hebrew summary of reasoning or null). '
               'Use null when uncertain.',
@@ -282,6 +286,7 @@ class AIService {
               'species_common (same as species_common_en), species_scientific (same as species_scientific_latin), '
               'source_language (BCP-47 language code or null), '
               'species_confidence (0-1 or null), health_score (integer 1-5 or null), '
+              'stress_symptoms (array with any of: "chlorosis","necrosis","wilting","leaf_spot","defoliation","gummosis","pest_damage","none","other", or null), '
               'phenological_stage (string "bud", "open", "fruit", or null), '
               'notes (short Hebrew summary of reasoning or null). '
               'Use null when uncertain.',
@@ -349,6 +354,29 @@ class AIService {
     }
 
     final notes = obj['notes'];
+    List<String>? stressSymptoms;
+    final symptomsRaw = obj['stress_symptoms'];
+    if (symptomsRaw is List) {
+      const allowed = {
+        'chlorosis',
+        'necrosis',
+        'wilting',
+        'leaf_spot',
+        'defoliation',
+        'gummosis',
+        'pest_damage',
+        'none',
+        'other',
+      };
+      final normalized = symptomsRaw
+          .map((e) => e.toString().trim().toLowerCase())
+          .where(allowed.contains)
+          .toSet()
+          .toList();
+      if (normalized.isNotEmpty) {
+        stressSymptoms = normalized;
+      }
+    }
 
     String? common = obj['species_common_en'] is String
         ? obj['species_common_en'] as String
@@ -387,6 +415,7 @@ class AIService {
       sourceLanguage: sourceLanguage,
       speciesConfidence: conf,
       healthScore: health,
+      stressSymptoms: stressSymptoms,
       phenologicalStage: stage,
       notes: notes is String ? notes : null,
     );

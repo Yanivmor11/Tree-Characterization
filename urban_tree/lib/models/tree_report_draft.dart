@@ -57,6 +57,7 @@ extension FlowerAbundanceStorage on FlowerAbundance {
 enum LeafCondition { healthy, stressed }
 
 enum DamageExtent { minimal, low, moderate, high }
+enum HazardAssessment { low, medium, high }
 
 extension DamageExtentLabel on DamageExtent {
   String get label => switch (this) {
@@ -71,6 +72,40 @@ extension DamageExtentLabel on DamageExtent {
         DamageExtent.low => 'low',
         DamageExtent.moderate => 'moderate',
         DamageExtent.high => 'high',
+      };
+}
+
+extension HazardAssessmentStorage on HazardAssessment {
+  String get storageValue => switch (this) {
+        HazardAssessment.low => 'low',
+        HazardAssessment.medium => 'medium',
+        HazardAssessment.high => 'high',
+      };
+}
+
+enum StressSymptom {
+  chlorosis,
+  necrosis,
+  wilting,
+  leafSpot,
+  defoliation,
+  gummosis,
+  pestDamage,
+  none,
+  other,
+}
+
+extension StressSymptomStorage on StressSymptom {
+  String get storageValue => switch (this) {
+        StressSymptom.chlorosis => 'chlorosis',
+        StressSymptom.necrosis => 'necrosis',
+        StressSymptom.wilting => 'wilting',
+        StressSymptom.leafSpot => 'leaf_spot',
+        StressSymptom.defoliation => 'defoliation',
+        StressSymptom.gummosis => 'gummosis',
+        StressSymptom.pestDamage => 'pest_damage',
+        StressSymptom.none => 'none',
+        StressSymptom.other => 'other',
       };
 }
 
@@ -119,6 +154,8 @@ class TreeReportDraft {
   final List<XFile> leavesImages = [];
   LeafCondition leafCondition = LeafCondition.healthy;
   DamageExtent damageExtent = DamageExtent.minimal;
+  HazardAssessment hazardAssessment = HazardAssessment.low;
+  final Set<StressSymptom> stressSymptoms = {};
 
   bool get hasLowAccuracyWarning =>
       accuracyMeters != null &&

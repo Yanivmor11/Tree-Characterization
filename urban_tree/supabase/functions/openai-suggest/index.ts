@@ -51,6 +51,7 @@ Deno.serve(async (req: Request) => {
         source_language: null,
         species_confidence: null,
         health_score: null,
+        stress_symptoms: null,
         phenological_stage: null,
         notes: null,
       }),
@@ -67,6 +68,7 @@ Deno.serve(async (req: Request) => {
     'species_scientific (same value as species_scientific_latin for backward compatibility), ' +
     'source_language (BCP-47 code like "he", "ar", "ru", "en", or null), ' +
     'species_confidence (number 0-1 or null), health_score (integer 1-5 or null), ' +
+    'stress_symptoms (array with any of: "chlorosis","necrosis","wilting","leaf_spot","defoliation","gummosis","pest_damage","none","other", or null), ' +
     'phenological_stage (string "bud", "open", "fruit", or null), ' +
     "notes (short reasoning in user's language when possible, or null). " +
     "Use null when uncertain. Normalize typos in canonical fields. " +
@@ -151,6 +153,10 @@ Deno.serve(async (req: Request) => {
   parsed.species_common = commonEn;
   parsed.species_scientific_latin = scientificLatin;
   parsed.species_scientific = scientificLatin;
+
+  if (!Array.isArray(parsed.stress_symptoms)) {
+    parsed.stress_symptoms = null;
+  }
 
   return new Response(JSON.stringify(parsed), {
     headers: { ...corsHeaders, "Content-Type": "application/json" },

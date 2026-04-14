@@ -62,6 +62,21 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
 
   TreeReportDraft get _d => widget.draft;
 
+  static StressSymptom? _stressSymptomFromStorage(String symptom) {
+    return switch (symptom) {
+      'chlorosis' => StressSymptom.chlorosis,
+      'necrosis' => StressSymptom.necrosis,
+      'wilting' => StressSymptom.wilting,
+      'leaf_spot' => StressSymptom.leafSpot,
+      'defoliation' => StressSymptom.defoliation,
+      'gummosis' => StressSymptom.gummosis,
+      'pest_damage' => StressSymptom.pestDamage,
+      'none' => StressSymptom.none,
+      'other' => StressSymptom.other,
+      _ => null,
+    };
+  }
+
   @override
   void initState() {
     super.initState();
@@ -591,6 +606,19 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
       if (s.healthScore != null) {
         _d.healthScore = s.healthScore!;
       }
+      if (s.stressSymptoms != null && s.stressSymptoms!.isNotEmpty) {
+        _d.stressSymptoms
+          ..clear()
+          ..addAll(
+            s.stressSymptoms!
+                .map(_stressSymptomFromStorage)
+                .whereType<StressSymptom>(),
+          );
+        if (_d.stressSymptoms.isNotEmpty &&
+            !_d.stressSymptoms.contains(StressSymptom.none)) {
+          _d.leafCondition = LeafCondition.stressed;
+        }
+      }
       if (stageEnum != null) {
         _d.phenologicalStage = stageEnum;
       }
@@ -623,6 +651,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     final has = s.speciesCommon != null ||
         s.speciesScientific != null ||
         s.healthScore != null ||
+        (s.stressSymptoms != null && s.stressSymptoms!.isNotEmpty) ||
         s.phenologicalStage != null ||
         (s.notes != null && s.notes!.isNotEmpty);
     if (!has) {
@@ -652,6 +681,8 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
               Text(l10n.suggestedSpeciesLine(com, sci)),
             if (s.healthScore != null)
               Text(l10n.assistantSuggestedHealth(s.healthScore!)),
+            if (s.stressSymptoms != null && s.stressSymptoms!.isNotEmpty)
+              Text('Stress: ${s.stressSymptoms!.join(', ')}'),
             if (s.phenologicalStage != null)
               Text(
                 switch (s.phenologicalStage) {
@@ -728,6 +759,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     final has = s.healthScore != null ||
         s.speciesCommon != null ||
         s.speciesScientific != null ||
+        (s.stressSymptoms != null && s.stressSymptoms!.isNotEmpty) ||
         (s.notes != null && s.notes!.isNotEmpty);
     if (!has) {
       return Text(
@@ -747,6 +779,8 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
           ),
         if (s.healthScore != null)
           Text(l10n.assistantSuggestedHealth(s.healthScore!)),
+        if (s.stressSymptoms != null && s.stressSymptoms!.isNotEmpty)
+          Text('Stress: ${s.stressSymptoms!.join(', ')}'),
         if (s.notes != null && s.notes!.isNotEmpty) Text(s.notes!),
         const SizedBox(height: 8),
         FilledButton.tonal(
@@ -766,6 +800,19 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
               _d.speciesConfidence = s.speciesConfidence;
               if (s.healthScore != null) {
                 _d.healthScore = s.healthScore!;
+              }
+              if (s.stressSymptoms != null && s.stressSymptoms!.isNotEmpty) {
+                _d.stressSymptoms
+                  ..clear()
+                  ..addAll(
+                    s.stressSymptoms!
+                        .map(_stressSymptomFromStorage)
+                        .whereType<StressSymptom>(),
+                  );
+                if (_d.stressSymptoms.isNotEmpty &&
+                    !_d.stressSymptoms.contains(StressSymptom.none)) {
+                  _d.leafCondition = LeafCondition.stressed;
+                }
               }
               _suggestionWhole = null;
             });
@@ -986,6 +1033,31 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
           label: '${_d.healthScore}',
           onChanged: (v) => setState(() => _d.healthScore = v.round()),
         ),
+        const SizedBox(height: 16),
+        Text('הערכת סיכון', style: theme.textTheme.titleMedium),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<HazardAssessment>(
+          initialValue: _d.hazardAssessment,
+          decoration: const InputDecoration(border: OutlineInputBorder()),
+          items: const [
+            DropdownMenuItem(
+              value: HazardAssessment.low,
+              child: Text('Low'),
+            ),
+            DropdownMenuItem(
+              value: HazardAssessment.medium,
+              child: Text('Medium'),
+            ),
+            DropdownMenuItem(
+              value: HazardAssessment.high,
+              child: Text('High'),
+            ),
+          ],
+          onChanged: (v) {
+            if (v == null) return;
+            setState(() => _d.hazardAssessment = v);
+          },
+        ),
         const SizedBox(height: 8),
         Text(l10n.canopyDensity, style: theme.textTheme.titleMedium),
         const SizedBox(height: 8),
@@ -1156,6 +1228,16 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
           onSelectionChanged: (s) =>
               setState(() => _d.leafCondition = s.first),
         ),
+        if (_d.stressSymptoms.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: _d.stressSymptoms
+                .map((symptom) => Chip(label: Text(symptom.storageValue)))
+                .toList(),
+          ),
+        ],
         const SizedBox(height: 16),
         Text(l10n.damageExtent, style: theme.textTheme.titleMedium),
         const SizedBox(height: 8),

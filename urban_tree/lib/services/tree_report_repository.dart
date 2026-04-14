@@ -33,7 +33,7 @@ class TreeReportRepository {
             'land_type_auto, health_score, canopy_density, structural_issues, '
             'whole_tree_image_urls, flower_image_urls, phenological_stage, '
             'flower_abundance, leaves_image_urls, leaf_condition, damage_extent, '
-            'species, species_scientific',
+            'species, species_scientific, stress_symptoms, hazard_assessment, insights_text, ai_suggestion_json',
           )
           .order('created_at', ascending: false)
           .limit(limit);
@@ -50,6 +50,51 @@ class TreeReportRepository {
     }
   }
 
+  Future<List<TreeReportRow>> fetchFilteredReports({
+    int limit = 500,
+    DateTime? fromDate,
+    DateTime? toDate,
+    String? speciesEnglish,
+    String? landType,
+    int? healthScore,
+  }) async {
+    try {
+      var query = _client.from('tree_reports').select(
+            'id, created_at, latitude, longitude, accuracy_meters, land_type, '
+            'land_type_auto, health_score, canopy_density, structural_issues, '
+            'whole_tree_image_urls, flower_image_urls, phenological_stage, '
+            'flower_abundance, leaves_image_urls, leaf_condition, damage_extent, '
+            'species, species_scientific, stress_symptoms, hazard_assessment, insights_text, ai_suggestion_json',
+          );
+      if (fromDate != null) {
+        query = query.gte('created_at', fromDate.toUtc().toIso8601String());
+      }
+      if (toDate != null) {
+        query = query.lte('created_at', toDate.toUtc().toIso8601String());
+      }
+      final trimmedSpecies = speciesEnglish?.trim();
+      if (trimmedSpecies != null && trimmedSpecies.isNotEmpty) {
+        query = query.ilike('species', trimmedSpecies);
+      }
+      if (landType != null && landType.isNotEmpty) {
+        query = query.eq('land_type', landType);
+      }
+      if (healthScore != null) {
+        query = query.eq('health_score', healthScore);
+      }
+      final rows =
+          await query.order('created_at', ascending: false).limit(limit);
+      final out = <TreeReportRow>[];
+      for (final row in (rows as List<dynamic>)) {
+        final parsed = TreeReportRow.fromMap(Map<String, dynamic>.from(row as Map));
+        if (parsed != null) out.add(parsed);
+      }
+      return out;
+    } catch (_) {
+      return const [];
+    }
+  }
+
   Future<TreeReportRow?> fetchReportById(String id) async {
     try {
       final row = await _client
@@ -59,7 +104,7 @@ class TreeReportRepository {
             'land_type_auto, health_score, canopy_density, structural_issues, '
             'whole_tree_image_urls, flower_image_urls, phenological_stage, '
             'flower_abundance, leaves_image_urls, leaf_condition, damage_extent, '
-            'species, species_scientific',
+            'species, species_scientific, stress_symptoms, hazard_assessment, insights_text, ai_suggestion_json',
           )
           .eq('id', id)
           .maybeSingle();
@@ -67,6 +112,46 @@ class TreeReportRepository {
       return TreeReportRow.fromMap(Map<String, dynamic>.from(row));
     } catch (_) {
       return null;
+    }
+  }
+
+  Future<List<TreeReportRow>> fetchHistoryForAsset(
+    TreeReportRow anchor, {
+    int limit = 60,
+  }) async {
+    try {
+      const degreeWindow = 0.0003;
+      final rows = await _client
+          .from('tree_reports')
+          .select(
+            'id, created_at, latitude, longitude, accuracy_meters, land_type, '
+            'land_type_auto, health_score, canopy_density, structural_issues, '
+            'whole_tree_image_urls, flower_image_urls, phenological_stage, '
+            'flower_abundance, leaves_image_urls, leaf_condition, damage_extent, '
+            'species, species_scientific, stress_symptoms, hazard_assessment, insights_text, ai_suggestion_json',
+          )
+          .gte('latitude', anchor.latitude - degreeWindow)
+          .lte('latitude', anchor.latitude + degreeWindow)
+          .gte('longitude', anchor.longitude - degreeWindow)
+          .lte('longitude', anchor.longitude + degreeWindow)
+          .order('created_at', ascending: true)
+          .limit(limit);
+
+      final out = <TreeReportRow>[];
+      for (final row in (rows as List<dynamic>)) {
+        final parsed = TreeReportRow.fromMap(Map<String, dynamic>.from(row as Map));
+        if (parsed == null) continue;
+        final sameSpecies = anchor.species == null ||
+            anchor.species!.isEmpty ||
+            parsed.species == null ||
+            parsed.species!.isEmpty ||
+            parsed.species!.toLowerCase().trim() ==
+                anchor.species!.toLowerCase().trim();
+        if (sameSpecies) out.add(parsed);
+      }
+      return out;
+    } catch (_) {
+      return const [];
     }
   }
 
@@ -92,6 +177,8 @@ class TreeReportRepository {
       'damage_extent',
       'species',
       'species_scientific',
+      'stress_symptoms',
+      'hazard_assessment',
     ];
     final list = <List<String>>[headers];
     for (final r in rows) {
@@ -115,6 +202,8 @@ class TreeReportRepository {
         r.damageExtent,
         r.species ?? '',
         r.speciesScientific ?? '',
+        jsonEncode(r.stressSymptoms),
+        r.hazardAssessment,
       ]);
     }
     return const ListToCsvConverter().convert(list);
@@ -168,6 +257,9 @@ class TreeReportRepository {
           ? 'healthy'
           : 'stressed',
       'damage_extent': draft.damageExtent.storageValue,
+      'hazard_assessment': draft.hazardAssessment.storageValue,
+      'stress_symptoms':
+          draft.stressSymptoms.map((e) => e.storageValue).toList(),
       if (species != null && species.isNotEmpty) 'species': species,
       if (speciesSci != null && speciesSci.isNotEmpty)
         'species_scientific': speciesSci,

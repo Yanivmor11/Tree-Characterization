@@ -18,6 +18,7 @@ import '../services/land_use_service.dart';
 import '../services/location_service.dart';
 import '../services/pest_hotspot_service.dart';
 import '../services/species_rarity_service.dart';
+import 'report/report_detail_screen.dart';
 import 'report/report_flow_launcher.dart';
 import 'top_guardians_screen.dart';
 
@@ -33,6 +34,7 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   static const LatLng _defaultCenter = LatLng(32.0853, 34.7818);
+  static const Duration _pestAlertCooldown = Duration(minutes: 15);
 
   final MapController _mapController = MapController();
   final LandUseService _landUseService = LandUseService();
@@ -50,6 +52,8 @@ class _MapScreenState extends State<MapScreen> {
   };
 
   RealtimeChannel? _reportsChannel;
+  String? _lastAlertHotspotId;
+  DateTime? _lastAlertAt;
 
   @override
   void initState() {
@@ -135,6 +139,14 @@ class _MapScreenState extends State<MapScreen> {
         h.longitude,
       );
       if (d <= h.radiusM) {
+        final now = DateTime.now();
+        if (_lastAlertHotspotId == h.id &&
+            _lastAlertAt != null &&
+            now.difference(_lastAlertAt!) < _pestAlertCooldown) {
+          continue;
+        }
+        _lastAlertHotspotId = h.id;
+        _lastAlertAt = now;
         return l10n.pestNearbyBanner(h.label, h.radiusM.round());
       }
     }
@@ -261,6 +273,14 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
+  Future<void> _openReportDetail(String reportId) async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (_) => ReportDetailScreen(reportId: reportId),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -276,12 +296,16 @@ class _MapScreenState extends State<MapScreen> {
         color: gem ? Colors.amber.shade800 : r.landType.layerColor(1),
         size: gem ? 36 : 34,
       );
+      final markerIcon = GestureDetector(
+        onTap: () => _openReportDetail(r.id),
+        child: tip != null ? Tooltip(message: tip, child: icon) : icon,
+      );
       markers.add(
         Marker(
           point: LatLng(r.latitude, r.longitude),
           width: 40,
           height: 40,
-          child: tip != null ? Tooltip(message: tip, child: icon) : icon,
+          child: markerIcon,
         ),
       );
     }

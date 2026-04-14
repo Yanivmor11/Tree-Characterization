@@ -78,11 +78,25 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      Text(
-                        'Points: ${profile?.totalPoints ?? 0} · Trust: ${(profile?.trustScore ?? 0).toStringAsFixed(1)}',
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          color: theme.colorScheme.primary,
-                        ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'Points: ${profile?.totalPoints ?? 0} · מדד אמינות: ${(profile?.trustScore ?? 0).toStringAsFixed(1)}',
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                          Tooltip(
+                            message: 'Score based on validated reports',
+                            child: Icon(
+                              Icons.info_outline,
+                              size: 18,
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

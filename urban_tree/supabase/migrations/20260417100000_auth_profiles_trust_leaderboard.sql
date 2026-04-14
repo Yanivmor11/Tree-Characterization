@@ -126,6 +126,9 @@ create trigger tree_reports_trust_score_after_insert
   for each row
   execute procedure public.tree_reports_trust_score_after_insert();
 
+drop view if exists public.leaderboard_national;
+drop view if exists public.leaderboard_city;
+
 create or replace view public.leaderboard_national as
 select
   p.id as user_id,

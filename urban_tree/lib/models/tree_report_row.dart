@@ -22,6 +22,10 @@ class TreeReportRow {
     required this.damageExtent,
     this.species,
     this.speciesScientific,
+    required this.stressSymptoms,
+    this.insightsText,
+    this.aiSuggestionAudit,
+    required this.hazardAssessment,
   });
 
   final String id;
@@ -43,6 +47,10 @@ class TreeReportRow {
   final String damageExtent;
   final String? species;
   final String? speciesScientific;
+  final List<String> stressSymptoms;
+  final String hazardAssessment;
+  final String? insightsText;
+  final Map<String, dynamic>? aiSuggestionAudit;
 
   static TreeReportRow? fromMap(Map<String, dynamic> row) {
     final id = row['id']?.toString();
@@ -76,6 +84,10 @@ class TreeReportRow {
       damageExtent: row['damage_extent'] as String? ?? '',
       species: row['species'] as String?,
       speciesScientific: row['species_scientific'] as String?,
+      stressSymptoms: _stringList(row['stress_symptoms']),
+      hazardAssessment: row['hazard_assessment'] as String? ?? 'low',
+      insightsText: row['insights_text'] as String?,
+      aiSuggestionAudit: _mapValue(row['ai_suggestion_json']),
     );
   }
 
@@ -84,5 +96,13 @@ class TreeReportRow {
       return v.map((e) => e.toString()).toList();
     }
     return const [];
+  }
+
+  static Map<String, dynamic>? _mapValue(dynamic v) {
+    if (v is Map<String, dynamic>) return v;
+    if (v is Map) {
+      return Map<String, dynamic>.from(v);
+    }
+    return null;
   }
 }

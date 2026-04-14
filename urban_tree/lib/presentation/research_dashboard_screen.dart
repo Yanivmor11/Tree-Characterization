@@ -8,9 +8,11 @@ import 'package:share_plus/share_plus.dart';
 
 import '../l10n/app_localizations.dart';
 import '../l10n/l10n_extensions.dart';
+import '../models/land_use.dart';
 import '../models/tree_report_row.dart';
 import '../services/data_quality_service.dart';
 import '../services/tree_report_repository.dart';
+import 'report/report_detail_screen.dart';
 
 enum _ResearchMode { reports, quality }
 
@@ -29,6 +31,12 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
   List<DataQualityFlag> _flags = [];
   bool _loading = true;
   String? _error;
+  DateTime? _fromDate;
+  DateTime? _toDate;
+  String _speciesFilter = '';
+  LandUseType? _landUseFilter;
+  int? _healthScoreFilter;
+  final _speciesController = TextEditingController();
 
   @override
   void initState() {
@@ -43,7 +51,14 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
     });
     try {
       if (_mode == _ResearchMode.reports) {
-        final list = await _repo.fetchRecentReports(limit: 500);
+        final list = await _repo.fetchFilteredReports(
+          limit: 500,
+          fromDate: _fromDate,
+          toDate: _toDate,
+          speciesEnglish: _speciesFilter,
+          landType: _landUseFilter?.storageValue,
+          healthScore: _healthScoreFilter,
+        );
         if (!mounted) return;
         setState(() {
           _rows = list;
@@ -75,21 +90,83 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
       return;
     }
     final csv = _repo.reportsToCsv(_rows);
+    final fileName = _buildExportFileName();
 
     if (kIsWeb) {
-      await Share.share(csv, subject: l10n.shareCsvSubject);
+      await Share.share(csv, subject: fileName);
       return;
     }
 
     final dir = await getTemporaryDirectory();
-    final path =
-        '${dir.path}/urban_tree_reports_${DateTime.now().millisecondsSinceEpoch}.csv';
+    final path = '${dir.path}/$fileName';
     final file = File(path);
     await file.writeAsString(csv);
     await Share.shareXFiles(
-      [XFile(path, mimeType: 'text/csv', name: 'urban_tree_reports.csv')],
+      [XFile(path, mimeType: 'text/csv', name: fileName)],
       subject: l10n.shareCsvSubject,
     );
+  }
+
+  Future<void> _openReportDetail(String reportId) async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (_) => ReportDetailScreen(reportId: reportId),
+      ),
+    );
+  }
+
+  Future<void> _pickFromDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      initialDate: _fromDate ?? DateTime.now().subtract(const Duration(days: 30)),
+    );
+    if (picked == null) return;
+    setState(() => _fromDate = picked);
+    _load();
+  }
+
+  Future<void> _pickToDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      initialDate: _toDate ?? DateTime.now(),
+    );
+    if (picked == null) return;
+    setState(() => _toDate = picked.add(const Duration(hours: 23, minutes: 59)));
+    _load();
+  }
+
+  void _clearFilters() {
+    setState(() {
+      _fromDate = null;
+      _toDate = null;
+      _speciesFilter = '';
+      _landUseFilter = null;
+      _healthScoreFilter = null;
+    });
+    _speciesController.clear();
+    _load();
+  }
+
+  @override
+  void dispose() {
+    _speciesController.dispose();
+    super.dispose();
+  }
+
+  String _buildExportFileName() {
+    final datePart = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final segments = <String>[
+      if (_landUseFilter != null) _landUseFilter!.storageValue,
+      if (_healthScoreFilter != null) 'h$_healthScoreFilter',
+      if (_speciesFilter.trim().isNotEmpty)
+        _speciesFilter.trim().toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '_'),
+    ];
+    final suffix = segments.isEmpty ? 'all' : segments.join('_');
+    return 'urban_tree_export_${datePart}_$suffix.csv';
   }
 
   @override
@@ -140,6 +217,130 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
               },
             ),
           ),
+          if (_mode == _ResearchMode.reports)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        'Research Window',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: _pickFromDate,
+                              child: Text(
+                                _fromDate == null
+                                    ? 'From date'
+                                    : 'From: ${dateFmt.format(_fromDate!)}',
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: _pickToDate,
+                              child: Text(
+                                _toDate == null
+                                    ? 'To date'
+                                    : 'To: ${dateFmt.format(_toDate!)}',
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: _speciesController,
+                        decoration: const InputDecoration(
+                          labelText: 'Species (normalized English)',
+                          border: OutlineInputBorder(),
+                        ),
+                        onSubmitted: (v) {
+                          setState(() => _speciesFilter = v.trim());
+                          _load();
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      GridView.count(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                        childAspectRatio: 3.2,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: [
+                          DropdownButtonFormField<LandUseType?>(
+                            initialValue: _landUseFilter,
+                            decoration: const InputDecoration(
+                              labelText: 'Land-use',
+                              border: OutlineInputBorder(),
+                            ),
+                            items: const [
+                              DropdownMenuItem<LandUseType?>(
+                                value: null,
+                                child: Text('All'),
+                              ),
+                              DropdownMenuItem<LandUseType?>(
+                                value: LandUseType.public,
+                                child: Text('Public'),
+                              ),
+                              DropdownMenuItem<LandUseType?>(
+                                value: LandUseType.private,
+                                child: Text('Private'),
+                              ),
+                            ],
+                            onChanged: (v) {
+                              setState(() => _landUseFilter = v);
+                              _load();
+                            },
+                          ),
+                          DropdownButtonFormField<int?>(
+                            initialValue: _healthScoreFilter,
+                            decoration: const InputDecoration(
+                              labelText: 'Health score',
+                              border: OutlineInputBorder(),
+                            ),
+                            items: [
+                              const DropdownMenuItem<int?>(
+                                value: null,
+                                child: Text('All'),
+                              ),
+                              ...List.generate(
+                                5,
+                                (i) => DropdownMenuItem<int?>(
+                                  value: i + 1,
+                                  child: Text('${i + 1}'),
+                                ),
+                              ),
+                            ],
+                            onChanged: (v) {
+                              setState(() => _healthScoreFilter = v);
+                              _load();
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: _clearFilters,
+                          child: const Text('Clear filters'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           const SizedBox(height: 8),
           if (_loading)
             const Expanded(
@@ -187,6 +388,7 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
           final r = _rows[i];
           return Card(
             child: ListTile(
+              onTap: () => _openReportDetail(r.id),
               title: Text(
                 l10n.reportListItemSubtitle(
                   dateFmt.format(r.createdAt.toLocal()),
