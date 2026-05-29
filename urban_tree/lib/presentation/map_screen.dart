@@ -22,11 +22,22 @@ import 'report/report_detail_screen.dart';
 import 'report/report_flow_launcher.dart';
 import 'top_guardians_screen.dart';
 
+import 'species/species_detail_screen.dart';
+import 'theme/app_colors.dart';
+import 'widgets/botanical_widgets.dart';
+
 /// OpenStreetMap base map with land-use overlays, report pins, and report entry.
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key, this.onReportFlowComplete});
+  const MapScreen({
+    super.key,
+    this.onReportFlowComplete,
+    this.onMenuTap,
+    this.embedded = false,
+  });
 
   final VoidCallback? onReportFlowComplete;
+  final VoidCallback? onMenuTap;
+  final bool embedded;
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -50,6 +61,8 @@ class _MapScreenState extends State<MapScreen> {
   final Map<LandUseType, bool> _layerVisible = {
     for (final t in LandUseType.values) t: true,
   };
+
+  TreeReportRow? _selectedReport;
 
   RealtimeChannel? _reportsChannel;
   String? _lastAlertHotspotId;
@@ -297,7 +310,13 @@ class _MapScreenState extends State<MapScreen> {
         size: gem ? 36 : 34,
       );
       final markerIcon = GestureDetector(
-        onTap: () => _openReportDetail(r.id),
+        onTap: () {
+          if (widget.embedded) {
+            setState(() => _selectedReport = r);
+          } else {
+            _openReportDetail(r.id);
+          }
+        },
         child: tip != null ? Tooltip(message: tip, child: icon) : icon,
       );
       markers.add(
@@ -340,6 +359,132 @@ class _MapScreenState extends State<MapScreen> {
 
     final pestBanner = _pestBannerText(l10n);
 
+    final mapWidget = Column(
+      children: [
+        if (pestBanner != null && !widget.embedded)
+          Material(
+            color: theme.colorScheme.errorContainer,
+            child: ListTile(
+              dense: true,
+              leading: Icon(
+                Icons.warning_amber_rounded,
+                color: theme.colorScheme.onErrorContainer,
+              ),
+              title: Text(
+                pestBanner,
+                style: TextStyle(color: theme.colorScheme.onErrorContainer),
+              ),
+            ),
+          ),
+        Expanded(
+          child: FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              initialCenter: _userPoint ?? _defaultCenter,
+              initialZoom: 13,
+              minZoom: 3,
+              maxZoom: 19,
+            ),
+            children: [
+              TileLayer(
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                userAgentPackageName: 'com.example.urban_tree',
+              ),
+              if (_visiblePolygons.isNotEmpty)
+                PolygonLayer(polygons: _visiblePolygons),
+              if (circles.isNotEmpty) CircleLayer(circles: circles),
+              if (markers.isNotEmpty) MarkerLayer(markers: markers),
+              RichAttributionWidget(
+                showFlutterMapAttribution: true,
+                attributions: [
+                  TextSourceAttribution(
+                    l10n.osmContributors,
+                    onTap: _openOsmCopyright,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+
+    if (widget.embedded) {
+      final selected = _selectedReport;
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: Stack(
+          children: [
+            Column(
+              children: [
+                BotanicalAppBar(
+                  title: l10n.appBrandTitle,
+                  onMenuTap: widget.onMenuTap,
+                ),
+                Expanded(child: mapWidget),
+              ],
+            ),
+            Positioned(
+              top: 88,
+              left: 24,
+              right: 24,
+              child: GlassContainer(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                child: Row(
+                  children: [
+                    const Icon(Icons.search, color: AppColors.outline),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: l10n.mapSearchHint,
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: _openLayerSheet,
+                      icon: const Icon(Icons.filter_list, color: AppColors.primary),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              top: 160,
+              right: 24,
+              child: FloatingActionButton.small(
+                heroTag: 'map-loc',
+                backgroundColor: AppColors.surfaceContainerLowest.withValues(alpha: 0.95),
+                onPressed: _recenterOnUser,
+                child: const Icon(Icons.my_location, color: AppColors.primary),
+              ),
+            ),
+            if (selected != null)
+              Positioned(
+                left: 16,
+                right: 16,
+                bottom: 100,
+                child: _MapTreeSheet(
+                  report: selected,
+                  l10n: l10n,
+                  onClose: () => setState(() => _selectedReport = null),
+                  onDetails: () {
+                    Navigator.of(context).push<void>(
+                      MaterialPageRoute<void>(
+                        builder: (_) => const SpeciesDetailScreen(
+                          speciesId: 'quercus-calliprinos',
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+          ],
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.appTitle),
@@ -362,55 +507,7 @@ class _MapScreenState extends State<MapScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          if (pestBanner != null)
-            Material(
-              color: theme.colorScheme.errorContainer,
-              child: ListTile(
-                dense: true,
-                leading: Icon(
-                  Icons.warning_amber_rounded,
-                  color: theme.colorScheme.onErrorContainer,
-                ),
-                title: Text(
-                  pestBanner,
-                  style: TextStyle(color: theme.colorScheme.onErrorContainer),
-                ),
-              ),
-            ),
-          Expanded(
-            child: FlutterMap(
-              mapController: _mapController,
-              options: MapOptions(
-                initialCenter: _userPoint ?? _defaultCenter,
-                initialZoom: 13,
-                minZoom: 3,
-                maxZoom: 19,
-              ),
-              children: [
-                TileLayer(
-                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  userAgentPackageName: 'com.example.urban_tree',
-                ),
-                if (_visiblePolygons.isNotEmpty)
-                  PolygonLayer(polygons: _visiblePolygons),
-                if (circles.isNotEmpty) CircleLayer(circles: circles),
-                if (markers.isNotEmpty) MarkerLayer(markers: markers),
-                RichAttributionWidget(
-                  showFlutterMapAttribution: true,
-                  attributions: [
-                    TextSourceAttribution(
-                      l10n.osmContributors,
-                      onTap: _openOsmCopyright,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+      body: mapWidget,
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -429,6 +526,95 @@ class _MapScreenState extends State<MapScreen> {
             label: Text(l10n.reportTreeFab),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _MapTreeSheet extends StatelessWidget {
+  const _MapTreeSheet({
+    required this.report,
+    required this.l10n,
+    required this.onClose,
+    required this.onDetails,
+  });
+
+  final TreeReportRow report;
+  final AppLocalizations l10n;
+  final VoidCallback onClose;
+  final VoidCallback onDetails;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      borderRadius: AppRadii.sheet,
+      clipBehavior: Clip.antiAlias,
+      elevation: 8,
+      child: Container(
+        color: AppColors.surfaceContainerLowest,
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 48,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.surfaceVariant,
+                borderRadius: BorderRadius.circular(999),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SpeciesBadge(label: l10n.mapProtectedTree),
+                      const SizedBox(height: 8),
+                      Text(
+                        report.species ?? l10n.appBrandTitle,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w800,
+                            ),
+                      ),
+                      if (report.speciesScientific != null)
+                        Text(
+                          report.speciesScientific!,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                fontStyle: FontStyle.italic,
+                              ),
+                        ),
+                    ],
+                  ),
+                ),
+                IconButton(onPressed: onClose, icon: const Icon(Icons.close)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: GradientButton(
+                    label: l10n.mapNavigate,
+                    icon: Icons.navigation,
+                    onPressed: onDetails,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                IconButton.filled(
+                  onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(l10n.speciesSavedToCollection)),
+                  ),
+                  icon: const Icon(Icons.bookmark_border),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

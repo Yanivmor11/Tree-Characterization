@@ -17,7 +17,9 @@ import 'report/report_detail_screen.dart';
 enum _ResearchMode { reports, quality }
 
 class ResearchDashboardScreen extends StatefulWidget {
-  const ResearchDashboardScreen({super.key});
+  const ResearchDashboardScreen({super.key, this.embedded = false});
+
+  final bool embedded;
 
   @override
   State<ResearchDashboardScreen> createState() => _ResearchDashboardScreenState();
@@ -175,21 +177,10 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
     final lang = Localizations.localeOf(context).languageCode;
     final dateFmt = DateFormat.yMMMd(lang);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.researchDashboardTitle),
-        actions: [
-          if (_mode == _ResearchMode.reports)
-            IconButton(
-              tooltip: l10n.exportCsv,
-              onPressed: _exportCsv,
-              icon: const Icon(Icons.ios_share_outlined),
-            ),
-        ],
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (!widget.embedded)
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
             child: Text(
@@ -369,7 +360,23 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
           else
             _buildQualityList(l10n, dateFmt),
         ],
+    );
+
+    if (widget.embedded) return content;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.researchDashboardTitle),
+        actions: [
+          if (_mode == _ResearchMode.reports)
+            IconButton(
+              tooltip: l10n.exportCsv,
+              onPressed: _exportCsv,
+              icon: const Icon(Icons.ios_share_outlined),
+            ),
+        ],
       ),
+      body: content,
     );
   }
 

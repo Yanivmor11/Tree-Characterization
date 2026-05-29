@@ -407,7 +407,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get validateCompleteSuggestions => 'Проверить и применить подсказки';
 
   @override
-  String get phenologyUnusualTitle => 'Unusual for this season';
+  String get phenologyUnusualTitle => 'Необычно для этого сезона';
 
   @override
   String phenologyUnusualBody(String message) {
@@ -415,62 +415,62 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get phenologyImSure => 'I\'m sure';
+  String get phenologyImSure => 'Я уверен';
 
   @override
-  String get phenologyGoBack => 'Review';
+  String get phenologyGoBack => 'Проверить';
 
   @override
-  String get treeInsightsTitle => 'Tree insights';
+  String get treeInsightsTitle => 'Сведения о дереве';
 
   @override
-  String get treeInsightsClose => 'Done';
+  String get treeInsightsClose => 'Готово';
 
   @override
   String pointsPreview(int points) {
-    return 'Estimated points: $points';
+    return 'Ожидаемые баллы: $points';
   }
 
   @override
   String nearbyMappedTreesWarning(int count, int meters) {
-    return '$count mapped trees within ~$meters m — avoid duplicate entries.';
+    return '$count отмеченных деревьев в радиусе ~$meters м — избегайте дубликатов.';
   }
 
   @override
-  String get leaderboardTitle => 'Top guardians';
+  String get leaderboardTitle => 'Лучшие хранители';
 
   @override
-  String get leaderboardNational => 'National';
+  String get leaderboardNational => 'Страна';
 
   @override
-  String get leaderboardMyCity => 'My city';
+  String get leaderboardMyCity => 'Мой город';
 
   @override
-  String get leaderboardEmpty => 'No leaderboard entries yet';
+  String get leaderboardEmpty => 'Пока нет записей в рейтинге';
 
   @override
-  String get leaderboardCityEmpty => 'No entries for your city yet';
+  String get leaderboardCityEmpty => 'Пока нет записей для вашего города';
 
   @override
   String get yourCityMissing =>
-      'Your city is set after your first geocoded report.';
+      'Ваш город задаётся после первого отчёта с геопривязкой.';
 
   @override
   String pestNearbyBanner(String pest, int meters) {
-    return '$pest reported nearby (~$meters m)';
+    return '$pest замечен поблизости (~$meters м)';
   }
 
   @override
-  String get mapGemRare => 'Rare species';
+  String get mapGemRare => 'Редкий вид';
 
   @override
-  String get mapGemAbandoned => 'Abandoned · needs care';
+  String get mapGemAbandoned => 'Заброшено · нужен уход';
 
   @override
-  String get researchQualityTab => 'Quality flags';
+  String get researchQualityTab => 'Метки качества';
 
   @override
-  String get qualityFlagsEmpty => 'No open quality flags';
+  String get qualityFlagsEmpty => 'Нет открытых меток качества';
 
   @override
   String qualityFlagSubtitle(String reason, String cluster) {
@@ -478,16 +478,471 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get openLeaderboard => 'Leaderboard';
+  String get openLeaderboard => 'Лучшие хранители';
 
   @override
-  String get cameraNearbyTitle => 'Nearby mapped trees';
+  String get cameraNearbyTitle => 'Отмеченные деревья рядом';
 
   @override
   String cameraNearbyBody(int count, int meters) {
-    return '$count reports within $meters m of this spot.';
+    return '$count отчётов в радиусе $meters м от этой точки.';
   }
 
   @override
-  String get continueLabel => 'Continue';
+  String get continueLabel => 'Продолжить';
+
+  @override
+  String get appBrandTitle => 'Ботаническая монография';
+
+  @override
+  String get appBrandSubtitle => 'Ваш цифровой полевой дневник';
+
+  @override
+  String get navIdentify => 'Определить';
+
+  @override
+  String get navCollection => 'Коллекция';
+
+  @override
+  String get navJournal => 'Дневник';
+
+  @override
+  String get navHelp => 'Помощь';
+
+  @override
+  String get drawerTitle => 'Ботаническая монография';
+
+  @override
+  String get drawerSubtitle => 'Ваш цифровой полевой дневник';
+
+  @override
+  String get defaultUserName => 'Полевой исследователь';
+
+  @override
+  String get userRoleBotanist => 'Сертифицированный ботаник';
+
+  @override
+  String get signOut => 'Выйти';
+
+  @override
+  String get homeGreeting => 'Добро пожаловать';
+
+  @override
+  String homeHello(String name) {
+    return 'Здравствуйте, $name';
+  }
+
+  @override
+  String get homeSearchHint => 'Поиск деревьев, видов или признаков...';
+
+  @override
+  String get homeIdentifyTitle => 'Мгновенное определение деревьев';
+
+  @override
+  String get homeIdentifyBody =>
+      'Сфотографируйте лист, кору или плод и откройте природу вокруг вас.';
+
+  @override
+  String get homeIdentifyCta => 'Начать определение';
+
+  @override
+  String get homeRecentTitle => 'Недавние определения';
+
+  @override
+  String get homeViewAll => 'Показать все';
+
+  @override
+  String get homeNearbyTitle => 'Откройте деревья рядом с вами';
+
+  @override
+  String homeNearbyDistance(String distance) {
+    return '$distance от вас';
+  }
+
+  @override
+  String get identifyHubTitle => 'ИИ-определение растений';
+
+  @override
+  String get identifyHubBody =>
+      'Сфотографируйте лист, кору или плод для мгновенного определения вида дерева.';
+
+  @override
+  String get identifyStartCamera => 'Начать новое определение';
+
+  @override
+  String get identifyFromGallery => 'Выбрать из галереи';
+
+  @override
+  String get identifyPhotoGuide => 'Руководство по фото';
+
+  @override
+  String get identifyGalleryTitle => 'Галерея определений';
+
+  @override
+  String get identifyGalleryHeading => 'Мои фото';
+
+  @override
+  String get identifyGalleryBody =>
+      'Выберите фото из коллекции, чтобы начать ИИ-определение.';
+
+  @override
+  String identifySelected(int count) {
+    return 'Определить выбранные фото ($count)';
+  }
+
+  @override
+  String get identifyAddPhoto => 'Добавить фото';
+
+  @override
+  String get cameraLeafMode => 'Лист';
+
+  @override
+  String get cameraBarkMode => 'Кора';
+
+  @override
+  String get cameraFruitMode => 'Плод';
+
+  @override
+  String get cameraGallery => 'Галерея';
+
+  @override
+  String get cameraHelp => 'Помощь';
+
+  @override
+  String get cameraScan => 'Сканировать';
+
+  @override
+  String get cameraHint =>
+      'Поместите лист в центр кадра для точного определения';
+
+  @override
+  String get cameraIdentifierLabel => 'Определитель листьев';
+
+  @override
+  String get photoGuideBadge => 'Советы по определению';
+
+  @override
+  String get photoGuideTitle => 'Как фотографировать как ботаник?';
+
+  @override
+  String get photoGuideIntro =>
+      'Для наиболее точных результатов снимайте чёткие фото разных частей дерева.';
+
+  @override
+  String get photoGuideStep1 => 'Сфотографируйте лист';
+
+  @override
+  String get photoGuideStep1Body =>
+      'Положите лист на однородную поверхность или держите против солнца. Края и жилки должны быть полностью видны.';
+
+  @override
+  String get photoGuideBarkTitle => 'Кора дерева';
+
+  @override
+  String get photoGuideBarkBody =>
+      'Снимайте ствол на уровне глаз. Текстура коры — важный признак определения.';
+
+  @override
+  String get photoGuideLighting => 'Естественный свет';
+
+  @override
+  String get photoGuideLightingBody =>
+      'Избегайте вспышки; предпочтителен солнечный свет.';
+
+  @override
+  String get photoGuideFocus => 'Резкий фокус';
+
+  @override
+  String get photoGuideFocusBody =>
+      'Коснитесь экрана, чтобы сфокусировать объектив.';
+
+  @override
+  String get photoGuideAvoidTitle => 'Чего избегать?';
+
+  @override
+  String get photoGuideBlur => 'Размытые фото';
+
+  @override
+  String get photoGuideBlurBody => 'Алгоритму трудно с нечёткими деталями.';
+
+  @override
+  String get photoGuideDistance => 'Слишком далеко';
+
+  @override
+  String get photoGuideDistanceBody =>
+      'Не используйте дальний снимок всего дерева как основной.';
+
+  @override
+  String get photoGuideCta => 'Понятно, снимаем';
+
+  @override
+  String get collectionTitle => 'Моя коллекция';
+
+  @override
+  String get collectionArchive => 'Мой личный архив';
+
+  @override
+  String get collectionSearchHint => 'Поиск по коллекции деревьев...';
+
+  @override
+  String get collectionFilterAll => 'Все';
+
+  @override
+  String get collectionFilterConifers => 'Хвойные';
+
+  @override
+  String get collectionFilterDeciduous => 'Листопадные';
+
+  @override
+  String get collectionFilterBroadleaf => 'Широколиственные';
+
+  @override
+  String get collectionLoadMore => 'Загрузить ещё деревья';
+
+  @override
+  String collectionIdentifiedAt(String location) {
+    return 'Определено: $location';
+  }
+
+  @override
+  String get mapSearchHint => 'Поиск деревьев или мест...';
+
+  @override
+  String get mapProtectedTree => 'Охраняемое дерево';
+
+  @override
+  String mapDistance(String distance) {
+    return 'Расстояние: $distance';
+  }
+
+  @override
+  String get mapNavigate => 'Маршрут к дереву';
+
+  @override
+  String get mapTreesNearby => 'Деревья рядом с вами';
+
+  @override
+  String get mapTotalMarked => 'Всего отмеченных деревьев';
+
+  @override
+  String get mapRareSpecies => 'Редкие виды';
+
+  @override
+  String get mapViewFullList => 'Показать весь список';
+
+  @override
+  String get mapFilterLabel => 'Фильтр карты';
+
+  @override
+  String get mapFullDetails => 'Подробности';
+
+  @override
+  String get speciesSaveCollection => 'Сохранить в коллекцию';
+
+  @override
+  String get speciesMorphology => 'Ботаническая морфология';
+
+  @override
+  String get speciesDistribution => 'Распространение и среда обитания';
+
+  @override
+  String get speciesUsesTitle => 'Использование и фольклор';
+
+  @override
+  String get speciesDidYouKnow => 'Знаете ли вы?';
+
+  @override
+  String speciesAnatomy(String name) {
+    return 'Анатомия: $name';
+  }
+
+  @override
+  String get speciesWhereToFind => 'Где можно найти это дерево?';
+
+  @override
+  String get speciesViewDistributionMap =>
+      'Посмотреть карту распространения по стране';
+
+  @override
+  String get profileExplorerRank => 'Ранг исследователя';
+
+  @override
+  String get profileFieldResearcher => 'Полевой исследователь';
+
+  @override
+  String profileMemberSince(String date) {
+    return 'В сообществе с $date';
+  }
+
+  @override
+  String get profileTreesIdentified => 'Определено деревьев';
+
+  @override
+  String get profileBadgesEarned => 'Получено наград';
+
+  @override
+  String get profileBadgesTitle => 'Награды и достижения';
+
+  @override
+  String get profileSettingsTitle => 'Настройки и аккаунт';
+
+  @override
+  String get profileAccount => 'Данные аккаунта';
+
+  @override
+  String get profileNotifications => 'Полевые оповещения';
+
+  @override
+  String get profileFieldJournals => 'Полевые дневники';
+
+  @override
+  String get journalTitle => 'Цифровой полевой дневник';
+
+  @override
+  String get journalObservations => 'Мои наблюдения';
+
+  @override
+  String get journalResearchSection => 'Инструменты исследователя';
+
+  @override
+  String get journalReadMore => 'Подробнее';
+
+  @override
+  String get journalWeeklySummary => 'Сводка активности за неделю';
+
+  @override
+  String get journalWeeklyBody =>
+      'На этой неделе вы задокументировали новые виды. Продолжайте развивать ботанические исследования в Израиле.';
+
+  @override
+  String get helpCenterTitle => 'Центр помощи';
+
+  @override
+  String get helpHeroTitle =>
+      'Чем помочь вашему ботаническому исследованию сегодня?';
+
+  @override
+  String get helpHeroBody =>
+      'Откройте секреты мира деревьев с помощью наших подробных руководств.';
+
+  @override
+  String get helpGuidesTitle => 'Быстрые руководства по определению';
+
+  @override
+  String get helpGuideLeaves => 'Определение по листьям';
+
+  @override
+  String get helpGuideBark => 'Определение по коре';
+
+  @override
+  String get helpGuideAi => 'Использование ИИ';
+
+  @override
+  String get helpFaqTitle => 'Часто задаваемые вопросы';
+
+  @override
+  String get helpContactTitle => 'Не нашли ответ?';
+
+  @override
+  String get helpContactBody =>
+      'Наши эксперты готовы помочь. Мы ответим в течение 24 часов.';
+
+  @override
+  String get helpContactCta => 'Связаться с экспертом';
+
+  @override
+  String get helpChatTitle => 'Чат с ботаником';
+
+  @override
+  String get helpChatBody =>
+      'Мгновенная помощь для срочных полевых определений.';
+
+  @override
+  String get helpChatCta => 'Начать чат';
+
+  @override
+  String get statHeight => 'Высота';
+
+  @override
+  String get statWater => 'Полив';
+
+  @override
+  String get statFlowering => 'Цветение';
+
+  @override
+  String get statMaxHeight => 'Макс. высота';
+
+  @override
+  String get statLifespan => 'Продолжительность жизни';
+
+  @override
+  String get statPhotosynthesis => 'Фотосинтез';
+
+  @override
+  String heightMeters(String value) {
+    return '$value м';
+  }
+
+  @override
+  String get homeFeaturedTitle => 'Избранные виды';
+
+  @override
+  String searchNoResults(String query) {
+    return 'Нет результатов по запросу «$query»';
+  }
+
+  @override
+  String get collectionEmpty =>
+      'В вашей коллекции пока нет деревьев. Определите дерево, чтобы начать архив.';
+
+  @override
+  String get speciesSavedToCollection => 'Сохранено в коллекцию';
+
+  @override
+  String photoGuideStepLabel(int number) {
+    return 'Шаг $number';
+  }
+
+  @override
+  String get reportRiskAssessment => 'Оценка риска';
+
+  @override
+  String get hazardLow => 'Низкий';
+
+  @override
+  String get hazardMedium => 'Средний';
+
+  @override
+  String get hazardHigh => 'Высокий';
+
+  @override
+  String get badgeForestGuardian => 'Хранитель леса';
+
+  @override
+  String get badgeMountainResearcher => 'Горный исследователь';
+
+  @override
+  String get badgeStreamsExpert => 'Эксперт по ручьям';
+
+  @override
+  String get helpFaq1Question =>
+      'Как система определяет деревья автоматически?';
+
+  @override
+  String get helpFaq1Answer =>
+      'Она использует глубокие нейросети, обученные на сотнях тысяч изображений средиземноморской растительности.';
+
+  @override
+  String get helpFaq2Question => 'Доступна ли карта офлайн?';
+
+  @override
+  String get helpFaq2Answer =>
+      'Можно загрузить карты отдельных областей для работы в поле без связи.';
+
+  @override
+  String get helpFaq3Question => 'Как добавить новое дерево в коллекцию?';
+
+  @override
+  String get helpFaq3Answer =>
+      'После успешного определения нажмите «Сохранить в коллекцию».';
 }

@@ -1,0 +1,79 @@
+{
+  "species": [
+    {
+      "id": "quercus-calliprinos",
+      "hebrewName": "אלון מצוי",
+      "scientificName": "Quercus calliprinos",
+      "family": "FAGACEAE",
+      "familyHebrew": "משפחת האלונים",
+      "tags": ["עץ ארץ-ישראלי", "ירוק-עד"],
+      "summary": "האלון המצוי הוא עץ החורש הים-תיכוני הנפוץ ביותר בישראל. הוא מתאפיין בחוסן רב, צמיחה איטית ואורך חיים מופלג שיכול להגיע למאות שנים.",
+      "heroImageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuBOW3Pk2N2FAJIOLT6bvn_mYdCIQTAF67vmbPuyR_q52qvpJI_A2VLu7-YXkvxXwYXmuXGAmVuZunPsrBtBHJmznlweXfzkgDNsOXnCurtzReHTj9PcKUfEQxsgai2QoBudG8WkB3nw3Amky_XQQpRJ9P82VqEZSplCxa16-vYLXIg0sWUCIsghKcPEzzFIJNugncM_JpZBKa_gi9IaFHMDZF1nXtXo_InhJIXF5YzT1cKl1O5ELrEF-z6CzIYi_seA0-9F2ho6keM",
+      "thumbnailUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuBy101X7up5cPdnjhcIfCdmg7uaQ2ytzmN86OtzUomQbG7XU0FyzFA999kSWENmXk2CgIYK6WrBNvNGI0sIlzZe1EVC0uowYRTC3BZUiX1yVQtbg1uhaImxqnMU0tz5j1z-5r04urvuS31B8CZTIe0SmBvSDmhisp8dq4taef_jA7dr64o80p9-uz9UlhXVLAcAE7nLmG6EWo0QtNcgV-psOJxrgKz3rp86ONzRwrjDdrXpwO02oxJYtRKetki2jzSY_tocpThNHWw",
+      "category": "נשירים",
+      "stats": {
+        "maxHeight": "15 מ'",
+        "lifespan": "800 ש'",
+        "photosynthesis": "C3",
+        "avgHeight": "5-12 מטרים",
+        "water": "נמוכה מאוד",
+        "flowering": "מרץ - אפריל",
+        "soil": "גיר וטרה-רוסה"
+      },
+      "morphology": {
+        "leaves": {
+          "title": "עלווה",
+          "body": "העלים גלדניים, שפתם משוננת וקוצנית קמעה. הצד העליון ירוק כהה ומבריק, בעוד הצד התחתון בהיר יותר. העלה שומר על חיוניותו לאורך כל השנה, מה שהופך את האלון לירוק-עד."
+        },
+        "fruit": {
+          "title": "הפרי: בלוט",
+          "body": "הבלוט יושב בתוך ספלול המכוסה קשקשים קשיחים. הוא משמש כמקור מזון חשוב לחיות הבר ביער."
+        },
+        "bark": {
+          "title": "גזע וקליפה",
+          "body": "קליפה אפורה, מחוספסת וסדוקה לאורכה בפרטים בוגרים. חוסן המבנה מאפשר עמידות רבה בפני שריפות.",
+          "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuAAHfsEzt4QRrFpV_FRkptvqYckBNhdupa4kKAujcYGx7IMb_5ilhBAIhtpQRCNwk9553evPKyIZuMx6U_yBDSmVjxJ64jcbtDry1GnyRBhqEqCPCKJF4fSA3qOLwBajcv8taZ1fp79dOxA9or9GvV16Qc9PaTDmMQTgBrLec95tHO75Mu80kcecwDle8nnsIGO0OFunSE7FOs1a7cW7vDVSYROkh5AYv-3LtCNwsEjETvh3Fp7yoZmvVXzNOxOmIdcb29o3mVxSE0"
+        }
+      },
+      "distribution": {
+        "description": "האלון המצוי הוא המרכיב העיקרי של החורש הים-תיכוני בישראל. הוא נפוץ מהחרמון בצפון ועד להרי יהודה בדרום.",
+        "regions": ["הרי הגליל", "הכרמל", "הרי יהודה"],
+        "mapImageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuBdFfGinQY_NNuDSi65E_Dh3pORYazkbEvt5VtLmy6k7BFZW1cUOsLrZlT68lkgAbnUxYapek_-Bgs3u4O9DOQCLEfxN-sLKVmNPl7hC_sPJa3oqIqM6PLC6OnabBWcreLQyakIO74_f1l24TrtG2dBh2XJ9tZmk33xUvnaJWYBKvS9BcHGjmE-szxMlRyVjulIIb1iqB8XrLCduh08dv3kGhaQu-GSNYMZWg1AEXDpjeEnKLaj-9dkNb9VDX7OFcAnNFDoILR3DNE"
+      },
+      "uses": [
+        {
+          "title": "תעשיית העץ",
+          "body": "עץ האלון ידוע בחוזקו הרב ובצפיפותו. היסטורית שימש לבניית סירות, כלי עבודה ובתי בד.",
+          "icon": "handyman"
+        },
+        {
+          "title": "רפואה עממית",
+          "body": "ספלולי האלון וקליפת העץ עשירים בטאנינים ושימשו לעצירת דימומים ולטיפול בדלקות גרון.",
+          "icon": "medication"
+        }
+      ],
+      "funFacts": [
+        "האלון מסוגל להתחדש במהירות לאחר שריפה באמצעות \"עיניים\" רדומות בבסיס הגזע.",
+        "בישראל קיימים פרטים של אלון מצוי המוערכים כבני מאות שנים, המקודשים במסורות שונות.",
+        "השם \"אלון\" מופיע עשרות פעמים בתנ\"ך ומסמל כוח ויציבות."
+      ],
+      "anatomyCards": [
+        {
+          "title": "מבנה העלה",
+          "body": "עלים גילדניים (קשיחים) המסייעים בשמירה על מים. הצד העליון כהה ומבריק, בעוד הצד התחתון בהיר יותר.",
+          "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuA-OdY4Fk9PNKo5fwvrQK4qCCXpcAeVd0lzVgvimBA-UJegHtvVT6jeXn7ftJkwwMgBl_o9zQB3WS_Or46elrjD9FVBm3ZEc8tKyHMZbGVtAkgbiOj_dp5AYYfy-6vnSuOuRgK_2gp4aYWGIkX0sY7WoaivLOqDSejYgWT9jhiUubkwq3cgjbDL09of9gqXSI09LH5sUfXxbhJQB0CXLWWwZV97bplGCxVenFrjf9KLgRkyenNvMfrtchNOum96ynxx3Sp7Nswi1Gg"
+        },
+        {
+          "title": "הפרי (בלוט)",
+          "body": "הבלוט יושב בתוך ספלול המכוסה קשקשים קשיחים. הבשלת הפרי אורכת כ-18 חודשים.",
+          "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuBlcHp1os8fXuGg62FpKHEp0Kr41F2q1UNJ1e7h20F1_9gBj9AHCytYb9jPJkkmXC-aTgenWS_WPkK7FNNbPEHEqhXppPHEIe5a2mlHTbpgFSBl3zKqiibF8sCHc2EntATm-W7KzTnSfwidqBLddsVa5lijaijATzcYkXXZZ4lqUwfl1uxhClP1V-kKtNXPewnEj_RuOm4kQqHY7EimJQgxyg_77m9Dhpk3XFrS_H6Yzur7jY5aYRM-yUWmOgv1slhDpS6hx6gQNc4"
+        },
+        {
+          "title": "הגזע והקליפה",
+          "body": "הגזע חסון ומכוסה בקליפה עבה, אפורה ומחורצת עמוק.",
+          "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuCDI5TzXFJSAAJN7DEDmHpfwb2RcFmsRbsjJzr7zmtaNM5EZ_QXONrJiCtDQfLuDpLsqEgbjqNjA0ci4x-S_gt-RZB1k_9vSBeAQGk0Y_Z56PiK6Zcx05n3uM3X9B2GVF-DnOA0Dzqc9L-fIqOtV6TDFYYI5pj4PTDf4A15a2m_9z6ybnsrjZ5tVsMieYBxSWb-bFniTqcX_yzj2yUkyw9HixxyyDma3fR9m935dWmSRcOjH7hrVs115ZTWwVnZaMv1woX24c2x4DI"
+        }
+      ]
+    }
+  ]
+}

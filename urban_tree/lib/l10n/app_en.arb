@@ -255,5 +255,207 @@
       "meters": {"type": "int"}
     }
   },
-  "continueLabel": "Continue"
+  "continueLabel": "Continue",
+
+  "appBrandTitle": "Botanical Monograph",
+  "appBrandSubtitle": "Your digital field journal",
+  "navIdentify": "Identify",
+  "navCollection": "Collection",
+  "navJournal": "Journal",
+  "navHelp": "Help",
+
+  "drawerTitle": "Botanical Monograph",
+  "drawerSubtitle": "Your digital field journal",
+  "defaultUserName": "Field researcher",
+  "userRoleBotanist": "Certified botanist",
+  "signOut": "Sign out",
+
+  "homeGreeting": "Welcome",
+  "homeHello": "Hello, {name}",
+  "@homeHello": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "homeSearchHint": "Search trees, species, or traits...",
+  "homeIdentifyTitle": "Instant tree identification",
+  "homeIdentifyBody": "Photograph a leaf, bark, or fruit and discover your local nature.",
+  "homeIdentifyCta": "Start identifying now",
+  "homeRecentTitle": "Recent identifications",
+  "homeViewAll": "View all",
+  "homeNearbyTitle": "Discover trees near you",
+  "homeNearbyDistance": "{distance} from you",
+  "@homeNearbyDistance": {
+    "placeholders": {
+      "distance": {"type": "String"}
+    }
+  },
+
+  "identifyHubTitle": "AI botanical identification",
+  "identifyHubBody": "Photograph a leaf, bark, or fruit to instantly identify the tree species.",
+  "identifyStartCamera": "Start new identification",
+  "identifyFromGallery": "Choose from gallery",
+  "identifyPhotoGuide": "Photo guide",
+  "identifyGalleryTitle": "Identification gallery",
+  "identifyGalleryHeading": "My photos",
+  "identifyGalleryBody": "Select a photo from your collection to start AI identification.",
+  "identifySelected": "Identify selected photos ({count})",
+  "@identifySelected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "identifyAddPhoto": "Add photo",
+
+  "cameraLeafMode": "Leaf",
+  "cameraBarkMode": "Bark",
+  "cameraFruitMode": "Fruit",
+  "cameraGallery": "Gallery",
+  "cameraHelp": "Help",
+  "cameraScan": "Scan",
+  "cameraHint": "Place the leaf in the center of the frame for accurate identification",
+  "cameraIdentifierLabel": "Leaf identifier",
+
+  "photoGuideBadge": "Identification tips",
+  "photoGuideTitle": "How to photograph like a botanist?",
+  "photoGuideIntro": "For the most accurate identification results, capture clear, focused photos of different tree parts.",
+  "photoGuideStep1": "Photograph the leaf",
+  "photoGuideStep1Body": "Place the leaf on a uniform surface or hold it toward the sun. Ensure edges and veins are fully visible.",
+  "photoGuideBarkTitle": "Tree bark",
+  "photoGuideBarkBody": "Photograph the trunk at eye level. Bark texture is a critical identification sign.",
+  "photoGuideLighting": "Natural light",
+  "photoGuideLightingBody": "Avoid flash; sunlight is preferred.",
+  "photoGuideFocus": "Sharp focus",
+  "photoGuideFocusBody": "Tap the screen to focus the lens.",
+  "photoGuideAvoidTitle": "What to avoid?",
+  "photoGuideBlur": "Blurry photos",
+  "photoGuideBlurBody": "The algorithm struggles with out-of-focus details.",
+  "photoGuideDistance": "Too far away",
+  "photoGuideDistanceBody": "Don't use a distant whole-tree shot as your main photo.",
+  "photoGuideCta": "Got it, let's shoot",
+
+  "collectionTitle": "My collection",
+  "collectionArchive": "My personal archive",
+  "collectionSearchHint": "Search the tree collection...",
+  "collectionFilterAll": "All",
+  "collectionFilterConifers": "Conifers",
+  "collectionFilterDeciduous": "Deciduous",
+  "collectionFilterBroadleaf": "Broadleaf",
+  "collectionLoadMore": "Load more trees",
+  "collectionIdentifiedAt": "Identified at: {location}",
+  "@collectionIdentifiedAt": {
+    "placeholders": {
+      "location": {"type": "String"}
+    }
+  },
+
+  "mapSearchHint": "Search trees or locations...",
+  "mapProtectedTree": "Protected tree",
+  "mapDistance": "Distance: {distance}",
+  "@mapDistance": {
+    "placeholders": {
+      "distance": {"type": "String"}
+    }
+  },
+  "mapNavigate": "Navigate to tree",
+  "mapTreesNearby": "Trees near you",
+  "mapTotalMarked": "Total marked trees",
+  "mapRareSpecies": "Rare species",
+  "mapViewFullList": "View full list",
+  "mapFilterLabel": "Map filter",
+  "mapFullDetails": "Full details",
+
+  "speciesSaveCollection": "Save to my collection",
+  "speciesMorphology": "Botanical morphology",
+  "speciesDistribution": "Distribution and habitat",
+  "speciesUsesTitle": "Uses and folklore",
+  "speciesDidYouKnow": "Did you know?",
+  "speciesAnatomy": "Anatomy of {name}",
+  "@speciesAnatomy": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "speciesWhereToFind": "Where can you find this tree?",
+  "speciesViewDistributionMap": "View national distribution map",
+
+  "profileExplorerRank": "Researcher rank",
+  "profileFieldResearcher": "Field researcher",
+  "profileMemberSince": "Member since {date}",
+  "@profileMemberSince": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "profileTreesIdentified": "Trees identified",
+  "profileBadgesEarned": "Badges earned",
+  "profileBadgesTitle": "Badges and achievements",
+  "profileSettingsTitle": "Settings and account",
+  "profileAccount": "Account details",
+  "profileNotifications": "Field alerts",
+  "profileFieldJournals": "Field journals",
+
+  "journalTitle": "Digital field journal",
+  "journalObservations": "My observations",
+  "journalResearchSection": "Research tools",
+  "journalReadMore": "Read more",
+  "journalWeeklySummary": "Weekly activity summary",
+  "journalWeeklyBody": "You documented new species this week. Keep advancing botanical research in Israel.",
+
+  "helpCenterTitle": "Help center",
+  "helpHeroTitle": "How can we help your botanical research today?",
+  "helpHeroBody": "Discover the secrets of the tree world with our detailed guides.",
+  "helpGuidesTitle": "Quick identification guides",
+  "helpGuideLeaves": "Identify by leaves",
+  "helpGuideBark": "Identify by bark",
+  "helpGuideAi": "Using AI",
+  "helpFaqTitle": "Frequently asked questions",
+  "helpContactTitle": "Didn't find your answer?",
+  "helpContactBody": "Our experts are here for you. We'll respond within 24 hours.",
+  "helpContactCta": "Contact an expert",
+  "helpChatTitle": "Botanist chat",
+  "helpChatBody": "Instant help for urgent field identifications.",
+  "helpChatCta": "Start chat",
+
+  "statHeight": "Height",
+  "statWater": "Water",
+  "statFlowering": "Flowering",
+  "statMaxHeight": "Max height",
+  "statLifespan": "Lifespan",
+  "statPhotosynthesis": "Photosynthesis",
+  "heightMeters": "{value} m",
+  "@heightMeters": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+
+  "homeFeaturedTitle": "Featured species",
+  "searchNoResults": "No results for \"{query}\"",
+  "@searchNoResults": {
+    "placeholders": {
+      "query": {"type": "String"}
+    }
+  },
+  "collectionEmpty": "No trees in your collection yet. Identify a tree to start your archive.",
+  "speciesSavedToCollection": "Saved to your collection",
+  "photoGuideStepLabel": "Step {number}",
+  "@photoGuideStepLabel": {
+    "placeholders": {
+      "number": {"type": "int"}
+    }
+  },
+  "reportRiskAssessment": "Risk assessment",
+  "hazardLow": "Low",
+  "hazardMedium": "Medium",
+  "hazardHigh": "High",
+  "badgeForestGuardian": "Forest guardian",
+  "badgeMountainResearcher": "Mountain researcher",
+  "badgeStreamsExpert": "Streams expert",
+  "helpFaq1Question": "How does the system identify trees automatically?",
+  "helpFaq1Answer": "It uses deep neural networks trained on hundreds of thousands of images of Mediterranean vegetation.",
+  "helpFaq2Question": "Is the map available offline?",
+  "helpFaq2Answer": "You can download maps of specific areas for field use without reception.",
+  "helpFaq3Question": "How do I add a new tree to the collection?",
+  "helpFaq3Answer": "After a successful identification, tap \"Save to my collection\"."
 }

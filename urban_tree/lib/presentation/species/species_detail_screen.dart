@@ -1,0 +1,352 @@
+import 'package:flutter/material.dart';
+
+import '../../l10n/app_localizations.dart';
+import '../../models/species_monograph.dart';
+import '../theme/app_colors.dart';
+import '../theme/app_theme.dart';
+import '../widgets/botanical_widgets.dart';
+
+class SpeciesDetailScreen extends StatefulWidget {
+  const SpeciesDetailScreen({super.key, required this.speciesId});
+
+  final String speciesId;
+
+  @override
+  State<SpeciesDetailScreen> createState() => _SpeciesDetailScreenState();
+}
+
+class _SpeciesDetailScreenState extends State<SpeciesDetailScreen> {
+  SpeciesMonograph? _species;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final s = await SpeciesMonographRepository.instance.byId(widget.speciesId);
+    if (mounted) setState(() => _species = s);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final species = _species;
+    final isWide = MediaQuery.sizeOf(context).width >= kDesktopBreakpoint;
+
+    if (species == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: isWide ? 500 : 320,
+            pinned: true,
+            backgroundColor: AppColors.background.withValues(alpha: 0.9),
+            leading: IconButton(
+              onPressed: () => Navigator.of(context).pop(),
+              icon: const Icon(Icons.arrow_forward, color: AppColors.primary),
+            ),
+            flexibleSpace: FlexibleSpaceBar(
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.network(
+                    species.heroImageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) => Container(color: AppColors.surfaceContainer),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [
+                          AppColors.background,
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 24,
+                    right: 24,
+                    left: 24,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SpeciesBadge(
+                          label: '${species.family} • ${species.familyHebrew}',
+                          tint: SpeciesBadgeTint.tertiary,
+                        ),
+                        Text(
+                          species.hebrewName,
+                          style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w800,
+                              ),
+                        ),
+                        Text(
+                          species.scientificName,
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                color: AppColors.secondary,
+                                fontStyle: FontStyle.italic,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.all(24),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                GradientButton(
+                  label: l10n.speciesSaveCollection,
+                  icon: Icons.bookmark,
+                  onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(l10n.speciesSavedToCollection)),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                Text(
+                  l10n.speciesMorphology,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+                const SizedBox(height: 16),
+                if (isWide)
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(flex: 7, child: _MorphCard(section: species.morphology.leaves)),
+                      const SizedBox(width: 16),
+                      Expanded(flex: 5, child: _MorphCard(section: species.morphology.fruit)),
+                    ],
+                  )
+                else ...[
+                  _MorphCard(section: species.morphology.leaves),
+                  const SizedBox(height: 12),
+                  _MorphCard(section: species.morphology.fruit),
+                ],
+                const SizedBox(height: 12),
+                _MorphCard(section: species.morphology.bark),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(child: _StatBox(label: l10n.statMaxHeight, value: species.stats.maxHeight, color: AppColors.primaryContainer)),
+                    const SizedBox(width: 12),
+                    Expanded(child: _StatBox(label: l10n.statLifespan, value: species.stats.lifespan, color: AppColors.secondaryContainer)),
+                    const SizedBox(width: 12),
+                    Expanded(child: _StatBox(label: l10n.statPhotosynthesis, value: species.stats.photosynthesis, color: AppColors.tertiaryContainer)),
+                  ],
+                ),
+                const SizedBox(height: 32),
+                Text(
+                  l10n.speciesDistribution,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+                const SizedBox(height: 12),
+                Text(species.distribution.description),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  children: species.distribution.regions
+                      .map((r) => SpeciesBadge(label: r, tint: SpeciesBadgeTint.neutral))
+                      .toList(),
+                ),
+                const SizedBox(height: 16),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  child: Image.network(
+                    species.distribution.mapImageUrl,
+                    height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                BentoCard(
+                  backgroundColor: AppColors.surfaceContainer,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.speciesUsesTitle,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                      ),
+                      const SizedBox(height: 16),
+                      for (final use in species.uses) ...[
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: CircleAvatar(
+                            backgroundColor: AppColors.surfaceContainerLowest,
+                            child: const Icon(Icons.eco, color: AppColors.secondary),
+                          ),
+                          title: Text(use.title, style: const TextStyle(fontWeight: FontWeight.w700)),
+                          subtitle: Text(use.body),
+                        ),
+                      ],
+                      const SizedBox(height: 8),
+                      Text(
+                        l10n.speciesDidYouKnow,
+                        style: const TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                      for (final fact in species.funFacts)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('• ', style: TextStyle(color: AppColors.secondary, fontWeight: FontWeight.w700)),
+                              Expanded(child: Text(fact)),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                if (isWide) ...[
+                  const SizedBox(height: 32),
+                  Text(
+                    l10n.speciesAnatomy(species.hebrewName),
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: species.anatomyCards
+                        .map(
+                          (c) => Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              child: _AnatomyCard(card: c),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ],
+                const SizedBox(height: 48),
+              ]),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MorphCard extends StatelessWidget {
+  const _MorphCard({required this.section});
+
+  final MorphologySection section;
+
+  @override
+  Widget build(BuildContext context) {
+    return BentoCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            section.title,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
+          const SizedBox(height: 8),
+          Text(section.body),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatBox extends StatelessWidget {
+  const _StatBox({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  final String label;
+  final String value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: AppRadii.card,
+      ),
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                ),
+          ),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: Colors.white.withValues(alpha: 0.85),
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AnatomyCard extends StatelessWidget {
+  const _AnatomyCard({required this.card});
+
+  final AnatomyCard card;
+
+  @override
+  Widget build(BuildContext context) {
+    return BentoCard(
+      padding: EdgeInsets.zero,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Image.network(card.imageUrl, height: 160, fit: BoxFit.cover),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(card.title, style: const TextStyle(fontWeight: FontWeight.w700)),
+                const SizedBox(height: 8),
+                Text(card.body, style: Theme.of(context).textTheme.bodySmall),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

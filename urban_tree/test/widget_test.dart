@@ -42,7 +42,7 @@ void main() {
     );
   });
 
-  testWidgets('Map screen and report FAB (Hebrew)', (WidgetTester tester) async {
+  testWidgets('Map screen shows botanical search (Hebrew)', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         locale: const Locale('he'),
@@ -55,14 +55,14 @@ void main() {
         ],
         home: ChangeNotifierProvider(
           create: (_) => ReportFeedController(),
-          child: const MapScreen(),
+          child: const MapScreen(embedded: true),
         ),
       ),
     );
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
 
-    expect(find.text('UrbanTree'), findsOneWidget);
-    expect(find.text('דיווח על עץ'), findsOneWidget);
+    expect(find.text('מונוגרפיה בוטנית'), findsOneWidget);
+    expect(find.text('חיפוש עצים או מיקומים...'), findsOneWidget);
   });
 }

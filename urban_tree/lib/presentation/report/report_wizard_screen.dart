@@ -1034,23 +1034,23 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
           onChanged: (v) => setState(() => _d.healthScore = v.round()),
         ),
         const SizedBox(height: 16),
-        Text('הערכת סיכון', style: theme.textTheme.titleMedium),
+        Text(l10n.reportRiskAssessment, style: theme.textTheme.titleMedium),
         const SizedBox(height: 8),
         DropdownButtonFormField<HazardAssessment>(
           initialValue: _d.hazardAssessment,
           decoration: const InputDecoration(border: OutlineInputBorder()),
-          items: const [
+          items: [
             DropdownMenuItem(
               value: HazardAssessment.low,
-              child: Text('Low'),
+              child: Text(l10n.hazardLow),
             ),
             DropdownMenuItem(
               value: HazardAssessment.medium,
-              child: Text('Medium'),
+              child: Text(l10n.hazardMedium),
             ),
             DropdownMenuItem(
               value: HazardAssessment.high,
-              child: Text('High'),
+              child: Text(l10n.hazardHigh),
             ),
           ],
           onChanged: (v) {

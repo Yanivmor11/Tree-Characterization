@@ -488,4 +488,455 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get continueLabel => 'Continue';
+
+  @override
+  String get appBrandTitle => 'Botanical Monograph';
+
+  @override
+  String get appBrandSubtitle => 'Your digital field journal';
+
+  @override
+  String get navIdentify => 'Identify';
+
+  @override
+  String get navCollection => 'Collection';
+
+  @override
+  String get navJournal => 'Journal';
+
+  @override
+  String get navHelp => 'Help';
+
+  @override
+  String get drawerTitle => 'Botanical Monograph';
+
+  @override
+  String get drawerSubtitle => 'Your digital field journal';
+
+  @override
+  String get defaultUserName => 'Field researcher';
+
+  @override
+  String get userRoleBotanist => 'Certified botanist';
+
+  @override
+  String get signOut => 'Sign out';
+
+  @override
+  String get homeGreeting => 'Welcome';
+
+  @override
+  String homeHello(String name) {
+    return 'Hello, $name';
+  }
+
+  @override
+  String get homeSearchHint => 'Search trees, species, or traits...';
+
+  @override
+  String get homeIdentifyTitle => 'Instant tree identification';
+
+  @override
+  String get homeIdentifyBody =>
+      'Photograph a leaf, bark, or fruit and discover your local nature.';
+
+  @override
+  String get homeIdentifyCta => 'Start identifying now';
+
+  @override
+  String get homeRecentTitle => 'Recent identifications';
+
+  @override
+  String get homeViewAll => 'View all';
+
+  @override
+  String get homeNearbyTitle => 'Discover trees near you';
+
+  @override
+  String homeNearbyDistance(String distance) {
+    return '$distance from you';
+  }
+
+  @override
+  String get identifyHubTitle => 'AI botanical identification';
+
+  @override
+  String get identifyHubBody =>
+      'Photograph a leaf, bark, or fruit to instantly identify the tree species.';
+
+  @override
+  String get identifyStartCamera => 'Start new identification';
+
+  @override
+  String get identifyFromGallery => 'Choose from gallery';
+
+  @override
+  String get identifyPhotoGuide => 'Photo guide';
+
+  @override
+  String get identifyGalleryTitle => 'Identification gallery';
+
+  @override
+  String get identifyGalleryHeading => 'My photos';
+
+  @override
+  String get identifyGalleryBody =>
+      'Select a photo from your collection to start AI identification.';
+
+  @override
+  String identifySelected(int count) {
+    return 'Identify selected photos ($count)';
+  }
+
+  @override
+  String get identifyAddPhoto => 'Add photo';
+
+  @override
+  String get cameraLeafMode => 'Leaf';
+
+  @override
+  String get cameraBarkMode => 'Bark';
+
+  @override
+  String get cameraFruitMode => 'Fruit';
+
+  @override
+  String get cameraGallery => 'Gallery';
+
+  @override
+  String get cameraHelp => 'Help';
+
+  @override
+  String get cameraScan => 'Scan';
+
+  @override
+  String get cameraHint =>
+      'Place the leaf in the center of the frame for accurate identification';
+
+  @override
+  String get cameraIdentifierLabel => 'Leaf identifier';
+
+  @override
+  String get photoGuideBadge => 'Identification tips';
+
+  @override
+  String get photoGuideTitle => 'How to photograph like a botanist?';
+
+  @override
+  String get photoGuideIntro =>
+      'For the most accurate identification results, capture clear, focused photos of different tree parts.';
+
+  @override
+  String get photoGuideStep1 => 'Photograph the leaf';
+
+  @override
+  String get photoGuideStep1Body =>
+      'Place the leaf on a uniform surface or hold it toward the sun. Ensure edges and veins are fully visible.';
+
+  @override
+  String get photoGuideBarkTitle => 'Tree bark';
+
+  @override
+  String get photoGuideBarkBody =>
+      'Photograph the trunk at eye level. Bark texture is a critical identification sign.';
+
+  @override
+  String get photoGuideLighting => 'Natural light';
+
+  @override
+  String get photoGuideLightingBody => 'Avoid flash; sunlight is preferred.';
+
+  @override
+  String get photoGuideFocus => 'Sharp focus';
+
+  @override
+  String get photoGuideFocusBody => 'Tap the screen to focus the lens.';
+
+  @override
+  String get photoGuideAvoidTitle => 'What to avoid?';
+
+  @override
+  String get photoGuideBlur => 'Blurry photos';
+
+  @override
+  String get photoGuideBlurBody =>
+      'The algorithm struggles with out-of-focus details.';
+
+  @override
+  String get photoGuideDistance => 'Too far away';
+
+  @override
+  String get photoGuideDistanceBody =>
+      'Don\'t use a distant whole-tree shot as your main photo.';
+
+  @override
+  String get photoGuideCta => 'Got it, let\'s shoot';
+
+  @override
+  String get collectionTitle => 'My collection';
+
+  @override
+  String get collectionArchive => 'My personal archive';
+
+  @override
+  String get collectionSearchHint => 'Search the tree collection...';
+
+  @override
+  String get collectionFilterAll => 'All';
+
+  @override
+  String get collectionFilterConifers => 'Conifers';
+
+  @override
+  String get collectionFilterDeciduous => 'Deciduous';
+
+  @override
+  String get collectionFilterBroadleaf => 'Broadleaf';
+
+  @override
+  String get collectionLoadMore => 'Load more trees';
+
+  @override
+  String collectionIdentifiedAt(String location) {
+    return 'Identified at: $location';
+  }
+
+  @override
+  String get mapSearchHint => 'Search trees or locations...';
+
+  @override
+  String get mapProtectedTree => 'Protected tree';
+
+  @override
+  String mapDistance(String distance) {
+    return 'Distance: $distance';
+  }
+
+  @override
+  String get mapNavigate => 'Navigate to tree';
+
+  @override
+  String get mapTreesNearby => 'Trees near you';
+
+  @override
+  String get mapTotalMarked => 'Total marked trees';
+
+  @override
+  String get mapRareSpecies => 'Rare species';
+
+  @override
+  String get mapViewFullList => 'View full list';
+
+  @override
+  String get mapFilterLabel => 'Map filter';
+
+  @override
+  String get mapFullDetails => 'Full details';
+
+  @override
+  String get speciesSaveCollection => 'Save to my collection';
+
+  @override
+  String get speciesMorphology => 'Botanical morphology';
+
+  @override
+  String get speciesDistribution => 'Distribution and habitat';
+
+  @override
+  String get speciesUsesTitle => 'Uses and folklore';
+
+  @override
+  String get speciesDidYouKnow => 'Did you know?';
+
+  @override
+  String speciesAnatomy(String name) {
+    return 'Anatomy of $name';
+  }
+
+  @override
+  String get speciesWhereToFind => 'Where can you find this tree?';
+
+  @override
+  String get speciesViewDistributionMap => 'View national distribution map';
+
+  @override
+  String get profileExplorerRank => 'Researcher rank';
+
+  @override
+  String get profileFieldResearcher => 'Field researcher';
+
+  @override
+  String profileMemberSince(String date) {
+    return 'Member since $date';
+  }
+
+  @override
+  String get profileTreesIdentified => 'Trees identified';
+
+  @override
+  String get profileBadgesEarned => 'Badges earned';
+
+  @override
+  String get profileBadgesTitle => 'Badges and achievements';
+
+  @override
+  String get profileSettingsTitle => 'Settings and account';
+
+  @override
+  String get profileAccount => 'Account details';
+
+  @override
+  String get profileNotifications => 'Field alerts';
+
+  @override
+  String get profileFieldJournals => 'Field journals';
+
+  @override
+  String get journalTitle => 'Digital field journal';
+
+  @override
+  String get journalObservations => 'My observations';
+
+  @override
+  String get journalResearchSection => 'Research tools';
+
+  @override
+  String get journalReadMore => 'Read more';
+
+  @override
+  String get journalWeeklySummary => 'Weekly activity summary';
+
+  @override
+  String get journalWeeklyBody =>
+      'You documented new species this week. Keep advancing botanical research in Israel.';
+
+  @override
+  String get helpCenterTitle => 'Help center';
+
+  @override
+  String get helpHeroTitle => 'How can we help your botanical research today?';
+
+  @override
+  String get helpHeroBody =>
+      'Discover the secrets of the tree world with our detailed guides.';
+
+  @override
+  String get helpGuidesTitle => 'Quick identification guides';
+
+  @override
+  String get helpGuideLeaves => 'Identify by leaves';
+
+  @override
+  String get helpGuideBark => 'Identify by bark';
+
+  @override
+  String get helpGuideAi => 'Using AI';
+
+  @override
+  String get helpFaqTitle => 'Frequently asked questions';
+
+  @override
+  String get helpContactTitle => 'Didn\'t find your answer?';
+
+  @override
+  String get helpContactBody =>
+      'Our experts are here for you. We\'ll respond within 24 hours.';
+
+  @override
+  String get helpContactCta => 'Contact an expert';
+
+  @override
+  String get helpChatTitle => 'Botanist chat';
+
+  @override
+  String get helpChatBody => 'Instant help for urgent field identifications.';
+
+  @override
+  String get helpChatCta => 'Start chat';
+
+  @override
+  String get statHeight => 'Height';
+
+  @override
+  String get statWater => 'Water';
+
+  @override
+  String get statFlowering => 'Flowering';
+
+  @override
+  String get statMaxHeight => 'Max height';
+
+  @override
+  String get statLifespan => 'Lifespan';
+
+  @override
+  String get statPhotosynthesis => 'Photosynthesis';
+
+  @override
+  String heightMeters(String value) {
+    return '$value m';
+  }
+
+  @override
+  String get homeFeaturedTitle => 'Featured species';
+
+  @override
+  String searchNoResults(String query) {
+    return 'No results for \"$query\"';
+  }
+
+  @override
+  String get collectionEmpty =>
+      'No trees in your collection yet. Identify a tree to start your archive.';
+
+  @override
+  String get speciesSavedToCollection => 'Saved to your collection';
+
+  @override
+  String photoGuideStepLabel(int number) {
+    return 'Step $number';
+  }
+
+  @override
+  String get reportRiskAssessment => 'Risk assessment';
+
+  @override
+  String get hazardLow => 'Low';
+
+  @override
+  String get hazardMedium => 'Medium';
+
+  @override
+  String get hazardHigh => 'High';
+
+  @override
+  String get badgeForestGuardian => 'Forest guardian';
+
+  @override
+  String get badgeMountainResearcher => 'Mountain researcher';
+
+  @override
+  String get badgeStreamsExpert => 'Streams expert';
+
+  @override
+  String get helpFaq1Question =>
+      'How does the system identify trees automatically?';
+
+  @override
+  String get helpFaq1Answer =>
+      'It uses deep neural networks trained on hundreds of thousands of images of Mediterranean vegetation.';
+
+  @override
+  String get helpFaq2Question => 'Is the map available offline?';
+
+  @override
+  String get helpFaq2Answer =>
+      'You can download maps of specific areas for field use without reception.';
+
+  @override
+  String get helpFaq3Question => 'How do I add a new tree to the collection?';
+
+  @override
+  String get helpFaq3Answer =>
+      'After a successful identification, tap \"Save to my collection\".';
 }

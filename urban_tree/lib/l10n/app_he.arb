@@ -255,5 +255,197 @@
       "meters": {"type": "int"}
     }
   },
-  "continueLabel": "Continue"
+  "continueLabel": "המשך",
+
+  "appBrandTitle": "מונוגרפיה בוטנית",
+  "appBrandSubtitle": "יומן השדה הדיגיטלי",
+  "navIdentify": "זיהוי",
+  "navCollection": "אוסף",
+  "navJournal": "יומן",
+  "navHelp": "עזרה",
+
+  "drawerTitle": "המונוגרף הבוטני",
+  "drawerSubtitle": "יומן השדה הדיגיטלי שלך",
+  "defaultUserName": "חוקר שטח",
+  "userRoleBotanist": "בוטנאית מוסמכת",
+  "signOut": "התנתקות מהמערכת",
+
+  "homeGreeting": "ברוך הבא",
+  "homeHello": "שלום, {name}",
+  "@homeHello": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "homeSearchHint": "חפש עצים, זנים או מאפיינים...",
+  "homeIdentifyTitle": "זיהוי עץ מיידי",
+  "homeIdentifyBody": "צלם עלה, קליפה או פרי וגלה את סודות הטבע המקומי שלך.",
+  "homeIdentifyCta": "התחל זיהוי עכשיו",
+  "homeRecentTitle": "זיהויים אחרונים",
+  "homeViewAll": "צפה בהכל",
+  "homeNearbyTitle": "גלה עצים בסביבתך",
+  "homeNearbyDistance": "{distance} ממך",
+  "@homeNearbyDistance": {
+    "placeholders": {
+      "distance": {"type": "String"}
+    }
+  },
+
+  "identifyHubTitle": "זיהוי בוטני מבוסס AI",
+  "identifyHubBody": "צלמו תמונה של עלה, קליפה או פרי כדי לזהות באופן מיידי את מין העץ.",
+  "identifyStartCamera": "התחל זיהוי חדש",
+  "identifyFromGallery": "בחירה מהגלריה",
+  "identifyPhotoGuide": "מדריך צילום",
+  "identifyGalleryTitle": "גלריית זיהוי",
+  "identifyGalleryHeading": "הצילומים שלי",
+  "identifyGalleryBody": "בחר תמונה מהאוסף שלך כדי להתחיל זיהוי בוטני מבוסס AI.",
+  "identifySelected": "זהה תמונות נבחרות ({count})",
+  "@identifySelected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "identifyAddPhoto": "הוסף תמונה",
+
+  "cameraLeafMode": "עלה",
+  "cameraBarkMode": "גזע",
+  "cameraFruitMode": "פרי",
+  "cameraGallery": "גלריה",
+  "cameraHelp": "עזרה",
+  "cameraScan": "סריקה",
+  "cameraHint": "מקמו את העלה במרכז המסגרת לקבלת זיהוי מדויק",
+  "cameraIdentifierLabel": "מזהה עלים",
+
+  "photoGuideBadge": "טיפים לזיהוי",
+  "photoGuideTitle": "איך לצלם כמו בוטנאי?",
+  "photoGuideIntro": "כדי לקבל את תוצאות הזיהוי המדויקות ביותר, חשוב להקפיד על צילום ברור וממוקד של חלקי העץ השונים.",
+  "photoGuideStep1": "צילום העלה",
+  "photoGuideStep1Body": "הנח את העלה על משטח אחיד או החזק אותו מול השמש. וודא שקצוות העלה והעורקים ברורים לחלוטין.",
+  "photoGuideBarkTitle": "קליפת העץ",
+  "photoGuideBarkBody": "צלם את הגזע בגובה העיניים. המרקם של הקליפה הוא סימן זיהוי קריטי.",
+  "photoGuideLighting": "תאורה טבעית",
+  "photoGuideLightingBody": "הימנע משימוש בפלאש; אור שמש עדיף.",
+  "photoGuideFocus": "מיקוד חד",
+  "photoGuideFocusBody": "הקש על המסך כדי למקד את העדשה.",
+  "photoGuideAvoidTitle": "ממה כדאי להימנע?",
+  "photoGuideBlur": "תמונות מטושטשות",
+  "photoGuideBlurBody": "האלגוריתם מתקשה לזהות פרטים מחוץ לפוקוס.",
+  "photoGuideDistance": "מרחק רב מדי",
+  "photoGuideDistanceBody": "אל תצלם את כל העץ מרחוק בתור התמונה הראשית.",
+  "photoGuideCta": "הבנתי, בואו נצלם",
+
+  "collectionTitle": "האוסף שלי",
+  "collectionArchive": "הארכיון האישי שלי",
+  "collectionSearchHint": "חיפוש באוסף העצים...",
+  "collectionFilterAll": "הכל",
+  "collectionFilterConifers": "מחטניים",
+  "collectionFilterDeciduous": "נשירים",
+  "collectionFilterBroadleaf": "רחבי עלים",
+  "collectionLoadMore": "טען עצים נוספים",
+  "collectionIdentifiedAt": "זוהה ב: {location}",
+  "@collectionIdentifiedAt": {
+    "placeholders": {
+      "location": {"type": "String"}
+    }
+  },
+
+  "mapSearchHint": "חיפוש עצים או מיקומים...",
+  "mapProtectedTree": "עץ מוגן",
+  "mapDistance": "מרחק: {distance}",
+  "@mapDistance": {
+    "placeholders": {
+      "distance": {"type": "String"}
+    }
+  },
+  "mapNavigate": "ניווט לעץ",
+  "mapTreesNearby": "עצים בסביבתך",
+  "mapTotalMarked": "סה\"כ עצים מסומנים",
+  "mapRareSpecies": "מינים נדירים",
+  "mapViewFullList": "צפייה ברשימה המלאה",
+  "mapFilterLabel": "סינון מפה",
+  "mapFullDetails": "פרטים מלאים",
+
+  "speciesSaveCollection": "שמור לאוסף שלי",
+  "speciesMorphology": "מורפולוגיה בוטנית",
+  "speciesDistribution": "תפוצה וסביבת גידול",
+  "speciesUsesTitle": "שימושים ופולקלור",
+  "speciesDidYouKnow": "הידעת?",
+  "speciesAnatomy": "אנטומיה של {name}",
+  "@speciesAnatomy": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "speciesWhereToFind": "איפה ניתן למצוא את האלון?",
+  "speciesViewDistributionMap": "צפייה במפת תפוצה ארצית",
+
+  "profileExplorerRank": "דרגת חוקר",
+  "profileFieldResearcher": "חוקר שטח",
+  "profileMemberSince": "חבר מאז {date}",
+  "@profileMemberSince": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "profileTreesIdentified": "עצים שזוהו",
+  "profileBadgesEarned": "תגים שהושגו",
+  "profileBadgesTitle": "תגים והישגים",
+  "profileSettingsTitle": "הגדרות וחשבון",
+  "profileAccount": "פרטי חשבון",
+  "profileNotifications": "התראות שטח",
+  "profileFieldJournals": "יומני שדה",
+
+  "journalTitle": "יומן שדה דיגיטלי",
+  "journalObservations": "התצפיות שלי",
+  "journalResearchSection": "כלי מחקר",
+  "journalReadMore": "קרא עוד",
+  "journalWeeklySummary": "סיכום פעילות שבועית",
+  "journalWeeklyBody": "תיעדת מינים חדשים השבוע. המשיכו כך לקידום מחקר הצמחייה בישראל.",
+
+  "helpCenterTitle": "מרכז העזרה",
+  "helpHeroTitle": "איך נוכל לסייע לך במחקר הבוטני שלך היום?",
+  "helpHeroBody": "גלה את הסודות של עולם העצים בעזרת המדריכים המפורטים שלנו.",
+  "helpGuidesTitle": "מדריכי זיהוי מהירים",
+  "helpGuideLeaves": "זיהוי לפי עלים",
+  "helpGuideBark": "זיהוי לפי קליפה",
+  "helpGuideAi": "שימוש ב-AI",
+  "helpFaqTitle": "שאלות נפוצות",
+  "helpContactTitle": "לא מצאת את התשובה?",
+  "helpContactBody": "המומחים שלנו כאן בשבילך. נחזור אליך תוך 24 שעות.",
+  "helpContactCta": "צור קשר עם מומחה",
+  "helpChatTitle": "צ'אט בוטנאי",
+  "helpChatBody": "מענה מיידי לזיהויים דחופים בשטח.",
+  "helpChatCta": "התחל שיחה",
+
+  "statHeight": "גובה",
+  "statWater": "השקיה",
+  "statFlowering": "פריחה",
+  "statMaxHeight": "גובה מקסימלי",
+  "statLifespan": "תוחלת חיים",
+  "statPhotosynthesis": "מנגנון פוטו'",
+  "heightMeters": "{value} מ׳",
+  "@heightMeters": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+
+  "homeFeaturedTitle": "מינים נבחרים",
+  "searchNoResults": "אין תוצאות עבור \"{query}\"",
+  "collectionEmpty": "אין עדיין עצים באוסף שלך. זהה עץ כדי להתחיל את הארכיון.",
+  "speciesSavedToCollection": "נשמר לאוסף שלך",
+  "photoGuideStepLabel": "שלב {number}",
+  "reportRiskAssessment": "הערכת סיכון",
+  "hazardLow": "נמוך",
+  "hazardMedium": "בינוני",
+  "hazardHigh": "גבוה",
+  "badgeForestGuardian": "שומר היער",
+  "badgeMountainResearcher": "חוקר הרים",
+  "badgeStreamsExpert": "מומחה נחלים",
+  "helpFaq1Question": "איך המערכת מזהה עצים באופן אוטומטי?",
+  "helpFaq1Answer": "המערכת משתמשת ברשתות נוירונים עמוקות שאומנו על מאות אלפי תמונות של צמחייה ים-תיכונית.",
+  "helpFaq2Question": "האם המפה זמינה במצב לא מקוון?",
+  "helpFaq2Answer": "ניתן להוריד מפות של אזורים ספציפיים לשימוש בשטח ללא קליטה.",
+  "helpFaq3Question": "איך מוסיפים עץ חדש לאוסף?",
+  "helpFaq3Answer": "לאחר זיהוי מוצלח, לחץ על \"שמור לאוסף\"."
 }

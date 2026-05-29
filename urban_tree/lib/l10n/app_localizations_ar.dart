@@ -403,7 +403,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get validateCompleteSuggestions => 'تحقّق وأكمل الاقتراحات';
 
   @override
-  String get phenologyUnusualTitle => 'Unusual for this season';
+  String get phenologyUnusualTitle => 'غير معتاد لهذا الموسم';
 
   @override
   String phenologyUnusualBody(String message) {
@@ -411,62 +411,61 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get phenologyImSure => 'I\'m sure';
+  String get phenologyImSure => 'أنا متأكد';
 
   @override
-  String get phenologyGoBack => 'Review';
+  String get phenologyGoBack => 'مراجعة';
 
   @override
-  String get treeInsightsTitle => 'Tree insights';
+  String get treeInsightsTitle => 'رؤى عن الشجرة';
 
   @override
-  String get treeInsightsClose => 'Done';
+  String get treeInsightsClose => 'تم';
 
   @override
   String pointsPreview(int points) {
-    return 'Estimated points: $points';
+    return 'النقاط المقدرة: $points';
   }
 
   @override
   String nearbyMappedTreesWarning(int count, int meters) {
-    return '$count mapped trees within ~$meters m — avoid duplicate entries.';
+    return '$count أشجار مرسومة ضمن ~$meters م — تجنّب الإدخالات المكررة.';
   }
 
   @override
-  String get leaderboardTitle => 'Top guardians';
+  String get leaderboardTitle => 'أبرز الحُرّاس';
 
   @override
-  String get leaderboardNational => 'National';
+  String get leaderboardNational => 'وطني';
 
   @override
-  String get leaderboardMyCity => 'My city';
+  String get leaderboardMyCity => 'مدينتي';
 
   @override
-  String get leaderboardEmpty => 'No leaderboard entries yet';
+  String get leaderboardEmpty => 'لا توجد إدخالات في لوحة الصدارة بعد';
 
   @override
-  String get leaderboardCityEmpty => 'No entries for your city yet';
+  String get leaderboardCityEmpty => 'لا توجد إدخالات لمدينتك بعد';
 
   @override
-  String get yourCityMissing =>
-      'Your city is set after your first geocoded report.';
+  String get yourCityMissing => 'يتم تعيين مدينتك بعد أول تقرير محدد جغرافيًا.';
 
   @override
   String pestNearbyBanner(String pest, int meters) {
-    return '$pest reported nearby (~$meters m)';
+    return 'تم الإبلاغ عن $pest في الجوار (~$meters م)';
   }
 
   @override
-  String get mapGemRare => 'Rare species';
+  String get mapGemRare => 'نوع نادر';
 
   @override
-  String get mapGemAbandoned => 'Abandoned · needs care';
+  String get mapGemAbandoned => 'مهجور · يحتاج إلى عناية';
 
   @override
-  String get researchQualityTab => 'Quality flags';
+  String get researchQualityTab => 'علامات الجودة';
 
   @override
-  String get qualityFlagsEmpty => 'No open quality flags';
+  String get qualityFlagsEmpty => 'لا توجد علامات جودة مفتوحة';
 
   @override
   String qualityFlagSubtitle(String reason, String cluster) {
@@ -474,16 +473,464 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get openLeaderboard => 'Leaderboard';
+  String get openLeaderboard => 'أبرز الحُرّاس';
 
   @override
-  String get cameraNearbyTitle => 'Nearby mapped trees';
+  String get cameraNearbyTitle => 'أشجار مرسومة قريبة';
 
   @override
   String cameraNearbyBody(int count, int meters) {
-    return '$count reports within $meters m of this spot.';
+    return '$count تقارير ضمن $meters م من هذا الموقع.';
   }
 
   @override
-  String get continueLabel => 'Continue';
+  String get continueLabel => 'متابعة';
+
+  @override
+  String get appBrandTitle => 'دراسة نباتية';
+
+  @override
+  String get appBrandSubtitle => 'مذكرتك الميدانية الرقمية';
+
+  @override
+  String get navIdentify => 'تعرّف';
+
+  @override
+  String get navCollection => 'المجموعة';
+
+  @override
+  String get navJournal => 'المذكرة';
+
+  @override
+  String get navHelp => 'مساعدة';
+
+  @override
+  String get drawerTitle => 'دراسة نباتية';
+
+  @override
+  String get drawerSubtitle => 'مذكرتك الميدانية الرقمية';
+
+  @override
+  String get defaultUserName => 'باحث ميداني';
+
+  @override
+  String get userRoleBotanist => 'عالم نبات معتمد';
+
+  @override
+  String get signOut => 'تسجيل الخروج';
+
+  @override
+  String get homeGreeting => 'أهلاً';
+
+  @override
+  String homeHello(String name) {
+    return 'مرحبًا، $name';
+  }
+
+  @override
+  String get homeSearchHint => 'ابحث عن أشجار أو أنواع أو صفات...';
+
+  @override
+  String get homeIdentifyTitle => 'تعرّف فوري على الأشجار';
+
+  @override
+  String get homeIdentifyBody =>
+      'صوّر ورقة أو لحاءً أو ثمرة واكتشف طبيعتك المحلية.';
+
+  @override
+  String get homeIdentifyCta => 'ابدأ التعرّف الآن';
+
+  @override
+  String get homeRecentTitle => 'عمليات التعرّف الأخيرة';
+
+  @override
+  String get homeViewAll => 'عرض الكل';
+
+  @override
+  String get homeNearbyTitle => 'اكتشف أشجارًا بالقرب منك';
+
+  @override
+  String homeNearbyDistance(String distance) {
+    return '$distance منك';
+  }
+
+  @override
+  String get identifyHubTitle => 'تعرّف نباتي بالذكاء الاصطناعي';
+
+  @override
+  String get identifyHubBody =>
+      'صوّر ورقة أو لحاءً أو ثمرة للتعرّف الفوري على نوع الشجرة.';
+
+  @override
+  String get identifyStartCamera => 'ابدأ تعرّفًا جديدًا';
+
+  @override
+  String get identifyFromGallery => 'اختر من المعرض';
+
+  @override
+  String get identifyPhotoGuide => 'دليل التصوير';
+
+  @override
+  String get identifyGalleryTitle => 'معرض التعرّف';
+
+  @override
+  String get identifyGalleryHeading => 'صوري';
+
+  @override
+  String get identifyGalleryBody =>
+      'اختر صورة من مجموعتك لبدء التعرّف بالذكاء الاصطناعي.';
+
+  @override
+  String identifySelected(int count) {
+    return 'تعرّف على الصور المحددة ($count)';
+  }
+
+  @override
+  String get identifyAddPhoto => 'إضافة صورة';
+
+  @override
+  String get cameraLeafMode => 'ورقة';
+
+  @override
+  String get cameraBarkMode => 'لحاء';
+
+  @override
+  String get cameraFruitMode => 'ثمرة';
+
+  @override
+  String get cameraGallery => 'المعرض';
+
+  @override
+  String get cameraHelp => 'مساعدة';
+
+  @override
+  String get cameraScan => 'مسح';
+
+  @override
+  String get cameraHint => 'ضع الورقة في منتصف الإطار للحصول على تعرّف دقيق';
+
+  @override
+  String get cameraIdentifierLabel => 'مُعرّف الأوراق';
+
+  @override
+  String get photoGuideBadge => 'نصائح التعرّف';
+
+  @override
+  String get photoGuideTitle => 'كيف تصوّر مثل عالم نبات؟';
+
+  @override
+  String get photoGuideIntro =>
+      'للحصول على أدق نتائج التعرّف، التقط صورًا واضحة ومركّزة لأجزاء مختلفة من الشجرة.';
+
+  @override
+  String get photoGuideStep1 => 'صوّر الورقة';
+
+  @override
+  String get photoGuideStep1Body =>
+      'ضع الورقة على سطح موحّد أو امسكها باتجاه الشمس. تأكد من ظهور الحواف والعروق كاملة.';
+
+  @override
+  String get photoGuideBarkTitle => 'لحاء الشجرة';
+
+  @override
+  String get photoGuideBarkBody =>
+      'صوّر الجذع على مستوى العين. ملمس اللحاء علامة تعرّف حاسمة.';
+
+  @override
+  String get photoGuideLighting => 'ضوء طبيعي';
+
+  @override
+  String get photoGuideLightingBody => 'تجنّب الفلاش؛ يُفضّل ضوء الشمس.';
+
+  @override
+  String get photoGuideFocus => 'تركيز حاد';
+
+  @override
+  String get photoGuideFocusBody => 'انقر على الشاشة لتركيز العدسة.';
+
+  @override
+  String get photoGuideAvoidTitle => 'ما الذي يجب تجنّبه؟';
+
+  @override
+  String get photoGuideBlur => 'صور ضبابية';
+
+  @override
+  String get photoGuideBlurBody =>
+      'تواجه الخوارزمية صعوبة مع التفاصيل غير الواضحة.';
+
+  @override
+  String get photoGuideDistance => 'بعيد جدًا';
+
+  @override
+  String get photoGuideDistanceBody =>
+      'لا تستخدم لقطة بعيدة للشجرة كاملة كصورة رئيسية.';
+
+  @override
+  String get photoGuideCta => 'فهمت، لنبدأ التصوير';
+
+  @override
+  String get collectionTitle => 'مجموعتي';
+
+  @override
+  String get collectionArchive => 'أرشيفي الشخصي';
+
+  @override
+  String get collectionSearchHint => 'ابحث في مجموعة الأشجار...';
+
+  @override
+  String get collectionFilterAll => 'الكل';
+
+  @override
+  String get collectionFilterConifers => 'صنوبريات';
+
+  @override
+  String get collectionFilterDeciduous => 'نفضية';
+
+  @override
+  String get collectionFilterBroadleaf => 'عريضة الأوراق';
+
+  @override
+  String get collectionLoadMore => 'تحميل المزيد من الأشجار';
+
+  @override
+  String collectionIdentifiedAt(String location) {
+    return 'تم التعرّف في: $location';
+  }
+
+  @override
+  String get mapSearchHint => 'ابحث عن أشجار أو مواقع...';
+
+  @override
+  String get mapProtectedTree => 'شجرة محمية';
+
+  @override
+  String mapDistance(String distance) {
+    return 'المسافة: $distance';
+  }
+
+  @override
+  String get mapNavigate => 'التوجّه إلى الشجرة';
+
+  @override
+  String get mapTreesNearby => 'أشجار بالقرب منك';
+
+  @override
+  String get mapTotalMarked => 'إجمالي الأشجار المعلّمة';
+
+  @override
+  String get mapRareSpecies => 'أنواع نادرة';
+
+  @override
+  String get mapViewFullList => 'عرض القائمة كاملة';
+
+  @override
+  String get mapFilterLabel => 'تصفية الخريطة';
+
+  @override
+  String get mapFullDetails => 'التفاصيل الكاملة';
+
+  @override
+  String get speciesSaveCollection => 'احفظ في مجموعتي';
+
+  @override
+  String get speciesMorphology => 'البنية النباتية';
+
+  @override
+  String get speciesDistribution => 'الانتشار والموطن';
+
+  @override
+  String get speciesUsesTitle => 'الاستخدامات والفولكلور';
+
+  @override
+  String get speciesDidYouKnow => 'هل تعلم؟';
+
+  @override
+  String speciesAnatomy(String name) {
+    return 'تشريح $name';
+  }
+
+  @override
+  String get speciesWhereToFind => 'أين يمكنك أن تجد هذه الشجرة؟';
+
+  @override
+  String get speciesViewDistributionMap => 'عرض خريطة الانتشار الوطنية';
+
+  @override
+  String get profileExplorerRank => 'رتبة الباحث';
+
+  @override
+  String get profileFieldResearcher => 'باحث ميداني';
+
+  @override
+  String profileMemberSince(String date) {
+    return 'عضو منذ $date';
+  }
+
+  @override
+  String get profileTreesIdentified => 'أشجار تم التعرّف عليها';
+
+  @override
+  String get profileBadgesEarned => 'أوسمة مكتسبة';
+
+  @override
+  String get profileBadgesTitle => 'الأوسمة والإنجازات';
+
+  @override
+  String get profileSettingsTitle => 'الإعدادات والحساب';
+
+  @override
+  String get profileAccount => 'تفاصيل الحساب';
+
+  @override
+  String get profileNotifications => 'تنبيهات ميدانية';
+
+  @override
+  String get profileFieldJournals => 'المذكرات الميدانية';
+
+  @override
+  String get journalTitle => 'المذكرة الميدانية الرقمية';
+
+  @override
+  String get journalObservations => 'ملاحظاتي';
+
+  @override
+  String get journalResearchSection => 'أدوات البحث';
+
+  @override
+  String get journalReadMore => 'اقرأ المزيد';
+
+  @override
+  String get journalWeeklySummary => 'ملخص النشاط الأسبوعي';
+
+  @override
+  String get journalWeeklyBody =>
+      'لقد وثّقت أنواعًا جديدة هذا الأسبوع. واصل دفع البحث النباتي في إسرائيل.';
+
+  @override
+  String get helpCenterTitle => 'مركز المساعدة';
+
+  @override
+  String get helpHeroTitle => 'كيف يمكننا مساعدة بحثك النباتي اليوم؟';
+
+  @override
+  String get helpHeroBody =>
+      'اكتشف أسرار عالم الأشجار من خلال أدلتنا المفصّلة.';
+
+  @override
+  String get helpGuidesTitle => 'أدلة تعرّف سريعة';
+
+  @override
+  String get helpGuideLeaves => 'التعرّف عبر الأوراق';
+
+  @override
+  String get helpGuideBark => 'التعرّف عبر اللحاء';
+
+  @override
+  String get helpGuideAi => 'استخدام الذكاء الاصطناعي';
+
+  @override
+  String get helpFaqTitle => 'الأسئلة الشائعة';
+
+  @override
+  String get helpContactTitle => 'لم تجد إجابتك؟';
+
+  @override
+  String get helpContactBody => 'خبراؤنا في خدمتك. سنرد خلال 24 ساعة.';
+
+  @override
+  String get helpContactCta => 'تواصل مع خبير';
+
+  @override
+  String get helpChatTitle => 'دردشة عالم النبات';
+
+  @override
+  String get helpChatBody => 'مساعدة فورية لعمليات التعرّف الميدانية العاجلة.';
+
+  @override
+  String get helpChatCta => 'بدء الدردشة';
+
+  @override
+  String get statHeight => 'الارتفاع';
+
+  @override
+  String get statWater => 'الري';
+
+  @override
+  String get statFlowering => 'الإزهار';
+
+  @override
+  String get statMaxHeight => 'أقصى ارتفاع';
+
+  @override
+  String get statLifespan => 'العمر';
+
+  @override
+  String get statPhotosynthesis => 'التركيب الضوئي';
+
+  @override
+  String heightMeters(String value) {
+    return '$value م';
+  }
+
+  @override
+  String get homeFeaturedTitle => 'أنواع مميزة';
+
+  @override
+  String searchNoResults(String query) {
+    return 'لا نتائج لـ \"$query\"';
+  }
+
+  @override
+  String get collectionEmpty =>
+      'لا توجد أشجار في مجموعتك بعد. تعرّف على شجرة لبدء أرشيفك.';
+
+  @override
+  String get speciesSavedToCollection => 'تم الحفظ في مجموعتك';
+
+  @override
+  String photoGuideStepLabel(int number) {
+    return 'الخطوة $number';
+  }
+
+  @override
+  String get reportRiskAssessment => 'تقييم المخاطر';
+
+  @override
+  String get hazardLow => 'منخفض';
+
+  @override
+  String get hazardMedium => 'متوسط';
+
+  @override
+  String get hazardHigh => 'مرتفع';
+
+  @override
+  String get badgeForestGuardian => 'حارس الغابة';
+
+  @override
+  String get badgeMountainResearcher => 'باحث الجبال';
+
+  @override
+  String get badgeStreamsExpert => 'خبير الجداول';
+
+  @override
+  String get helpFaq1Question => 'كيف يتعرّف النظام على الأشجار تلقائيًا؟';
+
+  @override
+  String get helpFaq1Answer =>
+      'يستخدم النظام شبكات عصبية عميقة دُرّبت على مئات الآلاف من صور النباتات المتوسطية.';
+
+  @override
+  String get helpFaq2Question => 'هل الخريطة متاحة دون اتصال؟';
+
+  @override
+  String get helpFaq2Answer =>
+      'يمكنك تنزيل خرائط لمناطق محددة للاستخدام الميداني دون تغطية.';
+
+  @override
+  String get helpFaq3Question => 'كيف أضيف شجرة جديدة إلى المجموعة؟';
+
+  @override
+  String get helpFaq3Answer =>
+      'بعد التعرّف الناجح، اضغط على \"احفظ في مجموعتي\".';
 }

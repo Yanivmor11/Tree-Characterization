@@ -1,21 +1,17 @@
 {
   "@@locale": "ar",
   "appTitle": "UrbanTree",
-
   "navHome": "الرئيسية",
   "navMap": "الخريطة",
   "navResearch": "البحث",
   "navProfile": "الملف الشخصي",
-
   "appLanguageTitle": "لغة التطبيق",
   "useDeviceLanguage": "لغة الجهاز",
-
   "homeWelcomeTitle": "رسم خرائط الأشجار الحضرية",
   "homeWelcomeSubtitle": "ساعدوا البحث البيئي بتقارير دقيقة وموقع GPS جيد.",
   "totalTreesMapped": "إجمالي الأشجار المرسومة",
   "startReporting": "بدء التقرير",
   "couldNotLoadStats": "تعذر تحميل الإحصائيات",
-
   "researchDashboardTitle": "لوحة البحث",
   "researchDashboardSubtitle": "أحدث التقارير من قاعدة البيانات",
   "exportCsv": "تصدير CSV",
@@ -24,19 +20,9 @@
   "loadReportsError": "خطأ في تحميل التقارير",
   "retry": "إعادة المحاولة",
   "reportListItemSubtitle": "{date} · {landType} · درجة {health}",
-  "@reportListItemSubtitle": {
-    "placeholders": {
-      "date": {"type": "String"},
-      "landType": {"type": "String"},
-      "health": {"type": "int"}
-    }
-  },
-
   "profileTitle": "الملف الشخصي",
   "profilePlaceholder": "ستظهر هنا إعدادات المستخدم والتفضيلات لاحقًا.",
-
   "splashTagline": "رسم خرائط الأشجار من أجل البحث",
-
   "mapLayersTooltip": "طبقات استخدام الأرض",
   "mapMyLocationTooltip": "موقعي",
   "reportTreeFab": "الإبلاغ عن شجرة",
@@ -47,20 +33,9 @@
   "tintGreen": "أخضر",
   "tintBrown": "بني",
   "layerTintLabel": "اللون: {colorName}",
-  "@layerTintLabel": {
-    "placeholders": {
-      "colorName": {"type": "String"}
-    }
-  },
-
   "locationPermissionRequired": "مطلوب إذن الموقع.",
   "locationServicesOff": "شغّل خدمات الموقع على الجهاز.",
   "couldNotGetLocation": "تعذر الحصول على الموقع: {error}",
-  "@couldNotGetLocation": {
-    "placeholders": {
-      "error": {"type": "String"}
-    }
-  },
   "locationPermissionRequiredToReport": "مطلوب إذن الموقع للإبلاغ.",
   "locationBlockedTitle": "الموقع محظور",
   "locationBlockedBody": "فعّل الموقع لتطبيق UrbanTree في إعدادات النظام للإبلاغ الدقيق.",
@@ -69,22 +44,9 @@
   "enableLocationBrowser": "فعّل الموقع في إعدادات الموقع في المتصفح ثم أعد المحاولة.",
   "reportSubmitted": "تم حفظ التقرير",
   "couldNotStartReport": "تعذر بدء التقرير: {error}",
-  "@couldNotStartReport": {
-    "placeholders": {
-      "error": {"type": "String"}
-    }
-  },
-
   "osmContributors": "مساهمو OpenStreetMap",
-
   "treeReportTitle": "تقرير شجرة",
   "gpsAccuracyWarning": "دقة GPS هي {accuracy} م (الهدف ≤ {target} م). انتقل إلى سماء مفتوحة إن أمكن قبل تصنيف استخدام الأرض.",
-  "@gpsAccuracyWarning": {
-    "placeholders": {
-      "accuracy": {"type": "String"},
-      "target": {"type": "String"}
-    }
-  },
   "landUseSection": "استخدام الأرض",
   "landTypeLabel": "نوع الأرض",
   "landTypeSuggestedFromGis": "مقترح من طبقات GIS. يمكن التغيير عند الحاجة.",
@@ -92,38 +54,20 @@
   "landUsePrivate": "خاص",
   "landUseKkl": "KKL",
   "landUseAbandoned": "مهجور",
-
   "back": "رجوع",
   "next": "التالي",
   "submitReport": "إرسال التقرير",
   "addFlowerStageOrRemove": "أضف مرحلة ووفرة الزهور/الثمار، أو احذف تلك الصور.",
   "couldNotSaveReport": "تعذر حفظ التقرير: {error}",
-  "@couldNotSaveReport": {
-    "placeholders": {
-      "error": {"type": "String"}
-    }
-  },
   "reportValidationWholeTreePhotos": "أضف صورة واحدة على الأقل للشجرة كاملة قبل الإرسال.",
   "reportValidationLeavesPhotos": "أضف صورة واحدة على الأقل للأوراق قبل الإرسال.",
   "reportValidationFlowerIncomplete": "أضف مرحلة ووفرة الزهور/الثمار، أو احذف تلك الصور.",
   "reportValidationGpsAccuracyBlocked": "دقة GPS هي {accuracy} م؛ يتطلب هذا الإصدار ≤ {target} م. انتقل لمكان مفتوح وحاول مجددًا.",
-  "@reportValidationGpsAccuracyBlocked": {
-    "placeholders": {
-      "accuracy": {"type": "String"},
-      "target": {"type": "String"}
-    }
-  },
-
   "step1WholeTree": "الخطوة 1 — الشجرة كاملة",
   "step1WholeTreeDescription": "1–3 صور للتاج والهيكل بالكامل (مطلوب صورة واحدة على الأقل للإرسال).",
   "gallery": "المعرض",
   "camera": "الكاميرا",
   "healthScoreLabel": "درجة الصحة: {score} من 5",
-  "@healthScoreLabel": {
-    "placeholders": {
-      "score": {"type": "int"}
-    }
-  },
   "canopyDensity": "كثافة المظلة",
   "canopySparse": "خفيفة",
   "canopyModerate": "متوسطة",
@@ -135,7 +79,6 @@
   "structuralExposedRoots": "جذور مكشوفة",
   "structuralCavity": "تجويف / تعفن",
   "structuralOther": "أخرى",
-
   "step2FlowerFruit": "الخطوة 2 — زهرة / ثمرة",
   "step2FlowerFruitDescription": "اختياري. إن اختلطت البرعم والزهرة المفتوحة والثمرة، صوّر كلًا على حدة.",
   "phenologicalStage": "المرحلة الفينولوجية",
@@ -146,7 +89,6 @@
   "abundanceLow": "منخفضة",
   "abundanceMedium": "متوسطة",
   "abundanceHigh": "عالية",
-
   "step3Leaves": "الخطوة 3 — الأوراق",
   "step3LeavesDescription": "1–3 صور للأوراق والارتباط بالغصن (مطلوب صورة واحدة على الأقل للإرسال). لاحظ الاصفرار والبقع والثقوب والتلف في الحالة أدناه.",
   "generalCondition": "الحالة العامة",
@@ -157,7 +99,6 @@
   "damageLow": "منخفض",
   "damageModerate": "متوسط",
   "damageHigh": "عالٍ (>50٪)",
-
   "assistantTitle": "مساعد الوصف (ذكاء اصطناعي)",
   "assistantDescription": "صف ما تراه (أعراض الإجهاد، مرحلة الإزهار، إلخ). المساعد يقترح فقط — أكد قبل الحفظ.",
   "assistantNotesLabel": "وصف نصي حر",
@@ -165,92 +106,179 @@
   "assistantSuggest": "احصل على اقتراح",
   "assistantWorking": "جارٍ المعالجة…",
   "assistantError": "خطأ: {message}",
-  "@assistantError": {
-    "placeholders": {
-      "message": {"type": "String"}
-    }
-  },
   "assistantApply": "تطبيق",
   "assistantDismiss": "إغلاق",
   "assistantSuggestedHealth": "اقتراح درجة الصحة: {score}",
-  "@assistantSuggestedHealth": {
-    "placeholders": {
-      "score": {"type": "int"}
-    }
-  },
   "assistantSuggestedStageBud": "مرحلة مقترحة: برعم",
   "assistantSuggestedStageOpen": "مرحلة مقترحة: زهرة مفتوحة",
   "assistantSuggestedStageFruit": "مرحلة مقترحة: ثمرة",
   "assistantNoStructuredSuggestion": "لا يوجد اقتراح منظم. أعد الصياغة أو تابع يدويًا.",
-
   "speciesLabel": "النوع (الاسم الشائع)",
   "speciesHint": "مثال: Olive, Jacaranda",
   "visionSuggestionsTitle": "اقتراحات الصور (AI)",
   "visionSuggestionsSubtitle": "اقتراحات فقط — راجعها ثم أكّدها.",
   "suggestedSpeciesLine": "النوع: {common} ({scientific})",
-  "@suggestedSpeciesLine": {
-    "placeholders": {
-      "common": {"type": "String"},
-      "scientific": {"type": "String"}
-    }
-  },
   "validateCompleteSuggestions": "تحقّق وأكمل الاقتراحات",
-  "phenologyUnusualTitle": "Unusual for this season",
+  "phenologyUnusualTitle": "غير معتاد لهذا الموسم",
   "phenologyUnusualBody": "{message}",
-  "@phenologyUnusualBody": {
-    "placeholders": {
-      "message": {"type": "String"}
-    }
-  },
-  "phenologyImSure": "I'm sure",
-  "phenologyGoBack": "Review",
-  "treeInsightsTitle": "Tree insights",
-  "treeInsightsClose": "Done",
-  "pointsPreview": "Estimated points: {points}",
-  "@pointsPreview": {
-    "placeholders": {
-      "points": {"type": "int"}
-    }
-  },
-  "nearbyMappedTreesWarning": "{count} mapped trees within ~{meters} m — avoid duplicate entries.",
-  "@nearbyMappedTreesWarning": {
-    "placeholders": {
-      "count": {"type": "int"},
-      "meters": {"type": "int"}
-    }
-  },
-  "leaderboardTitle": "Top guardians",
-  "leaderboardNational": "National",
-  "leaderboardMyCity": "My city",
-  "leaderboardEmpty": "No leaderboard entries yet",
-  "leaderboardCityEmpty": "No entries for your city yet",
-  "yourCityMissing": "Your city is set after your first geocoded report.",
-  "pestNearbyBanner": "{pest} reported nearby (~{meters} m)",
-  "@pestNearbyBanner": {
-    "placeholders": {
-      "pest": {"type": "String"},
-      "meters": {"type": "int"}
-    }
-  },
-  "mapGemRare": "Rare species",
-  "mapGemAbandoned": "Abandoned · needs care",
-  "researchQualityTab": "Quality flags",
-  "qualityFlagsEmpty": "No open quality flags",
+  "phenologyImSure": "أنا متأكد",
+  "phenologyGoBack": "مراجعة",
+  "treeInsightsTitle": "رؤى عن الشجرة",
+  "treeInsightsClose": "تم",
+  "pointsPreview": "النقاط المقدرة: {points}",
+  "nearbyMappedTreesWarning": "{count} أشجار مرسومة ضمن ~{meters} م — تجنّب الإدخالات المكررة.",
+  "leaderboardTitle": "أبرز الحُرّاس",
+  "leaderboardNational": "وطني",
+  "leaderboardMyCity": "مدينتي",
+  "leaderboardEmpty": "لا توجد إدخالات في لوحة الصدارة بعد",
+  "leaderboardCityEmpty": "لا توجد إدخالات لمدينتك بعد",
+  "yourCityMissing": "يتم تعيين مدينتك بعد أول تقرير محدد جغرافيًا.",
+  "pestNearbyBanner": "تم الإبلاغ عن {pest} في الجوار (~{meters} م)",
+  "mapGemRare": "نوع نادر",
+  "mapGemAbandoned": "مهجور · يحتاج إلى عناية",
+  "researchQualityTab": "علامات الجودة",
+  "qualityFlagsEmpty": "لا توجد علامات جودة مفتوحة",
   "qualityFlagSubtitle": "{reason} · {cluster}",
-  "@qualityFlagSubtitle": {
-    "placeholders": {
-      "reason": {"type": "String"},
-      "cluster": {"type": "String"}
-    }
-  },
-  "openLeaderboard": "Leaderboard",
-  "cameraNearbyTitle": "Nearby mapped trees",
-  "cameraNearbyBody": "{count} reports within {meters} m of this spot.",
-  "@cameraNearbyBody": {
-    "placeholders": {
-      "count": {"type": "int"},
-      "meters": {"type": "int"}
-    }
-  },
-  "continueLabel": "Continue"
+  "openLeaderboard": "أبرز الحُرّاس",
+  "cameraNearbyTitle": "أشجار مرسومة قريبة",
+  "cameraNearbyBody": "{count} تقارير ضمن {meters} م من هذا الموقع.",
+  "continueLabel": "متابعة",
+  "appBrandTitle": "دراسة نباتية",
+  "appBrandSubtitle": "مذكرتك الميدانية الرقمية",
+  "navIdentify": "تعرّف",
+  "navCollection": "المجموعة",
+  "navJournal": "المذكرة",
+  "navHelp": "مساعدة",
+  "drawerTitle": "دراسة نباتية",
+  "drawerSubtitle": "مذكرتك الميدانية الرقمية",
+  "defaultUserName": "باحث ميداني",
+  "userRoleBotanist": "عالم نبات معتمد",
+  "signOut": "تسجيل الخروج",
+  "homeGreeting": "أهلاً",
+  "homeHello": "مرحبًا، {name}",
+  "homeSearchHint": "ابحث عن أشجار أو أنواع أو صفات...",
+  "homeIdentifyTitle": "تعرّف فوري على الأشجار",
+  "homeIdentifyBody": "صوّر ورقة أو لحاءً أو ثمرة واكتشف طبيعتك المحلية.",
+  "homeIdentifyCta": "ابدأ التعرّف الآن",
+  "homeRecentTitle": "عمليات التعرّف الأخيرة",
+  "homeViewAll": "عرض الكل",
+  "homeNearbyTitle": "اكتشف أشجارًا بالقرب منك",
+  "homeNearbyDistance": "{distance} منك",
+  "identifyHubTitle": "تعرّف نباتي بالذكاء الاصطناعي",
+  "identifyHubBody": "صوّر ورقة أو لحاءً أو ثمرة للتعرّف الفوري على نوع الشجرة.",
+  "identifyStartCamera": "ابدأ تعرّفًا جديدًا",
+  "identifyFromGallery": "اختر من المعرض",
+  "identifyPhotoGuide": "دليل التصوير",
+  "identifyGalleryTitle": "معرض التعرّف",
+  "identifyGalleryHeading": "صوري",
+  "identifyGalleryBody": "اختر صورة من مجموعتك لبدء التعرّف بالذكاء الاصطناعي.",
+  "identifySelected": "تعرّف على الصور المحددة ({count})",
+  "identifyAddPhoto": "إضافة صورة",
+  "cameraLeafMode": "ورقة",
+  "cameraBarkMode": "لحاء",
+  "cameraFruitMode": "ثمرة",
+  "cameraGallery": "المعرض",
+  "cameraHelp": "مساعدة",
+  "cameraScan": "مسح",
+  "cameraHint": "ضع الورقة في منتصف الإطار للحصول على تعرّف دقيق",
+  "cameraIdentifierLabel": "مُعرّف الأوراق",
+  "photoGuideBadge": "نصائح التعرّف",
+  "photoGuideTitle": "كيف تصوّر مثل عالم نبات؟",
+  "photoGuideIntro": "للحصول على أدق نتائج التعرّف، التقط صورًا واضحة ومركّزة لأجزاء مختلفة من الشجرة.",
+  "photoGuideStep1": "صوّر الورقة",
+  "photoGuideStep1Body": "ضع الورقة على سطح موحّد أو امسكها باتجاه الشمس. تأكد من ظهور الحواف والعروق كاملة.",
+  "photoGuideBarkTitle": "لحاء الشجرة",
+  "photoGuideBarkBody": "صوّر الجذع على مستوى العين. ملمس اللحاء علامة تعرّف حاسمة.",
+  "photoGuideLighting": "ضوء طبيعي",
+  "photoGuideLightingBody": "تجنّب الفلاش؛ يُفضّل ضوء الشمس.",
+  "photoGuideFocus": "تركيز حاد",
+  "photoGuideFocusBody": "انقر على الشاشة لتركيز العدسة.",
+  "photoGuideAvoidTitle": "ما الذي يجب تجنّبه؟",
+  "photoGuideBlur": "صور ضبابية",
+  "photoGuideBlurBody": "تواجه الخوارزمية صعوبة مع التفاصيل غير الواضحة.",
+  "photoGuideDistance": "بعيد جدًا",
+  "photoGuideDistanceBody": "لا تستخدم لقطة بعيدة للشجرة كاملة كصورة رئيسية.",
+  "photoGuideCta": "فهمت، لنبدأ التصوير",
+  "collectionTitle": "مجموعتي",
+  "collectionArchive": "أرشيفي الشخصي",
+  "collectionSearchHint": "ابحث في مجموعة الأشجار...",
+  "collectionFilterAll": "الكل",
+  "collectionFilterConifers": "صنوبريات",
+  "collectionFilterDeciduous": "نفضية",
+  "collectionFilterBroadleaf": "عريضة الأوراق",
+  "collectionLoadMore": "تحميل المزيد من الأشجار",
+  "collectionIdentifiedAt": "تم التعرّف في: {location}",
+  "mapSearchHint": "ابحث عن أشجار أو مواقع...",
+  "mapProtectedTree": "شجرة محمية",
+  "mapDistance": "المسافة: {distance}",
+  "mapNavigate": "التوجّه إلى الشجرة",
+  "mapTreesNearby": "أشجار بالقرب منك",
+  "mapTotalMarked": "إجمالي الأشجار المعلّمة",
+  "mapRareSpecies": "أنواع نادرة",
+  "mapViewFullList": "عرض القائمة كاملة",
+  "mapFilterLabel": "تصفية الخريطة",
+  "mapFullDetails": "التفاصيل الكاملة",
+  "speciesSaveCollection": "احفظ في مجموعتي",
+  "speciesMorphology": "البنية النباتية",
+  "speciesDistribution": "الانتشار والموطن",
+  "speciesUsesTitle": "الاستخدامات والفولكلور",
+  "speciesDidYouKnow": "هل تعلم؟",
+  "speciesAnatomy": "تشريح {name}",
+  "speciesWhereToFind": "أين يمكنك أن تجد هذه الشجرة؟",
+  "speciesViewDistributionMap": "عرض خريطة الانتشار الوطنية",
+  "profileExplorerRank": "رتبة الباحث",
+  "profileFieldResearcher": "باحث ميداني",
+  "profileMemberSince": "عضو منذ {date}",
+  "profileTreesIdentified": "أشجار تم التعرّف عليها",
+  "profileBadgesEarned": "أوسمة مكتسبة",
+  "profileBadgesTitle": "الأوسمة والإنجازات",
+  "profileSettingsTitle": "الإعدادات والحساب",
+  "profileAccount": "تفاصيل الحساب",
+  "profileNotifications": "تنبيهات ميدانية",
+  "profileFieldJournals": "المذكرات الميدانية",
+  "journalTitle": "المذكرة الميدانية الرقمية",
+  "journalObservations": "ملاحظاتي",
+  "journalResearchSection": "أدوات البحث",
+  "journalReadMore": "اقرأ المزيد",
+  "journalWeeklySummary": "ملخص النشاط الأسبوعي",
+  "journalWeeklyBody": "لقد وثّقت أنواعًا جديدة هذا الأسبوع. واصل دفع البحث النباتي في إسرائيل.",
+  "helpCenterTitle": "مركز المساعدة",
+  "helpHeroTitle": "كيف يمكننا مساعدة بحثك النباتي اليوم؟",
+  "helpHeroBody": "اكتشف أسرار عالم الأشجار من خلال أدلتنا المفصّلة.",
+  "helpGuidesTitle": "أدلة تعرّف سريعة",
+  "helpGuideLeaves": "التعرّف عبر الأوراق",
+  "helpGuideBark": "التعرّف عبر اللحاء",
+  "helpGuideAi": "استخدام الذكاء الاصطناعي",
+  "helpFaqTitle": "الأسئلة الشائعة",
+  "helpContactTitle": "لم تجد إجابتك؟",
+  "helpContactBody": "خبراؤنا في خدمتك. سنرد خلال 24 ساعة.",
+  "helpContactCta": "تواصل مع خبير",
+  "helpChatTitle": "دردشة عالم النبات",
+  "helpChatBody": "مساعدة فورية لعمليات التعرّف الميدانية العاجلة.",
+  "helpChatCta": "بدء الدردشة",
+  "statHeight": "الارتفاع",
+  "statWater": "الري",
+  "statFlowering": "الإزهار",
+  "statMaxHeight": "أقصى ارتفاع",
+  "statLifespan": "العمر",
+  "statPhotosynthesis": "التركيب الضوئي",
+  "heightMeters": "{value} م",
+  "homeFeaturedTitle": "أنواع مميزة",
+  "searchNoResults": "لا نتائج لـ \"{query}\"",
+  "collectionEmpty": "لا توجد أشجار في مجموعتك بعد. تعرّف على شجرة لبدء أرشيفك.",
+  "speciesSavedToCollection": "تم الحفظ في مجموعتك",
+  "photoGuideStepLabel": "الخطوة {number}",
+  "reportRiskAssessment": "تقييم المخاطر",
+  "hazardLow": "منخفض",
+  "hazardMedium": "متوسط",
+  "hazardHigh": "مرتفع",
+  "badgeForestGuardian": "حارس الغابة",
+  "badgeMountainResearcher": "باحث الجبال",
+  "badgeStreamsExpert": "خبير الجداول",
+  "helpFaq1Question": "كيف يتعرّف النظام على الأشجار تلقائيًا؟",
+  "helpFaq1Answer": "يستخدم النظام شبكات عصبية عميقة دُرّبت على مئات الآلاف من صور النباتات المتوسطية.",
+  "helpFaq2Question": "هل الخريطة متاحة دون اتصال؟",
+  "helpFaq2Answer": "يمكنك تنزيل خرائط لمناطق محددة للاستخدام الميداني دون تغطية.",
+  "helpFaq3Question": "كيف أضيف شجرة جديدة إلى المجموعة؟",
+  "helpFaq3Answer": "بعد التعرّف الناجح، اضغط على \"احفظ في مجموعتي\"."
 }

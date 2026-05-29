@@ -1,0 +1,329 @@
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
+
+import '../theme/app_colors.dart';
+
+class GlassContainer extends StatelessWidget {
+  const GlassContainer({
+    super.key,
+    required this.child,
+    this.padding,
+    this.margin,
+    this.borderRadius,
+    this.border,
+  });
+
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? margin;
+  final BorderRadius? borderRadius;
+  final BoxBorder? border;
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = borderRadius ?? BorderRadius.circular(AppRadii.lg);
+    return Container(
+      margin: margin,
+      decoration: BoxDecoration(
+        borderRadius: radius,
+        border: border ??
+            Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.3)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.08),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+        child: Container(
+          padding: padding,
+          decoration: BoxDecoration(
+            borderRadius: radius,
+            color: AppColors.surfaceContainerLowest.withValues(alpha: 0.9),
+          ),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
+class GradientButton extends StatelessWidget {
+  const GradientButton({
+    super.key,
+    required this.label,
+    this.icon,
+    this.onPressed,
+    this.expanded = true,
+  });
+
+  final String label;
+  final IconData? icon;
+  final VoidCallback? onPressed;
+  final bool expanded;
+
+  @override
+  Widget build(BuildContext context) {
+    final button = Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: AppRadii.button,
+        child: Opacity(
+          opacity: onPressed == null ? 0.5 : 1,
+          child: Ink(
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: AppRadii.button,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: 0.2),
+                  blurRadius: 16,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              child: Row(
+                mainAxisSize: expanded ? MainAxisSize.max : MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (icon != null) ...[
+                    Icon(icon, color: AppColors.onPrimary, size: 22),
+                    const SizedBox(width: 8),
+                  ],
+                  Text(
+                    label,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: AppColors.onPrimary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    return expanded ? SizedBox(width: double.infinity, child: button) : button;
+  }
+}
+
+class SpeciesBadge extends StatelessWidget {
+  const SpeciesBadge({
+    super.key,
+    required this.label,
+    this.tint = SpeciesBadgeTint.tertiary,
+  });
+
+  final String label;
+  final SpeciesBadgeTint tint;
+
+  @override
+  Widget build(BuildContext context) {
+    final (bg, fg) = switch (tint) {
+      SpeciesBadgeTint.tertiary => (
+          AppColors.tertiaryContainer.withValues(alpha: 0.2),
+          AppColors.tertiary,
+        ),
+      SpeciesBadgeTint.secondary => (
+          AppColors.secondaryContainer,
+          AppColors.onSecondaryContainer,
+        ),
+      SpeciesBadgeTint.primary => (
+          AppColors.primaryContainer.withValues(alpha: 0.15),
+          AppColors.primary,
+        ),
+      SpeciesBadgeTint.neutral => (
+          AppColors.surfaceContainerHigh,
+          AppColors.onSurfaceVariant,
+        ),
+    };
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: fg,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.8,
+            ),
+      ),
+    );
+  }
+}
+
+enum SpeciesBadgeTint { tertiary, secondary, primary, neutral }
+
+class BentoCard extends StatelessWidget {
+  const BentoCard({
+    super.key,
+    required this.child,
+    this.padding = const EdgeInsets.all(24),
+    this.backgroundColor,
+    this.leafCorner = false,
+    this.onTap,
+  });
+
+  final Widget child;
+  final EdgeInsetsGeometry padding;
+  final Color? backgroundColor;
+  final bool leafCorner;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = leafCorner ? AppRadii.leafCorner() : AppRadii.card;
+    return Material(
+      color: backgroundColor ?? AppColors.surfaceContainerLowest,
+      borderRadius: radius,
+      elevation: 0,
+      shadowColor: AppColors.primary.withValues(alpha: 0.04),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: radius,
+        child: Ink(
+          decoration: BoxDecoration(
+            borderRadius: radius,
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.04),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Padding(padding: padding, child: child),
+        ),
+      ),
+    );
+  }
+}
+
+class BotanicalGlassHeader extends StatelessWidget implements PreferredSizeWidget {
+  const BotanicalGlassHeader({
+    super.key,
+    this.leading,
+    this.title,
+    this.actions = const [],
+    this.centerTitle = false,
+  });
+
+  final Widget? leading;
+  final Widget? title;
+  final List<Widget> actions;
+  final bool centerTitle;
+
+  @override
+  Size get preferredSize => const Size.fromHeight(72);
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.background.withValues(alpha: 0.8),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.08),
+                blurRadius: 24,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              child: Row(
+                children: [
+                  ?leading,
+                  if (title != null)
+                    Expanded(
+                      child: centerTitle
+                          ? Center(child: title)
+                          : title!,
+                    )
+                  else
+                    const Spacer(),
+                  ...actions,
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class BotanicalAppBar extends StatelessWidget {
+  const BotanicalAppBar({
+    super.key,
+    required this.title,
+    this.onMenuTap,
+    this.leading,
+    this.avatarUrl,
+    this.showMenu = true,
+  });
+
+  final String title;
+  final VoidCallback? onMenuTap;
+  final Widget? leading;
+  final String? avatarUrl;
+  final bool showMenu;
+
+  @override
+  Widget build(BuildContext context) {
+    return BotanicalGlassHeader(
+      leading: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (leading != null)
+            leading!
+          else if (showMenu)
+            IconButton(
+              onPressed: onMenuTap,
+              icon: const Icon(Icons.menu_rounded, color: AppColors.primary),
+              style: IconButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                hoverColor: AppColors.surfaceContainer,
+              ),
+            ),
+          const SizedBox(width: 8),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w800,
+                ),
+          ),
+        ],
+      ),
+      actions: [
+        CircleAvatar(
+          radius: 20,
+          backgroundColor: AppColors.surfaceContainer,
+          backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl!) : null,
+          child: avatarUrl == null
+              ? const Icon(Icons.person, color: AppColors.primary, size: 20)
+              : null,
+        ),
+      ],
+    );
+  }
+}
