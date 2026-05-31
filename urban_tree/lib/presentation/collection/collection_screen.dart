@@ -230,6 +230,7 @@ class _ReportCollectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final thumb = row.wholeTreeImageUrls.isNotEmpty ? row.wholeTreeImageUrls.first : null;
+    final title = row.species ?? row.speciesScientific ?? '—';
     return BentoCard(
       leafCorner: true,
       padding: EdgeInsets.zero,
@@ -238,21 +239,15 @@ class _ReportCollectionCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
-            child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-              child: thumb == null
-                  ? Container(
-                      color: AppColors.surfaceContainer,
-                      child: const Center(child: Icon(Icons.park, size: 48)),
-                    )
-                  : Image.network(
-                      thumb,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => Container(
-                        color: AppColors.surfaceContainer,
-                        child: const Center(child: Icon(Icons.park, size: 48)),
-                      ),
-                    ),
+            child: BotanicalNetworkImage(
+              url: thumb,
+              fit: BoxFit.cover,
+              fallbackIcon: Icons.park_rounded,
+              semanticLabel: thumb != null
+                  ? AppLocalizations.of(context).imageOf(title)
+                  : null,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(16)),
             ),
           ),
           Padding(

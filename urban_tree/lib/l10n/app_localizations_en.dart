@@ -939,4 +939,24 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get helpFaq3Answer =>
       'After a successful identification, tap \"Save to my collection\".';
+
+  @override
+  String get a11yOpenMenu => 'Open navigation menu';
+
+  @override
+  String get a11yUserProfile => 'User profile';
+
+  @override
+  String imageOf(String name) {
+    return 'Photo of $name';
+  }
+
+  @override
+  String get imageUnavailable => 'Image unavailable';
+
+  @override
+  String get reportPhotoLabel => 'Reported tree photo';
+
+  @override
+  String get distributionMapLabel => 'Distribution map';
 }

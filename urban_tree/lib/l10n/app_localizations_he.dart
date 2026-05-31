@@ -931,4 +931,24 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get helpFaq3Answer => 'לאחר זיהוי מוצלח, לחץ על \"שמור לאוסף\".';
+
+  @override
+  String get a11yOpenMenu => 'פתיחת תפריט הניווט';
+
+  @override
+  String get a11yUserProfile => 'פרופיל המשתמש';
+
+  @override
+  String imageOf(String name) {
+    return 'תמונה של $name';
+  }
+
+  @override
+  String get imageUnavailable => 'התמונה אינה זמינה';
+
+  @override
+  String get reportPhotoLabel => 'תמונת העץ שדווח';
+
+  @override
+  String get distributionMapLabel => 'מפת תפוצה';
 }

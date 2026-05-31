@@ -457,5 +457,17 @@
   "helpFaq2Question": "Is the map available offline?",
   "helpFaq2Answer": "You can download maps of specific areas for field use without reception.",
   "helpFaq3Question": "How do I add a new tree to the collection?",
-  "helpFaq3Answer": "After a successful identification, tap \"Save to my collection\"."
+  "helpFaq3Answer": "After a successful identification, tap \"Save to my collection\".",
+
+  "a11yOpenMenu": "Open navigation menu",
+  "a11yUserProfile": "User profile",
+  "imageOf": "Photo of {name}",
+  "@imageOf": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "imageUnavailable": "Image unavailable",
+  "reportPhotoLabel": "Reported tree photo",
+  "distributionMapLabel": "Distribution map"
 }

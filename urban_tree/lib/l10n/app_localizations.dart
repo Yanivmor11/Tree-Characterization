@@ -1787,6 +1787,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'After a successful identification, tap \"Save to my collection\".'**
   String get helpFaq3Answer;
+
+  /// No description provided for @a11yOpenMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Open navigation menu'**
+  String get a11yOpenMenu;
+
+  /// No description provided for @a11yUserProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'User profile'**
+  String get a11yUserProfile;
+
+  /// No description provided for @imageOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo of {name}'**
+  String imageOf(String name);
+
+  /// No description provided for @imageUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Image unavailable'**
+  String get imageUnavailable;
+
+  /// No description provided for @reportPhotoLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reported tree photo'**
+  String get reportPhotoLabel;
+
+  /// No description provided for @distributionMapLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Distribution map'**
+  String get distributionMapLabel;
 }
 
 class _AppLocalizationsDelegate

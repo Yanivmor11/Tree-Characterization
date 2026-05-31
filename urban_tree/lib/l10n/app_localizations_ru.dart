@@ -945,4 +945,24 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get helpFaq3Answer =>
       'После успешного определения нажмите «Сохранить в коллекцию».';
+
+  @override
+  String get a11yOpenMenu => 'Открыть меню навигации';
+
+  @override
+  String get a11yUserProfile => 'Профиль пользователя';
+
+  @override
+  String imageOf(String name) {
+    return 'Фото: $name';
+  }
+
+  @override
+  String get imageUnavailable => 'Изображение недоступно';
+
+  @override
+  String get reportPhotoLabel => 'Фото дерева из отчёта';
+
+  @override
+  String get distributionMapLabel => 'Карта распространения';
 }

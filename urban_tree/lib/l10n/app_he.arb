@@ -447,5 +447,12 @@
   "helpFaq2Question": "האם המפה זמינה במצב לא מקוון?",
   "helpFaq2Answer": "ניתן להוריד מפות של אזורים ספציפיים לשימוש בשטח ללא קליטה.",
   "helpFaq3Question": "איך מוסיפים עץ חדש לאוסף?",
-  "helpFaq3Answer": "לאחר זיהוי מוצלח, לחץ על \"שמור לאוסף\"."
+  "helpFaq3Answer": "לאחר זיהוי מוצלח, לחץ על \"שמור לאוסף\".",
+
+  "a11yOpenMenu": "פתיחת תפריט הניווט",
+  "a11yUserProfile": "פרופיל המשתמש",
+  "imageOf": "תמונה של {name}",
+  "imageUnavailable": "התמונה אינה זמינה",
+  "reportPhotoLabel": "תמונת העץ שדווח",
+  "distributionMapLabel": "מפת תפוצה"
 }

@@ -933,4 +933,24 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get helpFaq3Answer =>
       'بعد التعرّف الناجح، اضغط على \"احفظ في مجموعتي\".';
+
+  @override
+  String get a11yOpenMenu => 'فتح قائمة التنقل';
+
+  @override
+  String get a11yUserProfile => 'الملف الشخصي للمستخدم';
+
+  @override
+  String imageOf(String name) {
+    return 'صورة $name';
+  }
+
+  @override
+  String get imageUnavailable => 'الصورة غير متاحة';
+
+  @override
+  String get reportPhotoLabel => 'صورة الشجرة المُبلّغ عنها';
+
+  @override
+  String get distributionMapLabel => 'خريطة الانتشار';
 }

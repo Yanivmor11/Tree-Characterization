@@ -49,16 +49,17 @@ class _SpeciesDetailScreenState extends State<SpeciesDetailScreen> {
             backgroundColor: AppColors.background.withValues(alpha: 0.9),
             leading: IconButton(
               onPressed: () => Navigator.of(context).pop(),
+              tooltip: l10n.back,
               icon: const Icon(Icons.arrow_forward, color: AppColors.primary),
             ),
             flexibleSpace: FlexibleSpaceBar(
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.network(
-                    species.heroImageUrl,
+                  BotanicalNetworkImage(
+                    url: species.heroImageUrl,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) => Container(color: AppColors.surfaceContainer),
+                    semanticLabel: l10n.imageOf(species.hebrewName),
                   ),
                   Container(
                     decoration: BoxDecoration(
@@ -168,14 +169,14 @@ class _SpeciesDetailScreenState extends State<SpeciesDetailScreen> {
                       .toList(),
                 ),
                 const SizedBox(height: 16),
-                ClipRRect(
+                BotanicalNetworkImage(
+                  url: species.distribution.mapImageUrl,
+                  height: 200,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  fallbackIcon: Icons.map_rounded,
+                  semanticLabel: l10n.distributionMapLabel,
                   borderRadius: BorderRadius.circular(24),
-                  child: Image.network(
-                    species.distribution.mapImageUrl,
-                    height: 200,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
                 ),
                 const SizedBox(height: 32),
                 BentoCard(
@@ -333,7 +334,14 @@ class _AnatomyCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Image.network(card.imageUrl, height: 160, fit: BoxFit.cover),
+          BotanicalNetworkImage(
+            url: card.imageUrl,
+            height: 160,
+            fit: BoxFit.cover,
+            semanticLabel: AppLocalizations.of(context).imageOf(card.title),
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(16)),
+          ),
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(

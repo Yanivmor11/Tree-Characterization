@@ -2,7 +2,107 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../theme/app_colors.dart';
+
+/// Network image with a botanical loading shimmer, a graceful error fallback,
+/// and an accessibility label. Use everywhere remote imagery is shown so that
+/// broken or slow images never surface a raw "broken image" glyph.
+class BotanicalNetworkImage extends StatelessWidget {
+  const BotanicalNetworkImage({
+    super.key,
+    required this.url,
+    this.width,
+    this.height,
+    this.fit = BoxFit.cover,
+    this.semanticLabel,
+    this.fallbackIcon = Icons.eco_rounded,
+    this.borderRadius,
+  });
+
+  final String? url;
+  final double? width;
+  final double? height;
+  final BoxFit fit;
+  final String? semanticLabel;
+  final IconData fallbackIcon;
+  final BorderRadius? borderRadius;
+
+  @override
+  Widget build(BuildContext context) {
+    final source = url;
+    final hasSource = source != null && source.isNotEmpty;
+
+    Widget content = hasSource
+        ? Image.network(
+            source,
+            width: width,
+            height: height,
+            fit: fit,
+            semanticLabel: semanticLabel,
+            gaplessPlayback: true,
+            loadingBuilder: (context, child, progress) {
+              if (progress == null) return child;
+              return _ImagePlaceholder(
+                width: width,
+                height: height,
+                child: const Center(
+                  child: SizedBox(
+                    width: 28,
+                    height: 28,
+                    child: CircularProgressIndicator(strokeWidth: 2.5),
+                  ),
+                ),
+              );
+            },
+            errorBuilder: (_, _, _) => _fallback(context),
+          )
+        : _fallback(context);
+
+    if (borderRadius != null) {
+      content = ClipRRect(borderRadius: borderRadius!, child: content);
+    }
+    return content;
+  }
+
+  Widget _fallback(BuildContext context) {
+    final label = semanticLabel ?? AppLocalizations.of(context).imageUnavailable;
+    return _ImagePlaceholder(
+      width: width,
+      height: height,
+      semanticLabel: label,
+      child: Center(
+        child: Icon(fallbackIcon, size: 40, color: AppColors.outlineVariant),
+      ),
+    );
+  }
+}
+
+class _ImagePlaceholder extends StatelessWidget {
+  const _ImagePlaceholder({
+    required this.child,
+    this.width,
+    this.height,
+    this.semanticLabel,
+  });
+
+  final Widget child;
+  final double? width;
+  final double? height;
+  final String? semanticLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final placeholder = Container(
+      width: width,
+      height: height,
+      color: AppColors.surfaceContainer,
+      child: child,
+    );
+    if (semanticLabel == null) return placeholder;
+    return Semantics(label: semanticLabel, image: true, child: placeholder);
+  }
+}
 
 class GlassContainer extends StatelessWidget {
   const GlassContainer({
@@ -289,6 +389,7 @@ class BotanicalAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return BotanicalGlassHeader(
       leading: Row(
         mainAxisSize: MainAxisSize.min,
@@ -298,6 +399,7 @@ class BotanicalAppBar extends StatelessWidget {
           else if (showMenu)
             IconButton(
               onPressed: onMenuTap,
+              tooltip: l10n.a11yOpenMenu,
               icon: const Icon(Icons.menu_rounded, color: AppColors.primary),
               style: IconButton.styleFrom(
                 backgroundColor: Colors.transparent,
@@ -315,13 +417,18 @@ class BotanicalAppBar extends StatelessWidget {
         ],
       ),
       actions: [
-        CircleAvatar(
-          radius: 20,
-          backgroundColor: AppColors.surfaceContainer,
-          backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl!) : null,
-          child: avatarUrl == null
-              ? const Icon(Icons.person, color: AppColors.primary, size: 20)
-              : null,
+        Semantics(
+          label: l10n.a11yUserProfile,
+          button: true,
+          image: avatarUrl != null,
+          child: CircleAvatar(
+            radius: 20,
+            backgroundColor: AppColors.surfaceContainer,
+            backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl!) : null,
+            child: avatarUrl == null
+                ? const Icon(Icons.person, color: AppColors.primary, size: 20)
+                : null,
+          ),
         ),
       ],
     );

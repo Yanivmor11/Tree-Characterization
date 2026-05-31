@@ -191,6 +191,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     return _RecentCard(
                       title: row.species ?? row.speciesScientific ?? '—',
                       subtitle: row.speciesScientific ?? '',
+                      imageUrl: row.wholeTreeImageUrls.isNotEmpty
+                          ? row.wholeTreeImageUrls.first
+                          : null,
+                      healthScore: row.healthScore,
                       onTap: () => _openSpeciesByName(row.speciesScientific),
                     );
                   },
@@ -337,15 +341,20 @@ class _RecentCard extends StatelessWidget {
   const _RecentCard({
     required this.title,
     required this.subtitle,
+    required this.imageUrl,
+    required this.healthScore,
     required this.onTap,
   });
 
   final String title;
   final String subtitle;
+  final String? imageUrl;
+  final int healthScore;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return SizedBox(
       width: 180,
       child: InkWell(
@@ -355,14 +364,22 @@ class _RecentCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceContainer,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: const Center(
-                  child: Icon(Icons.park, size: 48, color: AppColors.primary),
-                ),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  BotanicalNetworkImage(
+                    url: imageUrl,
+                    fit: BoxFit.cover,
+                    fallbackIcon: Icons.park_rounded,
+                    semanticLabel: imageUrl != null ? l10n.imageOf(title) : null,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: _HealthChip(score: healthScore),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 8),
@@ -378,6 +395,54 @@ class _RecentCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppColors.onSurfaceVariant,
+                  ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Small overlay badge that conveys a report's health score (0–5) at a glance.
+class _HealthChip extends StatelessWidget {
+  const _HealthChip({required this.score});
+
+  final int score;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final Color color = score >= 4
+        ? AppColors.primary
+        : score >= 2
+            ? AppColors.secondary
+            : AppColors.error;
+    return Semantics(
+      label: l10n.healthScoreLabel(score),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: AppColors.surfaceContainerLowest.withValues(alpha: 0.92),
+          borderRadius: BorderRadius.circular(999),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: 0.12),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.favorite_rounded, size: 12, color: color),
+            const SizedBox(width: 4),
+            Text(
+              '$score/5',
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: color,
                   ),
             ),
           ],
@@ -409,20 +474,12 @@ class _FeaturedCard extends StatelessWidget {
       leafCorner: true,
       child: Row(
         children: [
-          ClipRRect(
+          BotanicalNetworkImage(
+            url: imageUrl,
+            width: 96,
+            height: 96,
+            semanticLabel: AppLocalizations.of(context).imageOf(title),
             borderRadius: BorderRadius.circular(16),
-            child: Image.network(
-              imageUrl,
-              width: 96,
-              height: 96,
-              fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => Container(
-                width: 96,
-                height: 96,
-                color: AppColors.surfaceContainer,
-                child: const Icon(Icons.eco),
-              ),
-            ),
           ),
           const SizedBox(width: 16),
           Expanded(

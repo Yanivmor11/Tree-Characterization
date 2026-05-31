@@ -207,15 +207,13 @@ class _JournalCard extends StatelessWidget {
               SizedBox(
                 height: 160,
                 width: double.infinity,
-                child: image == null
-                    ? Container(color: AppColors.surfaceContainer)
-                    : Image.network(
-                        image,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, _, _) => Container(
-                          color: AppColors.surfaceContainer,
-                        ),
-                      ),
+                child: BotanicalNetworkImage(
+                  url: image,
+                  fit: BoxFit.cover,
+                  fallbackIcon: Icons.park_rounded,
+                  semanticLabel:
+                      image != null ? l10n.reportPhotoLabel : null,
+                ),
               ),
               Positioned(
                 top: 12,
