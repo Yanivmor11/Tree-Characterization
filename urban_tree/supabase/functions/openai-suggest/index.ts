@@ -1,3 +1,11 @@
+/**
+ * OpenAI vision/text proxy for species and health characterization.
+ *
+ * Web clients MUST use this Edge Function (no client-side OPENAI_API_KEY).
+ * Normalizes multilingual input to species_common_en + species_scientific_latin.
+ *
+ * Env: OPENAI_API_KEY (Supabase secrets). verify_jwt = false in config.toml.
+ */
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 

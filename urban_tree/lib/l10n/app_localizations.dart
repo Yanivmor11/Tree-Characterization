@@ -1482,6 +1482,78 @@ abstract class AppLocalizations {
   /// **'Trees identified'**
   String get profileTreesIdentified;
 
+  /// No description provided for @profileGamificationPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Gamification points'**
+  String get profileGamificationPoints;
+
+  /// No description provided for @profileTrustScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Trust score'**
+  String get profileTrustScore;
+
+  /// No description provided for @profileNoBadgesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No badges earned yet'**
+  String get profileNoBadgesYet;
+
+  /// No description provided for @stressSymptoms.
+  ///
+  /// In en, this message translates to:
+  /// **'Stress symptoms'**
+  String get stressSymptoms;
+
+  /// No description provided for @stressChlorosis.
+  ///
+  /// In en, this message translates to:
+  /// **'Yellowing (chlorosis)'**
+  String get stressChlorosis;
+
+  /// No description provided for @stressNecrosis.
+  ///
+  /// In en, this message translates to:
+  /// **'Brown necrosis'**
+  String get stressNecrosis;
+
+  /// No description provided for @stressWilting.
+  ///
+  /// In en, this message translates to:
+  /// **'Wilting'**
+  String get stressWilting;
+
+  /// No description provided for @stressLeafSpot.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaf spots'**
+  String get stressLeafSpot;
+
+  /// No description provided for @stressDefoliation.
+  ///
+  /// In en, this message translates to:
+  /// **'Defoliation'**
+  String get stressDefoliation;
+
+  /// No description provided for @stressGummosis.
+  ///
+  /// In en, this message translates to:
+  /// **'Gummosis'**
+  String get stressGummosis;
+
+  /// No description provided for @stressPestDamage.
+  ///
+  /// In en, this message translates to:
+  /// **'Pest damage'**
+  String get stressPestDamage;
+
+  /// No description provided for @stressOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other stress'**
+  String get stressOther;
+
   /// No description provided for @profileBadgesEarned.
   ///
   /// In en, this message translates to:

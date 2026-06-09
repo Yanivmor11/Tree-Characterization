@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/app_locale_controller.dart';
 import '../../l10n/app_localizations.dart';
+import '../../services/badge_service.dart';
 import '../../services/profile_service.dart';
 import '../../state/auth_controller.dart';
 import '../theme/app_colors.dart';
@@ -33,22 +34,20 @@ class ProfileScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final auth = context.watch<AuthController>();
-    final profileService = ProfileService();
-    final badges = <({String label, IconData icon})>[
-      (label: l10n.badgeForestGuardian, icon: Icons.eco),
-      (label: l10n.badgeMountainResearcher, icon: Icons.landscape),
-      (label: l10n.badgeStreamsExpert, icon: Icons.water_drop),
-    ];
+    final profileFuture = Future.wait([
+      ProfileService().myProfile(),
+      BadgeService().myBadges(),
+    ]);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.colorScheme.surface,
       body: Column(
         children: [
           BotanicalAppBar(
             title: l10n.appBrandTitle,
             leading: IconButton(
               onPressed: () => Navigator.of(context).pop(),
-              icon: const Icon(Icons.arrow_forward, color: AppColors.primary),
+              icon: Icon(Icons.arrow_forward, color: theme.colorScheme.primary),
             ),
             showMenu: false,
           ),
@@ -56,25 +55,45 @@ class ProfileScreen extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(24, 8, 24, 48),
               children: [
-                FutureBuilder<UserProfileSnapshot?>(
-                  future: profileService.myProfile(),
+                FutureBuilder<List<Object?>>(
+                  future: profileFuture,
                   builder: (context, snapshot) {
-                    final profile = snapshot.data;
+                    final profile = snapshot.data?[0] as UserProfileSnapshot?;
+                    final badges =
+                        snapshot.data?[1] as List<EarnedBadge>? ?? const [];
                     final points = profile?.totalPoints ?? 0;
+                    final trustScore = profile?.trustScore ?? 0;
+                    final avatarUrl = profile?.avatarUrl;
+
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         BentoCard(
                           child: Row(
                             children: [
-                              Container(
-                                width: 96,
-                                height: 96,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(24),
-                                  color: AppColors.surfaceContainer,
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(24),
+                                child: Container(
+                                  width: 96,
+                                  height: 96,
+                                  color: theme.colorScheme.surfaceContainerHighest,
+                                  child: avatarUrl != null && avatarUrl.isNotEmpty
+                                      ? Image.network(
+                                          avatarUrl,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) =>
+                                              Icon(
+                                            Icons.person,
+                                            size: 48,
+                                            color: theme.colorScheme.primary,
+                                          ),
+                                        )
+                                      : Icon(
+                                          Icons.person,
+                                          size: 48,
+                                          color: theme.colorScheme.primary,
+                                        ),
                                 ),
-                                child: const Icon(Icons.person, size: 48),
                               ),
                               const SizedBox(width: 16),
                               Expanded(
@@ -90,7 +109,7 @@ class ProfileScreen extends StatelessWidget {
                                     Text(
                                       l10n.profileFieldResearcher,
                                       style: theme.textTheme.headlineSmall?.copyWith(
-                                        color: AppColors.primary,
+                                        color: theme.colorScheme.primary,
                                         fontWeight: FontWeight.w800,
                                       ),
                                     ),
@@ -115,7 +134,10 @@ class ProfileScreen extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Icon(Icons.local_florist, color: AppColors.primaryFixed),
+                                    const Icon(
+                                      Icons.stars_rounded,
+                                      color: AppColors.primaryFixed,
+                                    ),
                                     Text(
                                       '$points',
                                       style: theme.textTheme.headlineMedium?.copyWith(
@@ -124,7 +146,7 @@ class ProfileScreen extends StatelessWidget {
                                       ),
                                     ),
                                     Text(
-                                      l10n.profileTreesIdentified,
+                                      l10n.profileGamificationPoints,
                                       style: theme.textTheme.labelSmall?.copyWith(
                                         color: Colors.white70,
                                       ),
@@ -140,56 +162,98 @@ class ProfileScreen extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Icon(Icons.verified, color: AppColors.tertiaryContainer),
+                                    const Icon(
+                                      Icons.verified_user,
+                                      color: AppColors.tertiaryContainer,
+                                    ),
                                     Text(
-                                      '${badges.length}',
+                                      trustScore.toStringAsFixed(1),
                                       style: theme.textTheme.headlineMedium?.copyWith(
-                                        color: AppColors.primary,
+                                        color: theme.colorScheme.primary,
                                         fontWeight: FontWeight.w800,
                                       ),
                                     ),
-                                    Text(l10n.profileBadgesEarned),
+                                    Text(l10n.profileTrustScore),
                                   ],
                                 ),
                               ),
                             ),
                           ],
                         ),
+                        const SizedBox(height: 12),
+                        BentoCard(
+                          backgroundColor: AppColors.surfaceContainerHigh,
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.emoji_events_outlined,
+                                color: AppColors.secondary,
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${badges.length}',
+                                      style: theme.textTheme.titleLarge?.copyWith(
+                                        fontWeight: FontWeight.w800,
+                                        color: theme.colorScheme.primary,
+                                      ),
+                                    ),
+                                    Text(l10n.profileBadgesEarned),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              l10n.profileBadgesTitle,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        if (badges.isEmpty)
+                          BentoCard(
+                            child: Text(
+                              l10n.profileNoBadgesYet,
+                              style: theme.textTheme.bodyMedium,
+                            ),
+                          )
+                        else
+                          SizedBox(
+                            height: 140,
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: [
+                                for (final badge in badges)
+                                  _BadgeTile(
+                                    label: badge.displayName,
+                                    icon: badge.icon,
+                                    tooltip: badge.description,
+                                  ),
+                              ],
+                            ),
+                          ),
                       ],
                     );
                   },
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      l10n.profileBadgesTitle,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                    Text(l10n.homeViewAll, style: const TextStyle(color: AppColors.secondary)),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  height: 140,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      for (final badge in badges)
-                        _BadgeTile(label: badge.label, icon: badge.icon),
-                    ],
-                  ),
                 ),
                 const SizedBox(height: 24),
                 Text(
                   l10n.profileSettingsTitle,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: AppColors.primary,
+                    color: theme.colorScheme.primary,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -220,14 +284,14 @@ class ProfileScreen extends StatelessWidget {
                       localeController.locale?.languageCode == locale.languageCode;
                   return ListTile(
                     title: Text(_nativeNames[locale.languageCode] ?? locale.languageCode),
-                    trailing: selected ? const Icon(Icons.check, color: AppColors.primary) : null,
+                    trailing: selected ? Icon(Icons.check, color: theme.colorScheme.primary) : null,
                     onTap: () => localeController.setLocale(locale),
                   );
                 }),
                 ListTile(
                   title: Text(l10n.useDeviceLanguage),
                   trailing: localeController.locale == null
-                      ? const Icon(Icons.check, color: AppColors.primary)
+                      ? Icon(Icons.check, color: theme.colorScheme.primary)
                       : null,
                   onTap: () => localeController.setLocale(null),
                 ),
@@ -241,14 +305,19 @@ class ProfileScreen extends StatelessWidget {
 }
 
 class _BadgeTile extends StatelessWidget {
-  const _BadgeTile({required this.label, required this.icon});
+  const _BadgeTile({
+    required this.label,
+    required this.icon,
+    this.tooltip,
+  });
 
   final String label;
   final IconData icon;
+  final String? tooltip;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final tile = Container(
       width: 128,
       margin: const EdgeInsets.only(left: 12),
       child: BentoCard(
@@ -261,11 +330,22 @@ class _BadgeTile extends StatelessWidget {
               child: Icon(icon, color: AppColors.onTertiaryFixedVariant),
             ),
             const SizedBox(height: 8),
-            Text(label, style: Theme.of(context).textTheme.labelSmall),
+            Text(
+              label,
+              style: Theme.of(context).textTheme.labelSmall,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ],
         ),
       ),
     );
+
+    if (tooltip != null && tooltip!.isNotEmpty) {
+      return Tooltip(message: tooltip!, child: tile);
+    }
+    return tile;
   }
 }
 
@@ -284,18 +364,22 @@ class _SettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Material(
-        color: AppColors.surfaceContainerLow,
+        color: theme.colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(12),
         child: ListTile(
           onTap: onTap,
-          leading: Icon(icon, color: destructive ? AppColors.error : AppColors.primary),
+          leading: Icon(
+            icon,
+            color: destructive ? AppColors.error : theme.colorScheme.primary,
+          ),
           title: Text(
             label,
             style: TextStyle(
-              color: destructive ? AppColors.error : AppColors.onSurface,
+              color: destructive ? AppColors.error : theme.colorScheme.onSurface,
               fontWeight: FontWeight.w500,
             ),
           ),

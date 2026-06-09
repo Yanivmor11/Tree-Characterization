@@ -72,6 +72,17 @@
 		<string>UrbanTree uses the camera to photograph trees for citizen-science reports.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>UrbanTree needs photo library access to attach tree images to your report.</string>
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>io.supabase.flutter</string>
+				</array>
+			</dict>
+		</array>
 		<key>ITSAppUsesNonExemptEncryption</key>
 		<false/>
 		<key>UIStatusBarHidden</key>

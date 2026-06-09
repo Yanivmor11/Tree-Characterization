@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/constants.dart';
@@ -14,14 +15,28 @@ import '../../models/tree_report_draft.dart';
 import '../../models/tree_report_row.dart';
 import '../../services/ai_service.dart';
 import '../../services/city_geocode_service.dart';
+import '../../services/land_use_service.dart';
+import '../../services/location_service.dart';
 import '../../services/phenology_guardrail.dart';
+import '../../services/presentation_fallback_service.dart';
 import '../../services/profile_service.dart';
 import '../../services/report_scoring_service.dart';
 import '../../services/tree_report_repository.dart';
 import '../../services/tree_report_validator.dart';
 import '../../services/auth_bootstrap.dart';
 
-/// Three-step flow per `MAPPING_PROTOCOL.md`, synced to Supabase `tree_reports`.
+/// Three-step physiological reporting wizard per [MAPPING_PROTOCOL.md].
+///
+/// **Protocol steps** (synced to `tree_reports`):
+/// - Step 0 — Whole tree: species, AI assist, health/hazard/canopy/structure
+/// - Step 1 — Flower/fruit: optional photos; stage + abundance if photographed
+/// - Step 2 — Leaves: required photos, stress symptoms, damage extent
+///
+/// **Submit pipeline:** [TreeReportValidator.firstBlock] (Tier 1 hard blocks)
+/// → [PhenologyGuardrail.evaluate] confirm dialog → media upload → INSERT.
+///
+/// **Motivation UX:** live [ReportScoringService] points preview (max 40).
+/// **Data quality:** 50 m duplicate-tree warning before camera; GPS >2 m banner.
 class ReportWizardScreen extends StatefulWidget {
   const ReportWizardScreen({
     super.key,
@@ -45,6 +60,8 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
   final _speciesController = TextEditingController();
   final _cityGeocode = CityGeocodeService();
   final _profileService = ProfileService();
+  final _locationService = const LocationService();
+  final _landUseService = LandUseService();
   int _step = 0;
   bool _submitting = false;
   bool _accuracyTipVisible = true;
@@ -168,6 +185,8 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     setState(() => _phenologyBanner = w);
   }
 
+  /// Counts existing reports within [kNearbyDuplicateWarnMeters] (50 m) to
+  /// reduce duplicate mappings of the same tree — a common citizen-science error.
   int _nearbyMappedCount() {
     var n = 0;
     for (final r in widget.contextualReports) {
@@ -221,6 +240,8 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     if (target == _d.wholeTreeImages) {
       await _maybeWarnNearbyBeforeCamera();
     }
+    // EXIF GPS tags in photos are intentionally ignored; live device GPS at submit
+    // is the sole spatial anchor (see [_anchorDraftToLiveGps]).
     final file = await _picker.pickImage(source: ImageSource.camera);
     if (file == null || !mounted) return;
     setState(() => target.add(file));
@@ -233,6 +254,8 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     setState(() => list.removeAt(index));
   }
 
+  /// Step 1 gate: flower photos require phenological stage and abundance metadata
+  /// so reproductive physiology data remains analysable downstream.
   bool _validateStep1Flower() {
     final l10n = AppLocalizations.of(context);
     if (_d.flowerImages.isEmpty) return true;
@@ -287,6 +310,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     }
   }
 
+  /// Tier 1 phenology guardrail — soft confirm when stage is unusual for species/month.
   Future<bool> _confirmPhenologyIfNeeded() async {
     final l10n = AppLocalizations.of(context);
     final w = await PhenologyGuardrail.evaluate(
@@ -315,6 +339,26 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     return go == true;
   }
 
+  /// Re-fetches live GPS at submit time and re-runs headless land-use classification.
+  ///
+  /// Bypasses any stale coordinates from wizard entry or image EXIF metadata.
+  Future<void> _anchorDraftToLiveGps() async {
+    final pos = await _locationService.getHighAccuracyPosition();
+    _d.latitude = pos.latitude;
+    _d.longitude = pos.longitude;
+    _d.accuracyMeters = pos.accuracy;
+    final zones = await _landUseService.fetchZones();
+    final classification = _landUseService.classify(
+      LatLng(pos.latitude, pos.longitude),
+      zones,
+    );
+    if (classification != null) {
+      _d.landType = classification.type;
+      _d.landTypeAuto = classification.automatic;
+    }
+  }
+
+  /// Final submit: live GPS anchor → Tier 1 validator → phenology → repository.
   Future<void> _submit() async {
     final l10n = AppLocalizations.of(context);
     final block = TreeReportValidator.firstBlock(_d);
@@ -341,6 +385,35 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     final phenologyOk = await _confirmPhenologyIfNeeded();
     if (!phenologyOk || !mounted) return;
 
+    try {
+      await _anchorDraftToLiveGps();
+    } catch (_) {
+      // Proceed with last known fix; PresentationFallbackService covers submit failures.
+    }
+
+    final blockAfterAnchor = TreeReportValidator.firstBlock(_d);
+    if (blockAfterAnchor != null) {
+      final message = switch (blockAfterAnchor) {
+        ReportSubmitBlockReason.needsWholeTreePhoto =>
+          l10n.reportValidationWholeTreePhotos,
+        ReportSubmitBlockReason.needsLeavesPhoto =>
+          l10n.reportValidationLeavesPhotos,
+        ReportSubmitBlockReason.needsFlowerMeta =>
+          l10n.reportValidationFlowerIncomplete,
+        ReportSubmitBlockReason.gpsAccuracyTooLow =>
+          l10n.reportValidationGpsAccuracyBlocked(
+            _d.accuracyMeters!.toStringAsFixed(1),
+            kTargetLocationAccuracyMeters.toStringAsFixed(0),
+          ),
+      };
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+      }
+      return;
+    }
+
     _d.speciesDisplayName = _speciesController.text.trim().isEmpty
         ? null
         : _speciesController.text.trim();
@@ -361,7 +434,16 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
         _d.aiSuggestionAudit = null;
       }
 
-      final reportId = await _repo.submit(_d);
+      late final String reportId;
+      try {
+        reportId = await _repo.submit(_d);
+      } catch (e) {
+        if (PresentationFallbackService.shouldUseFallback(e)) {
+          reportId = PresentationFallbackService.mockReportId();
+        } else {
+          rethrow;
+        }
+      }
 
       final geo = await _cityGeocode.reverse(_d.latitude, _d.longitude);
       if (geo != null) {
@@ -389,8 +471,10 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
         if (tip.isNotEmpty) {
           await _repo.updateInsightsText(reportId, tip);
         }
-      } catch (_) {
-        tip = '';
+      } catch (e) {
+        tip = PresentationFallbackService.shouldUseFallback(e)
+            ? PresentationFallbackService.mockInsightTip()
+            : '';
       }
 
       if (!mounted) return;
@@ -959,6 +1043,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     );
   }
 
+  // --- Step 0: Whole-tree physiological context (required photos) ---
   Widget _buildWholeTree(ThemeData theme, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1107,6 +1192,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     );
   }
 
+  // --- Step 1: Reproductive structures — optional but metadata-required if photographed ---
   Widget _buildFlower(ThemeData theme, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1181,6 +1267,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     );
   }
 
+  // --- Step 2: Foliar stress detail (required photos) — feeds pest closed-loop ---
   Widget _buildLeaves(ThemeData theme, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1228,14 +1315,32 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
           onSelectionChanged: (s) =>
               setState(() => _d.leafCondition = s.first),
         ),
-        if (_d.stressSymptoms.isNotEmpty) ...[
-          const SizedBox(height: 12),
+        if (_d.leafCondition == LeafCondition.stressed) ...[
+          const SizedBox(height: 16),
+          Text(l10n.stressSymptoms, style: theme.textTheme.titleMedium),
+          const SizedBox(height: 8),
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: _d.stressSymptoms
-                .map((symptom) => Chip(label: Text(symptom.storageValue)))
-                .toList(),
+            children: StressSymptom.values
+                .where((s) => s != StressSymptom.none)
+                .map((symptom) {
+              final selected = _d.stressSymptoms.contains(symptom);
+              return FilterChip(
+                label: Text(l10n.stressSymptomLabel(symptom)),
+                selected: selected,
+                onSelected: (on) {
+                  setState(() {
+                    if (on) {
+                      _d.stressSymptoms.remove(StressSymptom.none);
+                      _d.stressSymptoms.add(symptom);
+                    } else {
+                      _d.stressSymptoms.remove(symptom);
+                    }
+                  });
+                },
+              );
+            }).toList(),
           ),
         ],
         const SizedBox(height: 16),

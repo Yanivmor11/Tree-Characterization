@@ -1,4 +1,12 @@
--- Closed-loop hardening: generate pest hotspots from reports and enforce GPS precision.
+-- ============================================================================
+-- Closed-loop feedback — GPS hard gate + pest hotspot auto-creation
+-- ============================================================================
+-- Server ALWAYS rejects accuracy_meters > 2 (cadastral-grade requirement).
+-- pest_damage stress symptom → 500 m hotspot overlay for neighborhood alerts.
+-- Independent of client BLOCK_SUBMIT_IF_LOW_ACCURACY flag.
+--
+-- Depends on: 20260413100000_gamification_platform.sql, stress_symptoms column
+-- ============================================================================
 
 create or replace function public.tree_report_closed_loop_after_insert()
 returns trigger
@@ -9,10 +17,12 @@ as $$
 declare
   source_key text;
 begin
+  -- Hard scientific gate: 2 m max uncertainty for public/private land distinction.
   if new.accuracy_meters is not null and new.accuracy_meters > 2 then
     raise exception 'GPS accuracy %m exceeds required maximum of 2m', new.accuracy_meters;
   end if;
 
+  -- Citizen-reported pest damage seeds a 500 m alert zone for map overlays.
   if new.stress_symptoms @> array['pest_damage']::text[] then
     source_key := 'report:' || new.id::text;
     insert into public.pest_hotspots (

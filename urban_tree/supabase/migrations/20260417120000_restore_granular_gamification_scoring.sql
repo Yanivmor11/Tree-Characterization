@@ -1,59 +1,13 @@
 -- ============================================================================
--- Badge catalog and grant_user_badge() helper
+-- Granular gamification scoring — 10 + 15 + 10 + 5 (max 40 points)
 -- ============================================================================
--- Centralizes badge definitions; temporarily used flat 25-pt scoring (later restored).
--- Depends on: 20260413100000_gamification_platform.sql
+-- Motivates physiological completeness: base whole-tree (10), flower detail (+15),
+-- leaf detail (+10), GIS auto land-match (+5). Badge grants reward milestone behaviors
+-- (first phenology, private land pioneer, city-first bloom, neighborhood watch).
+--
+-- Reverts temporary flat 25-pt scoring from 20260417113000.
+-- Depends on: grant_user_badge() from gamification_badges_hardening migration
 -- ============================================================================
-
-create table if not exists public.badge_definitions (
-  code text primary key,
-  display_name text not null,
-  description text not null,
-  category text not null default 'milestone',
-  active boolean not null default true,
-  created_at timestamptz not null default now()
-);
-
-alter table public.badge_definitions enable row level security;
-
-drop policy if exists "badge_definitions_read_all" on public.badge_definitions;
-create policy "badge_definitions_read_all" on public.badge_definitions
-  for select using (active = true);
-
-insert into public.badge_definitions (code, display_name, description, category)
-values
-  ('first_blossom_reporter', 'First Blossom Reporter', 'Submitted the first phenological report.', 'phenology'),
-  ('private_land_pioneer', 'Private Land Pioneer', 'Submitted a first report that maps private land tree context.', 'land-use'),
-  ('first_bloom_hunter', 'First Bloom Hunter', 'First flowering-stage report for a species in the reporter city.', 'phenology'),
-  ('neighborhood_watch', 'Neighborhood Watch', 'Contributed 5 reports in the same local grid.', 'community')
-on conflict (code) do update
-set display_name = excluded.display_name,
-    description = excluded.description,
-    category = excluded.category,
-    active = true;
-
-create or replace function public.grant_user_badge(target_user_id uuid, badge_code text)
-returns void
-language plpgsql
-security definer
-set search_path = public
-as $$
-begin
-  if target_user_id is null or badge_code is null then
-    return;
-  end if;
-
-  if exists (
-    select 1
-    from public.badge_definitions bd
-    where bd.code = badge_code and bd.active = true
-  ) then
-    insert into public.user_badges (user_id, badge_code)
-    values (target_user_id, badge_code)
-    on conflict (user_id, badge_code) do nothing;
-  end if;
-end;
-$$;
 
 create or replace function public.tree_report_gamification_after_insert()
 returns trigger
@@ -62,8 +16,12 @@ security definer
 set search_path = public
 as $$
 declare
-  full_report_points constant int := 25;
-  total_pts int := full_report_points;
+  -- Point breakdown mirrors client ReportScoringService preview in wizard UI.
+  base_pts int := 10;   -- whole-tree step always present at submit
+  flower_pts int := 0;  -- +15 when reproductive structures photographed
+  leaf_pts int := 0;    -- +10 when foliar detail photographed
+  land_pts int := 0;    -- +5 when GIS auto-classified land tenure
+  total_pts int;
   previous_total int := 0;
   points_delta int := 0;
   profile_city text;
@@ -76,6 +34,20 @@ begin
     return new;
   end if;
 
+  if cardinality(new.flower_image_urls) > 0 then
+    flower_pts := 15;
+  end if;
+
+  if cardinality(new.leaves_image_urls) > 0 then
+    leaf_pts := 10;
+  end if;
+
+  if new.land_type_auto = true then
+    land_pts := 5;
+  end if;
+
+  total_pts := base_pts + flower_pts + leaf_pts + land_pts;
+
   select coalesce(rs.total, 0) into previous_total
   from public.report_scores rs
   where rs.report_id = new.id;
@@ -83,7 +55,12 @@ begin
   insert into public.report_scores (report_id, points_breakdown, total)
   values (
     new.id,
-    jsonb_build_object('full_report', total_pts),
+    jsonb_build_object(
+      'base', base_pts,
+      'flower_fruit', flower_pts,
+      'leaf_detail', leaf_pts,
+      'land_use', land_pts
+    ),
     total_pts
   )
   on conflict (report_id) do update
@@ -150,5 +127,3 @@ begin
   return new;
 end;
 $$;
-
-grant select on public.badge_definitions to anon, authenticated;

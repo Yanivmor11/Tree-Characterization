@@ -1,3 +1,11 @@
+/**
+ * Post-submit actionable tree-care tip generator.
+ *
+ * Accepts structured report context JSON; returns { tip } for resident motivation.
+ * All platforms route through this function (no direct OpenAI on web).
+ *
+ * Env: OPENAI_API_KEY (Supabase secrets).
+ */
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 

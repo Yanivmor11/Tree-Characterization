@@ -45,7 +45,7 @@ From **repository root** (`Tree-Characterization`): `./scripts/build_web_prod.sh
 - [ ] Weekly data-quality job: after Vault secrets in `scripts/schedule_data_quality_weekly.sql`, run that SQL in the Dashboard SQL Editor (header `x-data-quality-secret` must match `DATA_QUALITY_CRON_SECRET`).
 - [ ] Dashboard → Authentication → Providers → **Anonymous**: enable (required for `signInAnonymously`).
 - [ ] Confirm storage bucket `tree-report-media` and policies exist (`supabase/migrations/20260401100000_initial_schema.sql`); set max upload size as needed.
-- [ ] Optional: `select * from public.pest_hotspots where source = 'seed';` (Tel Aviv demo hotspot after gamification migration). GPS ≤ 2 m is enforced in the app only when `BLOCK_SUBMIT_IF_LOW_ACCURACY` is true in `secrets.json` (see above); `accuracy_meters` is still stored for analysis.
+- [ ] Optional: `select * from public.pest_hotspots where source = 'seed';` (Tel Aviv demo hotspot after gamification migration). GPS ≤ 2 m is **always** enforced server-side by `tree_reports_closed_loop_after_insert`; the client additionally blocks when `BLOCK_SUBMIT_IF_LOW_ACCURACY` is true in `secrets.json`.
 
 ## Backend hardening
 

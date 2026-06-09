@@ -1,5 +1,9 @@
--- Comprehensive backfill for environments where gamification migration history
--- was marked applied before all objects were materialized.
+-- ============================================================================
+-- Gamification platform idempotent backfill
+-- ============================================================================
+-- Recreates profiles, scoring tables, RLS if partially applied environments.
+-- Depends on: 20260413100000_gamification_platform.sql
+-- ============================================================================
 
 create table if not exists public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,

@@ -127,9 +127,10 @@ class TreeReportDraft {
     required this.landTypeAuto,
   });
 
-  final double latitude;
-  final double longitude;
-  final double? accuracyMeters;
+  /// Mutable so live GPS at submit can refresh coordinates (image EXIF never used).
+  double latitude;
+  double longitude;
+  double? accuracyMeters;
   LandUseType landType;
   bool landTypeAuto;
 

@@ -774,6 +774,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileTreesIdentified => 'Trees identified';
 
   @override
+  String get profileGamificationPoints => 'Gamification points';
+
+  @override
+  String get profileTrustScore => 'Trust score';
+
+  @override
+  String get profileNoBadgesYet => 'No badges earned yet';
+
+  @override
+  String get stressSymptoms => 'Stress symptoms';
+
+  @override
+  String get stressChlorosis => 'Yellowing (chlorosis)';
+
+  @override
+  String get stressNecrosis => 'Brown necrosis';
+
+  @override
+  String get stressWilting => 'Wilting';
+
+  @override
+  String get stressLeafSpot => 'Leaf spots';
+
+  @override
+  String get stressDefoliation => 'Defoliation';
+
+  @override
+  String get stressGummosis => 'Gummosis';
+
+  @override
+  String get stressPestDamage => 'Pest damage';
+
+  @override
+  String get stressOther => 'Other stress';
+
+  @override
   String get profileBadgesEarned => 'Badges earned';
 
   @override

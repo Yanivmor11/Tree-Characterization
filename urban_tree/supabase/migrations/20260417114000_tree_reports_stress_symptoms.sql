@@ -1,4 +1,9 @@
--- Add structured stress symptoms for AI-assisted prefill and research export.
+-- ============================================================================
+-- stress_symptoms array — foliar stress + closed-loop pest detection
+-- ============================================================================
+-- pest_damage value triggers pest_hotspot auto-creation (500 m radius).
+-- Depends on: 20260413100000_gamification_platform.sql
+-- ============================================================================
 
 alter table public.tree_reports
   add column if not exists stress_symptoms text[] not null default '{}';

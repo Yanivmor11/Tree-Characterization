@@ -4,6 +4,14 @@ import 'package:flutter/services.dart' show rootBundle;
 
 import '../models/tree_report_draft.dart';
 
+/// **Tier 1** algorithmic phenology guardrail — season-window validation.
+///
+/// Citizen reporters may misidentify species or confuse phenological stages.
+/// This guardrail compares the reported stage (bud/open/fruit) against
+/// species-specific flowering and fruiting month windows from
+/// `assets/data/species_phenology.json`. A mismatch triggers a confirm dialog
+/// (soft gate) rather than a hard block, preserving rare early/late bloom
+/// observations while reducing noise in the phenology dataset.
 class PhenologyGuardrail {
   PhenologyGuardrail._();
 
@@ -18,7 +26,10 @@ class PhenologyGuardrail {
         .toList();
   }
 
-  /// Month is 1–12 (local report month).
+  /// Evaluates [draft] against species month windows for [month] (1–12, local).
+  ///
+  /// Returns null when species is unknown, stage is unset, or the observation
+  /// falls within the expected seasonal window.
   static Future<PhenologyWarning?> evaluate({
     required TreeReportDraft draft,
     required int month,
@@ -76,6 +87,7 @@ class PhenologyGuardrail {
   }
 }
 
+/// User-facing warning when phenological stage conflicts with species calendar.
 class PhenologyWarning {
   PhenologyWarning({required this.message});
 

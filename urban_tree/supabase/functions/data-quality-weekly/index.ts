@@ -1,3 +1,19 @@
+/**
+ * Weekly data-quality scanning engine (UrbanTree closed-loop research).
+ *
+ * Auth: header `x-data-quality-secret` must match DATA_QUALITY_CRON_SECRET.
+ * Triggered by pg_cron (Sundays 02:00 UTC) or manual HTTP POST.
+ *
+ * Algorithm:
+ * 1. Fetch last 8000 tree_reports (recent-first window).
+ * 2. Cluster by lat/lon rounded to 5 decimals (~1 m grid).
+ * 3. Flag clusters with ≥2 reports:
+ *    - health_score_variance: stddev(health_score) ≥ 1.25
+ *    - phenology_conflict_14d: multiple stages within 14 days
+ * 4. Insert into data_quality_flags (feeds trust score + research dashboard).
+ *
+ * Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, DATA_QUALITY_CRON_SECRET
+ */
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
@@ -83,6 +99,7 @@ Deno.serve(async (req: Request) => {
   }
 
   const reports = (rows ?? []) as Report[];
+  // Spatial cluster key — 5 decimal degrees ≈ 1.1 m; groups same-tree re-reports.
   const byCluster = new Map<string, Report[]>();
   for (const r of reports) {
     const k = clusterKey(r.latitude, r.longitude);
@@ -97,6 +114,7 @@ Deno.serve(async (req: Request) => {
 
     const healths = list.map((r) => r.health_score);
     const sd = stddev(healths);
+    // High variance at same coordinates suggests inconsistent citizen assessments.
     if (sd >= 1.25) {
       const { error: insErr } = await supabase.from("data_quality_flags").insert({
         cluster_key: key,

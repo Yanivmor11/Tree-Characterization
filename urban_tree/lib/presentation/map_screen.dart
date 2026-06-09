@@ -22,7 +22,6 @@ import 'report/report_detail_screen.dart';
 import 'report/report_flow_launcher.dart';
 import 'top_guardians_screen.dart';
 
-import 'species/species_detail_screen.dart';
 import 'theme/app_colors.dart';
 import 'widgets/botanical_widgets.dart';
 
@@ -127,6 +126,9 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   List<Polygon> get _visiblePolygons {
+    // Headless GIS: classification runs via LandUseService; overlays hidden for demo UI.
+    if (!kShowLandUseMapOverlays) return const [];
+
     final out = <Polygon>[];
     for (final z in _zones) {
       if (_layerVisible[z.type] != true) continue;
@@ -361,7 +363,7 @@ class _MapScreenState extends State<MapScreen> {
 
     final mapWidget = Column(
       children: [
-        if (pestBanner != null && !widget.embedded)
+        if (pestBanner != null)
           Material(
             color: theme.colorScheme.errorContainer,
             child: ListTile(
@@ -469,15 +471,7 @@ class _MapScreenState extends State<MapScreen> {
                   report: selected,
                   l10n: l10n,
                   onClose: () => setState(() => _selectedReport = null),
-                  onDetails: () {
-                    Navigator.of(context).push<void>(
-                      MaterialPageRoute<void>(
-                        builder: (_) => const SpeciesDetailScreen(
-                          speciesId: 'quercus-calliprinos',
-                        ),
-                      ),
-                    );
-                  },
+                  onDetails: () => _openReportDetail(selected.id),
                 ),
               ),
           ],

@@ -778,6 +778,42 @@ class AppLocalizationsRu extends AppLocalizations {
   String get profileTreesIdentified => 'Определено деревьев';
 
   @override
+  String get profileGamificationPoints => 'Очки геймификации';
+
+  @override
+  String get profileTrustScore => 'Индекс надёжности';
+
+  @override
+  String get profileNoBadgesYet => 'Награды пока не получены';
+
+  @override
+  String get stressSymptoms => 'Симптомы стресса';
+
+  @override
+  String get stressChlorosis => 'Пожелтение (хлороз)';
+
+  @override
+  String get stressNecrosis => 'Бурый некроз';
+
+  @override
+  String get stressWilting => 'Увядание';
+
+  @override
+  String get stressLeafSpot => 'Пятна на листьях';
+
+  @override
+  String get stressDefoliation => 'Опадение листьев';
+
+  @override
+  String get stressGummosis => 'Гуммоз';
+
+  @override
+  String get stressPestDamage => 'Повреждения вредителями';
+
+  @override
+  String get stressOther => 'Другой стресс';
+
+  @override
   String get profileBadgesEarned => 'Получено наград';
 
   @override

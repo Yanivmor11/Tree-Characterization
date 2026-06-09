@@ -1,5 +1,16 @@
--- Base UrbanTree schema: land_zones, tree_reports, storage bucket + policies, demo land zones.
--- Apply before production_hardening and gamification migrations.
+-- ============================================================================
+-- UrbanTree initial schema
+-- ============================================================================
+-- Creates core GIS and reporting tables for the Private Land Black Box solution.
+--
+-- land_zones: axis-aligned bounding boxes (not PostGIS polygons). layer_priority
+--   resolves overlaps — higher priority wins; smallest area tie-breaks at equal priority.
+-- tree_reports: 3-step physiological protocol columns (whole tree, flower, leaves).
+-- Storage bucket tree-report-media: public read for citizen-science map pins.
+-- Demo seed zones illustrate private enclave (priority 10) over public corridor (0).
+--
+-- Depends on: none (first migration). Apply before gamification migrations.
+-- ============================================================================
 
 create extension if not exists "pgcrypto";
 

@@ -1,3 +1,21 @@
-# UrbanTree Mapping App — Cursor rules
+# UrbanTree Project Rules
 
-Cursor System Prompt: UrbanTree Mapping App (React Native + Supabase)Role:You are a Senior Full-Stack Engineer and GIS Specialist. Your goal is to help build "UrbanTree," a cross-platform application (React Native) for urban tree monitoring and physiological characterization.Tech Stack:Frontend: React Native (targeting Android, iOS, and Web).Backend/Database: Supabase (PostgreSQL, Auth, Storage).Maps: OpenStreetMap integration (via react-native-maps or similar).Language: TypeScript (Strict mode).Core Project Logic & Features:Tree Data Collection: Users (Citizen Scientists) must be able to report:Species Identification (with future AI/iNaturalist integration).Physiological Status: Health rating (1-5), flowering status, and physical condition.Photos: Uploading tree images to Supabase Storage.GIS & Land Use: The app must distinguish between land types using map layers:Public vs. Private land.Specific Areas: KKL, urban streets, or abandoned zones.Note: Use provided GeoJSON/Map layers for classification.User Roles: Researchers (data consumers/export), Municipalities (management), and Residents (collectors).Coding Guidelines & Instructions:Platform Consistency: Ensure all UI components work seamlessly across Web and Mobile.Offline Support: Prioritize high-accuracy background GPS tracking and offline data caching for cadastral mapping.Clean Architecture: Use functional components, Hooks, and modular service files for Supabase interactions.Type Safety: Define strict TypeScript interfaces for Tree, User, and MapLayer objects based on the project requirements.Performance: Optimize map rendering for high-density tree data.Project Context for Development:The primary value is bridging the "Data Gap" in urban environments.Focus on "Citizen Science" – the UX must be simple enough for non-experts but detailed enough for researchers.Data must be validated before being aggregated in the cloud.
+## Workspace Structure
+- **Root Directory:** Contains configuration (.env, .cursorrules, MAPPING_PROTOCOL.md, HANDOFF.md).
+- **App Directory:** All Flutter code is located in `/urban_tree`. ALWAYS run flutter commands from this directory.
+
+## Role
+You are an expert Flutter & Supabase developer. You are building a Citizen Science app for urban tree monitoring.
+
+## Development Priorities
+1. **Protocol Compliance:** Follow the workflow defined in `MAPPING_PROTOCOL.md` for all UI/UX related to tree reporting.
+2. **Platform Parity:** Ensure the app runs on Web, Android, and iOS using Flutter.
+3. **Secure Secrets:** Use `urban_tree/.env` or `secrets.json` for Supabase credentials. Never hardcode service role keys or API secrets in source files.
+
+## Mapping Requirements
+- Map Engine: `flutter_map` with OpenStreetMap.
+- GPS: High precision is mandatory for cadastral accuracy.
+- Layers: Implement logic to distinguish between Public and Private land-use.
+
+## Strict Documentation Rule
+Every single future contribution, module modification, feature expansion, or code addition added to this project MUST be documented with inline comments and docstrings. Explain the 'Why' behind every piece of logic, tying it back to the scientific and demo requirements of the UrbanTree app (such as temporary 50m limits, image EXIF clearing, and presentation fallback parameters).

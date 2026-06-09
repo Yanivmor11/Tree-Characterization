@@ -768,6 +768,42 @@ class AppLocalizationsHe extends AppLocalizations {
   String get profileTreesIdentified => 'עצים שזוהו';
 
   @override
+  String get profileGamificationPoints => 'נקודות גיימיפיקציה';
+
+  @override
+  String get profileTrustScore => 'מדד אמינות';
+
+  @override
+  String get profileNoBadgesYet => 'עדיין לא הושגו תגים';
+
+  @override
+  String get stressSymptoms => 'סימפטומי לחץ';
+
+  @override
+  String get stressChlorosis => 'הצהבה (כלורוז)';
+
+  @override
+  String get stressNecrosis => 'נמק חום';
+
+  @override
+  String get stressWilting => 'נבילה';
+
+  @override
+  String get stressLeafSpot => 'כתמים על העלים';
+
+  @override
+  String get stressDefoliation => 'נשירת עלים';
+
+  @override
+  String get stressGummosis => 'גומוזיס';
+
+  @override
+  String get stressPestDamage => 'נזק ממזיקים';
+
+  @override
+  String get stressOther => 'לחץ אחר';
+
+  @override
   String get profileBadgesEarned => 'תגים שהושגו';
 
   @override

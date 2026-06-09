@@ -96,6 +96,63 @@ abstract final class AppColors {
     inversePrimary: inversePrimary,
     surfaceTint: surfaceTint,
   );
+
+  static const _darkPrimary = Color(0xFFA9D293);
+  static const _darkOnPrimary = Color(0xFF062100);
+  static const _darkPrimaryContainer = Color(0xFF2D4F1E);
+  static const _darkOnPrimaryContainer = Color(0xFFC5EFAD);
+  static const _darkSecondary = Color(0xFFF4BB92);
+  static const _darkOnSecondary = Color(0xFF301400);
+  static const _darkSecondaryContainer = Color(0xFF653D1E);
+  static const _darkOnSecondaryContainer = Color(0xFFFFDCC5);
+  static const _darkTertiary = Color(0xFFB2D186);
+  static const _darkOnTertiary = Color(0xFF112000);
+  static const _darkTertiaryContainer = Color(0xFF354E12);
+  static const _darkOnTertiaryContainer = Color(0xFFCDED9F);
+  static const _darkSurface = Color(0xFF141612);
+  static const _darkOnSurface = Color(0xFFE5E2DD);
+  static const _darkOnSurfaceVariant = Color(0xFFC3C8BB);
+  static const _darkOutline = Color(0xFF8D9387);
+  static const _darkOutlineVariant = Color(0xFF43493E);
+  static const _darkError = Color(0xFFFFB4AB);
+  static const _darkOnError = Color(0xFF690005);
+  static const _darkErrorContainer = Color(0xFF93000A);
+  static const _darkOnErrorContainer = Color(0xFFFFDAD6);
+  static const _darkInverseSurface = Color(0xFFE5E2DD);
+  static const _darkOnInverseSurface = Color(0xFF31302D);
+  static const _darkInversePrimary = Color(0xFF446733);
+  static const _darkSurfaceTint = Color(0xFFA9D293);
+
+  static ColorScheme darkColorScheme = const ColorScheme(
+    brightness: Brightness.dark,
+    primary: _darkPrimary,
+    onPrimary: _darkOnPrimary,
+    primaryContainer: _darkPrimaryContainer,
+    onPrimaryContainer: _darkOnPrimaryContainer,
+    secondary: _darkSecondary,
+    onSecondary: _darkOnSecondary,
+    secondaryContainer: _darkSecondaryContainer,
+    onSecondaryContainer: _darkOnSecondaryContainer,
+    tertiary: _darkTertiary,
+    onTertiary: _darkOnTertiary,
+    tertiaryContainer: _darkTertiaryContainer,
+    onTertiaryContainer: _darkOnTertiaryContainer,
+    error: _darkError,
+    onError: _darkOnError,
+    errorContainer: _darkErrorContainer,
+    onErrorContainer: _darkOnErrorContainer,
+    surface: _darkSurface,
+    onSurface: _darkOnSurface,
+    onSurfaceVariant: _darkOnSurfaceVariant,
+    outline: _darkOutline,
+    outlineVariant: _darkOutlineVariant,
+    shadow: Color(0xFF000000),
+    scrim: Color(0xFF000000),
+    inverseSurface: _darkInverseSurface,
+    onInverseSurface: _darkOnInverseSurface,
+    inversePrimary: _darkInversePrimary,
+    surfaceTint: _darkSurfaceTint,
+  );
 }
 
 abstract final class AppRadii {

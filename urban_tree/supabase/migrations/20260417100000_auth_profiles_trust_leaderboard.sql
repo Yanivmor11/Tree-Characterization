@@ -1,4 +1,12 @@
--- Auth profile extensions, trust score v1, and trust-aware leaderboard ranking.
+-- ============================================================================
+-- Tier 2 validation — User Trust Score and trust-aware leaderboard
+-- ============================================================================
+-- trust_score (0–100) rewards data completeness and penalizes duplicate-grid
+-- clustering. Feeds leaderboard_score = (total_points × 0.8) + (trust_score × 2.0)
+-- so motivated reporters with high-quality data rank above volume-only submitters.
+--
+-- Depends on: 20260413100000_gamification_platform.sql
+-- ============================================================================
 
 alter table public.profiles
   add column if not exists avatar_url text,
@@ -16,6 +24,8 @@ declare
   avg_species_confidence numeric := 0;
   duplicate_grid_ratio numeric := 0;
   open_quality_flag_ratio numeric := 0;
+  -- Weighted trust formula (max ~100): completeness 30%, AI confidence 25%,
+  -- duplicate-grid penalty 15%, global quality-flag signal 10%, base 20%.
   base_score numeric := 20;
   computed numeric := 0;
 begin

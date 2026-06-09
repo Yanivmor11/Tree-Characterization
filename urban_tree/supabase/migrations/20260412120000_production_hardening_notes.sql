@@ -1,5 +1,12 @@
--- Production hardening (reference migration): apply in a maintenance window after updating the app.
--- Client-side validation in TreeReportValidator is not sufficient for abuse prevention.
+-- ============================================================================
+-- Production hardening — server-side protocol enforcement
+-- ============================================================================
+-- Mirrors TreeReportValidator rules at the database layer so incomplete reports
+-- cannot bypass the client via direct API calls. Minimum photo counts align with
+-- physiological granularity requirements (whole-tree context + foliar detail).
+--
+-- Depends on: 20260401100000_initial_schema.sql
+-- ============================================================================
 
 -- 1) Minimum photo evidence per mapping protocol (adjust thresholds if product policy changes).
 alter table public.tree_reports drop constraint if exists tree_reports_min_whole_photos;

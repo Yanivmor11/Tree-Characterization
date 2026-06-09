@@ -55,4 +55,16 @@ extension UrbanTreeL10n on AppLocalizations {
         DamageExtent.moderate => damageModerate,
         DamageExtent.high => damageHigh,
       };
+
+  String stressSymptomLabel(StressSymptom s) => switch (s) {
+        StressSymptom.chlorosis => stressChlorosis,
+        StressSymptom.necrosis => stressNecrosis,
+        StressSymptom.wilting => stressWilting,
+        StressSymptom.leafSpot => stressLeafSpot,
+        StressSymptom.defoliation => stressDefoliation,
+        StressSymptom.gummosis => stressGummosis,
+        StressSymptom.pestDamage => stressPestDamage,
+        StressSymptom.none => conditionHealthy,
+        StressSymptom.other => stressOther,
+      };
 }

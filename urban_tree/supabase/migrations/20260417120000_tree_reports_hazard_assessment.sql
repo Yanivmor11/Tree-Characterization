@@ -1,4 +1,9 @@
--- Municipal hazard assessment field for asset management workflows.
+-- ============================================================================
+-- hazard_assessment — municipal asset risk (low/medium/high)
+-- ============================================================================
+-- Captured in wizard step 0 for urban forest asset management integration.
+-- Note: shares 20260417120000 timestamp prefix with restore_granular migration.
+-- ============================================================================
 
 alter table public.tree_reports
   add column if not exists hazard_assessment text not null default 'low';

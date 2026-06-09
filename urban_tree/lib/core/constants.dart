@@ -1,5 +1,13 @@
-/// Urban canyon mitigation: warn when GPS uncertainty exceeds this (meters).
-const double kTargetLocationAccuracyMeters = 2.0;
+/// Production citizen-science GPS ceiling (restore after demo).
+const double kProductionLocationAccuracyMeters = 2.0;
+
+/// Demo/presentation release: relaxed to 50 m for live testing (was 2 m).
+/// Client validator and accuracy banner use this threshold during the demo phase.
+const double kTargetLocationAccuracyMeters = 50.0;
+
+/// Headless GIS: land-use is classified in the background but bbox overlays are
+/// hidden from flutter_map for a clean presentation viewport.
+const bool kShowLandUseMapOverlays = false;
 
 const String kTreeReportBucket = 'tree-report-media';
 

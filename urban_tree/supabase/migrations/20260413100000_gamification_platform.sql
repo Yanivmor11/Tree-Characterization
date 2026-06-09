@@ -1,5 +1,15 @@
--- Gamification, profiles, species, pest hotspots, quality flags, scoring triggers.
--- Requires Supabase Auth with anonymous sign-in enabled for full client flow.
+-- ============================================================================
+-- Gamification platform — motivation + closed-loop research infrastructure
+-- ============================================================================
+-- profiles: reporter identity, total_points, city for leaderboard segmentation.
+-- report_scores / user_badges: granular completeness rewards (see restore migration).
+-- pest_hotspots: 500 m default radius for closed-loop pest alert overlays.
+-- data_quality_flags: populated by data-quality-weekly Edge Function cron.
+-- Auth-scoped tree_reports RLS replaces demo wide-open insert policy.
+--
+-- Requires: Anonymous auth enabled in Supabase Dashboard.
+-- Depends on: 20260401100000_initial_schema.sql
+-- ============================================================================
 
 -- ---------------------------------------------------------------------------
 -- profiles

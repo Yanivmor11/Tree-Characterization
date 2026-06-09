@@ -1,5 +1,11 @@
--- Municipal import support: physiological verification flag, provenance, and WGS84 geometry
--- derived from existing latitude/longitude (same CRS as the Flutter client).
+-- ============================================================================
+-- Municipal tree import — provenance and PostGIS geometry
+-- ============================================================================
+-- Adds import_source/external_id for Tel Aviv CSV pipeline; generated geom Point
+-- (EPSG:4326) for spatial queries. Separate from land_zones bbox GIS layer.
+--
+-- Depends on: 20260413100000_gamification_platform.sql
+-- ============================================================================
 
 create extension if not exists postgis;
 

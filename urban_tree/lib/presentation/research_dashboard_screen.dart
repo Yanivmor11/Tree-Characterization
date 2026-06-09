@@ -160,15 +160,18 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
   }
 
   String _buildExportFileName() {
-    final datePart = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final exportDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
     final segments = <String>[
+      if (_fromDate != null)
+        'from_${DateFormat('yyyy-MM-dd').format(_fromDate!)}',
+      if (_toDate != null) 'to_${DateFormat('yyyy-MM-dd').format(_toDate!)}',
       if (_landUseFilter != null) _landUseFilter!.storageValue,
       if (_healthScoreFilter != null) 'h$_healthScoreFilter',
       if (_speciesFilter.trim().isNotEmpty)
         _speciesFilter.trim().toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '_'),
     ];
     final suffix = segments.isEmpty ? 'all' : segments.join('_');
-    return 'urban_tree_export_${datePart}_$suffix.csv';
+    return 'urban_tree_export_${exportDate}_$suffix.csv';
   }
 
   @override
@@ -274,18 +277,16 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
                               labelText: 'Land-use',
                               border: OutlineInputBorder(),
                             ),
-                            items: const [
-                              DropdownMenuItem<LandUseType?>(
+                            items: [
+                              const DropdownMenuItem<LandUseType?>(
                                 value: null,
                                 child: Text('All'),
                               ),
-                              DropdownMenuItem<LandUseType?>(
-                                value: LandUseType.public,
-                                child: Text('Public'),
-                              ),
-                              DropdownMenuItem<LandUseType?>(
-                                value: LandUseType.private,
-                                child: Text('Private'),
+                              ...LandUseType.values.map(
+                                (t) => DropdownMenuItem<LandUseType?>(
+                                  value: t,
+                                  child: Text(l10n.landUseTypeLabel(t)),
+                                ),
                               ),
                             ],
                             onChanged: (v) {

@@ -770,6 +770,42 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileTreesIdentified => 'أشجار تم التعرّف عليها';
 
   @override
+  String get profileGamificationPoints => 'نقاط التحفيز';
+
+  @override
+  String get profileTrustScore => 'مؤشر الموثوقية';
+
+  @override
+  String get profileNoBadgesYet => 'لم تُكتسب أوسمة بعد';
+
+  @override
+  String get stressSymptoms => 'أعراض الإجهاد';
+
+  @override
+  String get stressChlorosis => 'اصفرار';
+
+  @override
+  String get stressNecrosis => 'نخر بني';
+
+  @override
+  String get stressWilting => 'ذبول';
+
+  @override
+  String get stressLeafSpot => 'بقع على الأوراق';
+
+  @override
+  String get stressDefoliation => 'تساقط الأوراق';
+
+  @override
+  String get stressGummosis => 'تصريف لزج';
+
+  @override
+  String get stressPestDamage => 'أضرار آفات';
+
+  @override
+  String get stressOther => 'إجهاد آخر';
+
+  @override
   String get profileBadgesEarned => 'أوسمة مكتسبة';
 
   @override

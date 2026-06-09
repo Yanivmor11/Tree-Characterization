@@ -1,3 +1,4 @@
+/** CORS headers for Flutter web → Edge Function calls (browser preflight). */
 export const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":

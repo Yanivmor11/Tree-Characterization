@@ -6,8 +6,14 @@ import 'package:image/image.dart' as img;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/env.dart';
+import 'presentation_fallback_service.dart';
 
-/// Suggestions for data quality; user must confirm before applying.
+/// AI characterization output — suggestions only; reporter must confirm.
+///
+/// Canonical fields ([speciesCommon], [speciesScientific]) are normalized to
+/// English common name and Latin binomial for cross-locale research queries.
+/// [translatedDisplayName] preserves the reporter's UI language; [sourceLanguage]
+/// records BCP-47 origin for audit. Stored in `tree_reports.ai_suggestion_json`.
 class CharacterizationSuggestion {
   CharacterizationSuggestion({
     this.speciesCommon,
@@ -49,6 +55,18 @@ class CharacterizationSuggestion {
   }
 }
 
+/// Vision and text AI for species/health/phenology characterization.
+///
+/// **Platform routing matrix** (keeps OpenAI keys off web clients):
+/// | Platform | Vision / text suggest | Post-submit insight |
+/// |----------|----------------------|---------------------|
+/// | Web | Edge `openai-suggest` | Edge `openai-tree-insights` |
+/// | Mobile + `OPENAI_API_KEY` | Direct OpenAI gpt-4o-mini | Edge insights |
+/// | Mobile, no key | Edge suggest (fallback) | Edge insights |
+///
+/// Images are resized to max 896 px before upload to balance diagnostic detail
+/// against token cost. Multilingual input is normalized to English/Latin in the
+/// model system prompt and [_parseOpenAiJsonObject].
 class AIService {
   AIService({http.Client? httpClient, SupabaseClient? supabase})
       : _http = httpClient ?? http.Client(),
@@ -91,6 +109,8 @@ class AIService {
     }
   }
 
+  /// Downscales large photos to ≤896 px — sufficient for species/phenology cues
+  /// while reducing vision-token cost and upload latency on mobile networks.
   Uint8List _resizeForVision(Uint8List bytes) {
     final decoded = img.decodeImage(bytes);
     if (decoded == null) return bytes;
@@ -103,43 +123,63 @@ class AIService {
     return Uint8List.fromList(img.encodeJpg(resized, quality: 82));
   }
 
+  /// Vision-based characterization from a whole-tree or detail photo.
+  ///
+  /// Presentation fail-safe: returns [PresentationFallbackService] mock on
+  /// OpenAI/Edge/network errors so the live demo UI keeps functioning.
   Future<CharacterizationSuggestion> suggestFromTreeImage({
     required Uint8List imageBytes,
     String mimeType = 'image/jpeg',
   }) async {
-    final prepared = _resizeForVision(imageBytes);
-    final b64 = base64Encode(prepared);
+    try {
+      final prepared = _resizeForVision(imageBytes);
+      final b64 = base64Encode(prepared);
 
-    if (kIsWeb) {
-      return _suggestVisionViaEdge(b64, mimeType);
+      if (kIsWeb) {
+        return await _suggestVisionViaEdge(b64, mimeType);
+      }
+
+      final key = AppEnv.openAiApiKey.trim();
+      if (key.isEmpty) {
+        return await _suggestVisionViaEdge(b64, mimeType);
+      }
+
+      return await _suggestVisionDirect(b64, mimeType, key);
+    } catch (e) {
+      if (PresentationFallbackService.shouldUseFallback(e)) {
+        return PresentationFallbackService.mockCharacterizationSuggestion();
+      }
+      rethrow;
     }
-
-    final key = AppEnv.openAiApiKey.trim();
-    if (key.isEmpty) {
-      return _suggestVisionViaEdge(b64, mimeType);
-    }
-
-    return _suggestVisionDirect(b64, mimeType, key);
   }
 
+  /// Text-based characterization from free-form resident description (any language).
   Future<CharacterizationSuggestion> suggestFromResidentText(String text) async {
     final trimmed = text.trim();
     if (trimmed.isEmpty) {
       return CharacterizationSuggestion();
     }
 
-    if (kIsWeb) {
-      return _suggestTextViaEdge(trimmed);
-    }
+    try {
+      if (kIsWeb) {
+        return await _suggestTextViaEdge(trimmed);
+      }
 
-    final key = AppEnv.openAiApiKey.trim();
-    if (key.isEmpty) {
-      return _suggestTextViaEdge(trimmed);
-    }
+      final key = AppEnv.openAiApiKey.trim();
+      if (key.isEmpty) {
+        return await _suggestTextViaEdge(trimmed);
+      }
 
-    return _suggestTextDirect(trimmed, key);
+      return await _suggestTextDirect(trimmed, key);
+    } catch (e) {
+      if (PresentationFallbackService.shouldUseFallback(e)) {
+        return PresentationFallbackService.mockCharacterizationSuggestion();
+      }
+      rethrow;
+    }
   }
 
+  /// Short actionable tip after successful submit (always via Edge Function).
   Future<String> treeInsightTip({
     required Map<String, dynamic> context,
   }) async {
@@ -161,10 +201,18 @@ class AIService {
         final tip = obj['tip'];
         if (tip is String) return tip;
       }
+      return '';
     } on FunctionException catch (e) {
+      if (PresentationFallbackService.shouldUseFallback(e)) {
+        return PresentationFallbackService.mockInsightTip();
+      }
       throw StateError('Insights failed: ${e.details ?? e.reasonPhrase}');
+    } catch (e) {
+      if (PresentationFallbackService.shouldUseFallback(e)) {
+        return PresentationFallbackService.mockInsightTip();
+      }
+      rethrow;
     }
-    return '';
   }
 
   Future<CharacterizationSuggestion> _suggestVisionViaEdge(
@@ -335,6 +383,8 @@ class AIService {
     throw StateError('Unexpected assistant response shape');
   }
 
+  /// Normalizes model JSON into typed fields; prefers `species_common_en` /
+  /// `species_scientific_latin` aliases for multilingual pipeline consistency.
   static CharacterizationSuggestion _parseOpenAiJsonObject(
     Map<String, dynamic> obj,
   ) {

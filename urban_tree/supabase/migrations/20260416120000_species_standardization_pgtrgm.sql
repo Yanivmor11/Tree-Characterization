@@ -1,4 +1,10 @@
--- Species standardization + fuzzy matching support (service-only source of truth).
+-- ============================================================================
+-- Species standardization via pg_trgm
+-- ============================================================================
+-- BEFORE INSERT/UPDATE trigger normalizes species names for research queries.
+-- Fuzzy matching reduces duplicate species spellings across multilingual reporters.
+-- Depends on: tree_reports.species columns
+-- ============================================================================
 create extension if not exists pg_trgm;
 
 alter table public.tree_reports

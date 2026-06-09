@@ -1,4 +1,9 @@
--- Defensive backfill for projects where species columns were marked applied but not materialized.
+-- ============================================================================
+-- species_confidence column backfill (idempotent)
+-- ============================================================================
+-- Stores AI confidence (0–1) for Tier 2 trust score computation.
+-- Depends on: 20260416120000_species_standardization_pgtrgm.sql
+-- ============================================================================
 alter table public.tree_reports
   add column if not exists species text;
 
