@@ -24,7 +24,7 @@ class _PhotoGalleryScreenState extends State<PhotoGalleryScreen> {
       final picker = ImagePicker();
       final file = await picker.pickImage(source: ImageSource.gallery);
       if (file != null && mounted) {
-        await _launcher.start(context);
+        await _launcher.start(context, initialImage: file);
       }
     } finally {
       if (mounted) setState(() => _picking = false);

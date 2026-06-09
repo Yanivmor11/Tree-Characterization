@@ -29,81 +29,40 @@ class ReportFlowLauncher {
   final LandUseService _landUseService;
   final TreeReportRepository _reportRepository;
 
+  /// Starts the GPS + wizard flow.
+  ///
+  /// [initialImage] (e.g. a photo just picked from the gallery or scan screen)
+  /// is attached as the first whole-tree photo so it reaches the wizard and
+  /// triggers AI vision analysis on entry.
   Future<void> start(
     BuildContext context, {
+    XFile? initialImage,
     VoidCallback? onReportComplete,
-  }) async {
-    final auth = context.read<AuthController>();
-    final reportFeed = context.read<ReportFeedController>();
-    if (!auth.isAuthenticated) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please sign in to submit reports.')),
-      );
-      return;
-    }
-
-    final ok = await _ensureLocationAndZones(context);
-    if (!ok || !context.mounted) return;
-
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
+  }) {
+    return _launchWizard(
+      context,
+      initialImage: initialImage,
+      onReportComplete: onReportComplete,
     );
-
-    try {
-      final zones = await _landUseService.fetchZones();
-      final pos = await _locationService.getHighAccuracyPosition();
-      if (!context.mounted) return;
-      Navigator.of(context).pop();
-      if (!context.mounted) return;
-
-      final point = LatLng(pos.latitude, pos.longitude);
-      final classification = _landUseService.classify(point, zones);
-      final draft = TreeReportDraft(
-        latitude: pos.latitude,
-        longitude: pos.longitude,
-        accuracyMeters: pos.accuracy,
-        landType: classification?.type ?? LandUseType.public,
-        landTypeAuto: classification != null,
-      );
-
-      final contextual = await _reportRepository.fetchRecentReports(limit: 500);
-
-      if (!context.mounted) return;
-      final reportId = await Navigator.of(context).push<String>(
-        MaterialPageRoute(
-          builder: (_) => ReportWizardScreen(
-            draft: draft,
-            contextualReports: contextual,
-          ),
-        ),
-      );
-      if (!context.mounted) return;
-      if (reportId != null && reportId.isNotEmpty) {
-        final submittedText = AppLocalizations.of(context).reportSubmitted;
-        await reportFeed.recordSubmittedReport(reportId);
-        if (!context.mounted) return;
-        onReportComplete?.call();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(submittedText)),
-        );
-      }
-    } catch (e) {
-      if (context.mounted) Navigator.of(context).pop();
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context).couldNotStartReport(e.toString())),
-        ),
-      );
-    }
   }
 
   /// Opens the device camera first, then continues the same wizard (shake shortcut).
   Future<void> startWithCameraFirst(
     BuildContext context, {
     VoidCallback? onReportComplete,
+  }) {
+    return _launchWizard(
+      context,
+      captureFromCamera: true,
+      onReportComplete: onReportComplete,
+    );
+  }
+
+  Future<void> _launchWizard(
+    BuildContext context, {
+    XFile? initialImage,
+    bool captureFromCamera = false,
+    VoidCallback? onReportComplete,
   }) async {
     final auth = context.read<AuthController>();
     final reportFeed = context.read<ReportFeedController>();
@@ -130,11 +89,14 @@ class ReportFlowLauncher {
       Navigator.of(context).pop();
       if (!context.mounted) return;
 
-      final picker = ImagePicker();
-      final file = await picker.pickImage(source: ImageSource.camera);
-      if (!context.mounted) return;
-      if (file == null) {
-        return;
+      var firstImage = initialImage;
+      if (captureFromCamera) {
+        final picker = ImagePicker();
+        firstImage = await picker.pickImage(source: ImageSource.camera);
+        if (!context.mounted) return;
+        if (firstImage == null) {
+          return;
+        }
       }
 
       final point = LatLng(pos.latitude, pos.longitude);
@@ -146,7 +108,9 @@ class ReportFlowLauncher {
         landType: classification?.type ?? LandUseType.public,
         landTypeAuto: classification != null,
       );
-      draft.wholeTreeImages.add(file);
+      if (firstImage != null) {
+        draft.wholeTreeImages.add(firstImage);
+      }
 
       final contextual = await _reportRepository.fetchRecentReports(limit: 500);
 

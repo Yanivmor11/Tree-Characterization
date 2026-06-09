@@ -22,7 +22,7 @@ class _IdentifyCameraScreenState extends State<IdentifyCameraScreen> {
   Future<void> _capture() async {
     final file = await _picker.pickImage(source: ImageSource.camera);
     if (file != null && mounted) {
-      await _launcher.start(context);
+      await _launcher.start(context, initialImage: file);
     }
   }
 

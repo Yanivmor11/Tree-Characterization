@@ -14,6 +14,7 @@ import 'l10n/app_localizations.dart';
 import 'presentation/auth/auth_gate_screen.dart';
 import 'presentation/theme/app_theme.dart';
 import 'state/auth_controller.dart';
+import 'state/report_feed_controller.dart';
 
 import 'core/constants.dart';
 
@@ -100,8 +101,14 @@ class UrbanTreeApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => AuthController(),
+    // ReportFeedController must live above MaterialApp's Navigator: identify
+    // screens are pushed as root routes (outside AppShell) and the report flow
+    // reads the feed from there.
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthController()),
+        ChangeNotifierProvider(create: (_) => ReportFeedController()..loadInitial()),
+      ],
       child: ListenableBuilder(
         listenable: localeController,
         builder: (context, _) {

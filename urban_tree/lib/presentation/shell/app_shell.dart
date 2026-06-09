@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../../core/app_locale_controller.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/auth_controller.dart';
-import '../../state/report_feed_controller.dart';
 import '../collection/collection_screen.dart';
 import '../home/home_screen.dart';
 import '../identify/identify_hub_screen.dart';
@@ -53,96 +52,93 @@ class _AppShellState extends State<AppShell> {
     final isDesktop = MediaQuery.sizeOf(context).width >= kDesktopBreakpoint;
     final labels = _labels(l10n);
 
-    return ChangeNotifierProvider(
-      create: (_) => ReportFeedController()..loadInitial(),
-      child: ShakeReportHost(
-        onReportComplete: _onReportComplete,
-        child: Stack(
-          children: [
-            Scaffold(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              body: Row(
-                children: [
-                  Expanded(
-                    child: IndexedStack(
-                      index: _tab.index,
-                      children: [
-                        HomeScreen(
-                          refreshTick: _statsRefreshTick,
-                          onReportComplete: _onReportComplete,
-                          onMenuTap: isDesktop ? null : _openDrawer,
-                          onViewAll: () => setState(() => _tab = AppTab.collection),
-                          embedded: isDesktop,
-                        ),
-                        IdentifyHubScreen(
-                          onMenuTap: isDesktop ? null : _openDrawer,
-                          embedded: isDesktop,
-                        ),
-                        CollectionScreen(
-                          onMenuTap: isDesktop ? null : _openDrawer,
-                          embedded: isDesktop,
-                        ),
-                        MapScreen(
-                          onReportFlowComplete: _onReportComplete,
-                          onMenuTap: isDesktop ? null : _openDrawer,
-                          embedded: true,
-                        ),
-                        JournalScreen(
-                          onMenuTap: isDesktop ? null : _openDrawer,
-                          embedded: isDesktop,
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (isDesktop)
-                    Theme(
-                      data: buildUrbanTreeTheme(brightness: Brightness.light),
-                      child: BotanicalSideNav(
-                        current: _tab,
-                        onChanged: (t) => setState(() => _tab = t),
-                        labels: labels,
-                        appTitle: l10n.appBrandTitle,
-                        appSubtitle: l10n.appBrandSubtitle,
-                        onIdentifyNew: () => AppRoutes.pushIdentifyCamera(context),
-                        userName: auth.user?.email?.split('@').first ?? l10n.defaultUserName,
-                        userSubtitle: l10n.userRoleBotanist,
-                        onHelpTap: () => AppRoutes.pushHelp(context),
-                        onProfileTap: () => AppRoutes.pushProfile(
-                          context,
-                          localeController: widget.localeController,
-                        ),
-                        helpLabel: l10n.navHelp,
+    return ShakeReportHost(
+      onReportComplete: _onReportComplete,
+      child: Stack(
+        children: [
+          Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            body: Row(
+              children: [
+                Expanded(
+                  child: IndexedStack(
+                    index: _tab.index,
+                    children: [
+                      HomeScreen(
+                        refreshTick: _statsRefreshTick,
+                        onReportComplete: _onReportComplete,
+                        onMenuTap: isDesktop ? null : _openDrawer,
+                        onViewAll: () => setState(() => _tab = AppTab.collection),
+                        embedded: isDesktop,
                       ),
-                    ),
-                ],
-              ),
-              bottomNavigationBar: isDesktop
-                  ? null
-                  : BotanicalBottomNav(
+                      IdentifyHubScreen(
+                        onMenuTap: isDesktop ? null : _openDrawer,
+                        embedded: isDesktop,
+                      ),
+                      CollectionScreen(
+                        onMenuTap: isDesktop ? null : _openDrawer,
+                        embedded: isDesktop,
+                      ),
+                      MapScreen(
+                        onReportFlowComplete: _onReportComplete,
+                        onMenuTap: isDesktop ? null : _openDrawer,
+                        embedded: true,
+                      ),
+                      JournalScreen(
+                        onMenuTap: isDesktop ? null : _openDrawer,
+                        embedded: isDesktop,
+                      ),
+                    ],
+                  ),
+                ),
+                if (isDesktop)
+                  Theme(
+                    data: buildUrbanTreeTheme(brightness: Brightness.light),
+                    child: BotanicalSideNav(
                       current: _tab,
                       onChanged: (t) => setState(() => _tab = t),
                       labels: labels,
+                      appTitle: l10n.appBrandTitle,
+                      appSubtitle: l10n.appBrandSubtitle,
+                      onIdentifyNew: () => AppRoutes.pushIdentifyCamera(context),
+                      userName: auth.user?.email?.split('@').first ?? l10n.defaultUserName,
+                      userSubtitle: l10n.userRoleBotanist,
+                      onHelpTap: () => AppRoutes.pushHelp(context),
+                      onProfileTap: () => AppRoutes.pushProfile(
+                        context,
+                        localeController: widget.localeController,
+                      ),
+                      helpLabel: l10n.navHelp,
                     ),
-            ),
-            if (_drawerOpen)
-              Positioned.fill(
-                child: Theme(
-                  data: buildUrbanTreeTheme(brightness: Brightness.light),
-                  child: BotanicalDrawer(
-                    current: _tab,
-                    onTabSelected: (t) => setState(() => _tab = t),
-                    onClose: _closeDrawer,
-                    onHelpTap: () => AppRoutes.pushHelp(context),
-                    onProfileTap: () => AppRoutes.pushProfile(
-                      context,
-                      localeController: widget.localeController,
-                    ),
-                    onSignOut: context.read<AuthController>().signOut,
                   ),
+              ],
+            ),
+            bottomNavigationBar: isDesktop
+                ? null
+                : BotanicalBottomNav(
+                    current: _tab,
+                    onChanged: (t) => setState(() => _tab = t),
+                    labels: labels,
+                  ),
+          ),
+          if (_drawerOpen)
+            Positioned.fill(
+              child: Theme(
+                data: buildUrbanTreeTheme(brightness: Brightness.light),
+                child: BotanicalDrawer(
+                  current: _tab,
+                  onTabSelected: (t) => setState(() => _tab = t),
+                  onClose: _closeDrawer,
+                  onHelpTap: () => AppRoutes.pushHelp(context),
+                  onProfileTap: () => AppRoutes.pushProfile(
+                    context,
+                    localeController: widget.localeController,
+                  ),
+                  onSignOut: context.read<AuthController>().signOut,
                 ),
               ),
-          ],
-        ),
+            ),
+        ],
       ),
     );
   }

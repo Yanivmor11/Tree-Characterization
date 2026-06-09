@@ -18,12 +18,19 @@ import 'package:geolocator/geolocator.dart';
 class LocationService {
   const LocationService();
 
-  /// Maximum wait for a single high-accuracy fix.
+  /// Maximum wait for a single high-accuracy fix (mobile GNSS).
   ///
   /// Chosen to balance urban-canyon acquisition time (multipath can delay a
-  /// sub-2 m fix) against reporter UX. Applied as both Geolocator `timeLimit`
-  /// (web) and `.timeout()` on all platforms.
+  /// sub-2 m fix) against reporter UX.
   static const Duration _fixTimeout = Duration(seconds: 35);
+
+  /// Web budget for the high-accuracy attempt. Desktop machines have no GNSS
+  /// chip, so `enableHighAccuracy` requests frequently stall in the browser;
+  /// a short budget keeps the reporting flow responsive before falling back.
+  static const Duration _webHighAccuracyTimeout = Duration(seconds: 12);
+
+  /// Web budget for the coarse (Wi-Fi/IP network) fallback fix.
+  static const Duration _webFallbackTimeout = Duration(seconds: 10);
 
   Future<bool> isLocationServiceEnabled() => Geolocator.isLocationServiceEnabled();
 
@@ -60,23 +67,49 @@ class LocationService {
   /// Platform strategy:
   /// - **Mobile:** [LocationAccuracy.bestForNavigation] — highest GNSS precision
   ///   available to mitigate urban-canyon error at property boundaries.
-  /// - **Web:** [LocationAccuracy.high] — browser geolocation API ceiling;
-  ///   accuracy banner warns when reported uncertainty exceeds 2 m.
+  /// - **Web:** high-accuracy attempt with a coarse network fallback (see
+  ///   [_getWebPosition]); accuracy banner warns when reported uncertainty
+  ///   exceeds 2 m.
   ///
   /// [distanceFilter] is 0 so no position smoothing hides true uncertainty.
   Future<Position> getHighAccuracyPosition() async {
-    final settings = kIsWeb
-        ? LocationSettings(
-            accuracy: LocationAccuracy.high,
-            distanceFilter: 0,
-            timeLimit: _fixTimeout,
-          )
-        : const LocationSettings(
-            accuracy: LocationAccuracy.bestForNavigation,
-            distanceFilter: 0,
-          );
+    if (kIsWeb) {
+      return _getWebPosition();
+    }
 
+    const settings = LocationSettings(
+      accuracy: LocationAccuracy.bestForNavigation,
+      distanceFilter: 0,
+    );
     return Geolocator.getCurrentPosition(locationSettings: settings)
         .timeout(_fixTimeout);
+  }
+
+  /// Browser fix with graceful degradation for GNSS-less desktops.
+  ///
+  /// Tries `enableHighAccuracy` first (best case on laptops with good Wi-Fi
+  /// positioning), then falls back to a coarse network-based fix so the report
+  /// flow never blocks for the full high-accuracy timeout. The lower accuracy
+  /// is still surfaced honestly via [Position.accuracy] downstream.
+  Future<Position> _getWebPosition() async {
+    try {
+      return await Geolocator.getCurrentPosition(
+        locationSettings: LocationSettings(
+          accuracy: LocationAccuracy.high,
+          distanceFilter: 0,
+          timeLimit: _webHighAccuracyTimeout,
+        ),
+      ).timeout(_webHighAccuracyTimeout);
+    } on PermissionDeniedException {
+      rethrow;
+    } catch (_) {
+      return Geolocator.getCurrentPosition(
+        locationSettings: LocationSettings(
+          accuracy: LocationAccuracy.low,
+          distanceFilter: 0,
+          timeLimit: _webFallbackTimeout,
+        ),
+      ).timeout(_webFallbackTimeout);
+    }
   }
 }
