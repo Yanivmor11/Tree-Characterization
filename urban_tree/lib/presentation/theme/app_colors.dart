@@ -5,7 +5,7 @@ abstract final class AppColors {
   static const primary = Color(0xFF173809);
   static const onPrimary = Color(0xFFFFFFFF);
   static const primaryContainer = Color(0xFF2D4F1E);
-  static const onPrimaryContainer = Color(0xFF98C083);
+  static const onPrimaryContainer = Color(0xFFC5EFAD);
 
   static const secondary = Color(0xFF805533);
   static const onSecondary = Color(0xFFFFFFFF);

@@ -72,7 +72,7 @@ class BotanicalNetworkImage extends StatelessWidget {
       height: height,
       semanticLabel: label,
       child: Center(
-        child: Icon(fallbackIcon, size: 40, color: AppColors.outlineVariant),
+        child: Icon(fallbackIcon, size: 40, color: Theme.of(context).colorScheme.outline),
       ),
     );
   }

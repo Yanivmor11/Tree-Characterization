@@ -11,19 +11,20 @@ class PhotoGuideScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final cs = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         children: [
           BotanicalGlassHeader(
             leading: IconButton(
               onPressed: () => Navigator.of(context).pop(),
-              icon: const Icon(Icons.close, color: AppColors.primary),
+              icon: Icon(Icons.close, color: cs.primary),
             ),
             title: Text(
               l10n.identifyPhotoGuide,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: AppColors.primary,
+                    color: cs.primary,
                     fontWeight: FontWeight.w800,
                   ),
             ),
@@ -37,7 +38,7 @@ class PhotoGuideScreen extends StatelessWidget {
                 Text(
                   l10n.photoGuideTitle,
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: AppColors.primary,
+                        color: cs.primary,
                         fontWeight: FontWeight.w800,
                       ),
                 ),
@@ -45,7 +46,7 @@ class PhotoGuideScreen extends StatelessWidget {
                 Text(
                   l10n.photoGuideIntro,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.onSurfaceVariant,
+                        color: cs.onSurfaceVariant,
                         height: 1.5,
                       ),
                 ),
@@ -58,7 +59,7 @@ class PhotoGuideScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Icon(Icons.eco, color: AppColors.primary, size: 32),
+                          Icon(Icons.eco, color: cs.primary, size: 32),
                           Text(
                             l10n.photoGuideStepLabel(1),
                             style: Theme.of(context).textTheme.labelMedium?.copyWith(
@@ -72,7 +73,7 @@ class PhotoGuideScreen extends StatelessWidget {
                       Text(
                         l10n.photoGuideStep1,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              color: AppColors.primary,
+                              color: cs.primary,
                               fontWeight: FontWeight.w700,
                             ),
                       ),
@@ -94,7 +95,7 @@ class PhotoGuideScreen extends StatelessWidget {
                             Text(
                               l10n.photoGuideBarkTitle,
                               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    color: AppColors.primary,
+                                    color: cs.primary,
                                     fontWeight: FontWeight.w700,
                                   ),
                             ),
@@ -122,12 +123,12 @@ class PhotoGuideScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: BentoCard(
-                        backgroundColor: AppColors.primaryContainer,
+                        backgroundColor: cs.primaryContainer,
                         padding: const EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Icon(Icons.light_mode, color: AppColors.onPrimaryContainer),
+                            Icon(Icons.light_mode, color: cs.onPrimaryContainer),
                             const SizedBox(height: 8),
                             Text(
                               l10n.photoGuideLighting,
@@ -173,7 +174,7 @@ class PhotoGuideScreen extends StatelessWidget {
                 Text(
                   l10n.photoGuideAvoidTitle,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: AppColors.primary,
+                        color: cs.primary,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -220,11 +221,12 @@ class _AvoidRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Row(
       children: [
         CircleAvatar(
-          backgroundColor: AppColors.errorContainer,
-          child: Icon(icon, color: AppColors.error),
+          backgroundColor: cs.errorContainer,
+          child: Icon(icon, color: cs.error),
         ),
         const SizedBox(width: 16),
         Expanded(
@@ -235,7 +237,7 @@ class _AvoidRow extends StatelessWidget {
               Text(
                 body,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.onSurfaceVariant,
+                      color: cs.onSurfaceVariant,
                     ),
               ),
             ],

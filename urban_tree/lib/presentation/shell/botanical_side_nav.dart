@@ -38,6 +38,7 @@ class BotanicalSideNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final cs = theme.colorScheme;
     return Container(
       width: kSideNavWidth,
       decoration: BoxDecoration(
@@ -103,13 +104,14 @@ class BotanicalSideNav extends StatelessWidget {
                           Text(
                             userName,
                             style: theme.textTheme.titleSmall?.copyWith(
+                              color: cs.onSurface,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                           Text(
                             userSubtitle,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: AppColors.onSurfaceVariant,
+                              color: cs.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -198,6 +200,7 @@ class _SideLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -205,9 +208,14 @@ class _SideLink extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Row(
           children: [
-            Icon(icon, color: AppColors.onSurfaceVariant),
+            Icon(icon, color: cs.onSurface),
             const SizedBox(width: 16),
-            Text(label, style: Theme.of(context).textTheme.titleSmall),
+            Text(
+              label,
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: cs.onSurface,
+                  ),
+            ),
           ],
         ),
       ),

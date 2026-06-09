@@ -31,6 +31,7 @@ class JournalScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final cs = Theme.of(context).colorScheme;
     final feed = context.watch<ReportFeedController>();
     final isWide = MediaQuery.sizeOf(context).width >= kDesktopBreakpoint;
     final crossAxis = isWide ? 3 : 1;
@@ -52,13 +53,13 @@ class JournalScreen extends StatelessWidget {
                 Text(
                   l10n.journalObservations,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: AppColors.secondary,
+                        color: cs.secondary,
                       ),
                 ),
                 Text(
                   l10n.journalTitle,
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: AppColors.primary,
+                        color: cs.primary,
                         fontWeight: FontWeight.w800,
                       ),
                 ),

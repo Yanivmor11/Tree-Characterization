@@ -99,6 +99,7 @@ class _HeroPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return BentoCard(
       backgroundColor: AppColors.surfaceContainerLow,
       child: Column(
@@ -107,7 +108,7 @@ class _HeroPanel extends StatelessWidget {
           Text(
             l10n.identifyHubTitle,
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: AppColors.primary,
+                  color: cs.primary,
                   fontWeight: FontWeight.w800,
                 ),
           ),
@@ -115,7 +116,7 @@ class _HeroPanel extends StatelessWidget {
           Text(
             l10n.identifyHubBody,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: AppColors.onSurfaceVariant,
+                  color: cs.onSurfaceVariant,
                 ),
           ),
           const SizedBox(height: 24),
@@ -153,6 +154,7 @@ class _DropZone extends StatelessWidget {
         AppRoutes.pushIdentifyCamera(context);
       },
       builder: (context, candidate, rejected) {
+        final cs = Theme.of(context).colorScheme;
         return Container(
           height: 400,
           decoration: BoxDecoration(
@@ -160,21 +162,21 @@ class _DropZone extends StatelessWidget {
             borderRadius: AppRadii.card,
             border: Border.all(
               color: candidate.isNotEmpty
-                  ? AppColors.primary
-                  : AppColors.outlineVariant.withValues(alpha: 0.5),
+                  ? cs.primary
+                  : cs.outline.withValues(alpha: 0.5),
               width: 2,
             ),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.upload_file, size: 48, color: AppColors.primary.withValues(alpha: 0.6)),
+              Icon(Icons.upload_file, size: 48, color: cs.primary.withValues(alpha: 0.8)),
               const SizedBox(height: 12),
               Text(l10n.identifyFromGallery, style: Theme.of(context).textTheme.titleMedium),
               Text(
                 'JPG, PNG',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.onSurfaceVariant,
+                      color: cs.onSurfaceVariant,
                     ),
               ),
             ],

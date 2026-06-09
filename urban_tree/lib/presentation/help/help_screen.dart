@@ -12,10 +12,11 @@ class HelpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final cs = Theme.of(context).colorScheme;
     final isWide = MediaQuery.sizeOf(context).width >= kDesktopBreakpoint;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         children: [
           BotanicalAppBar(
@@ -23,7 +24,7 @@ class HelpScreen extends StatelessWidget {
             showMenu: false,
             leading: IconButton(
               onPressed: () => Navigator.of(context).pop(),
-              icon: const Icon(Icons.arrow_forward, color: AppColors.primary),
+              icon: Icon(Icons.arrow_forward, color: cs.primary),
             ),
           ),
           Expanded(
@@ -62,7 +63,7 @@ class HelpScreen extends StatelessWidget {
                 Text(
                   l10n.helpGuidesTitle,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: AppColors.primary,
+                        color: cs.primary,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
@@ -118,21 +119,21 @@ class HelpScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 BentoCard(
-                  backgroundColor: AppColors.primaryContainer,
+                  backgroundColor: cs.primaryContainer,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         l10n.helpContactTitle,
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: AppColors.onPrimaryContainer,
+                              color: cs.onPrimaryContainer,
                               fontWeight: FontWeight.w700,
                             ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         l10n.helpContactBody,
-                        style: TextStyle(color: AppColors.onPrimaryContainer.withValues(alpha: 0.9)),
+                        style: TextStyle(color: cs.onPrimaryContainer.withValues(alpha: 0.9)),
                       ),
                       const SizedBox(height: 16),
                       FilledButton(
@@ -160,6 +161,7 @@ class _HeroText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -173,7 +175,7 @@ class _HeroText extends StatelessWidget {
         Text(
           l10n.helpHeroBody,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: AppColors.onSurfaceVariant,
+                color: cs.onSurfaceVariant,
               ),
         ),
       ],

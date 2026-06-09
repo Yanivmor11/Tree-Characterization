@@ -7,7 +7,6 @@ import '../../models/species_monograph.dart';
 import '../../models/tree_report_row.dart';
 import '../../state/report_feed_controller.dart';
 import '../species/species_detail_screen.dart';
-import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import '../widgets/botanical_widgets.dart';
 
@@ -64,6 +63,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final cs = Theme.of(context).colorScheme;
     final feed = context.watch<ReportFeedController>();
     final reports = _filtered(feed.recentReports);
     final crossAxis = MediaQuery.sizeOf(context).width >= kDesktopBreakpoint ? 4 : 1;
@@ -74,13 +74,13 @@ class _CollectionScreenState extends State<CollectionScreen> {
         Text(
           l10n.collectionArchive,
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: AppColors.onSurfaceVariant,
+                color: cs.onSurfaceVariant,
               ),
         ),
         Text(
           l10n.collectionTitle,
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: AppColors.primary,
+                color: cs.primary,
                 fontWeight: FontWeight.w800,
               ),
         ),
@@ -129,13 +129,13 @@ class _CollectionScreenState extends State<CollectionScreen> {
             child: Center(
               child: Column(
                 children: [
-                  const Icon(Icons.forest, size: 56, color: AppColors.outlineVariant),
+                  Icon(Icons.forest, size: 56, color: cs.outline),
                   const SizedBox(height: 12),
                   Text(
                     l10n.collectionEmpty,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.onSurfaceVariant,
+                          color: cs.onSurfaceVariant,
                         ),
                   ),
                 ],
@@ -176,7 +176,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
     if (widget.embedded) return body;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         children: [
           BotanicalAppBar(title: l10n.appBrandTitle, onMenuTap: widget.onMenuTap),
@@ -200,15 +200,16 @@ class _FilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(left: 8),
       child: FilterChip(
         label: Text(label),
         selected: selected,
         onSelected: (_) => onTap(),
-        selectedColor: AppColors.tertiaryContainer,
+        selectedColor: cs.tertiaryContainer,
         labelStyle: TextStyle(
-          color: selected ? AppColors.onTertiaryContainer : AppColors.onSurfaceVariant,
+          color: selected ? cs.onTertiaryContainer : cs.onSurfaceVariant,
           fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
         ),
       ),
@@ -229,6 +230,7 @@ class _ReportCollectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final thumb = row.wholeTreeImageUrls.isNotEmpty ? row.wholeTreeImageUrls.first : null;
     final title = row.species ?? row.speciesScientific ?? '—';
     return BentoCard(
@@ -268,7 +270,7 @@ class _ReportCollectionCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.onSurfaceVariant,
+                        color: cs.onSurfaceVariant,
                         fontStyle: FontStyle.italic,
                       ),
                 ),

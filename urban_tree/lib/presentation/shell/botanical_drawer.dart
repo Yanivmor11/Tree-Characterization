@@ -29,6 +29,7 @@ class BotanicalDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final cs = theme.colorScheme;
     final auth = context.watch<AuthController>();
 
     return Material(
@@ -150,13 +151,15 @@ class BotanicalDrawer extends StatelessWidget {
                                       Text(
                                         auth.user?.email?.split('@').first ??
                                             l10n.defaultUserName,
-                                        style: theme.textTheme.titleSmall
-                                            ?.copyWith(fontWeight: FontWeight.w700),
+                                        style: theme.textTheme.titleSmall?.copyWith(
+                                          color: cs.onSurface,
+                                          fontWeight: FontWeight.w700,
+                                        ),
                                       ),
                                       Text(
                                         l10n.userRoleBotanist,
                                         style: theme.textTheme.bodySmall?.copyWith(
-                                          color: AppColors.onSurfaceVariant,
+                                          color: cs.onSurfaceVariant,
                                         ),
                                       ),
                                     ],

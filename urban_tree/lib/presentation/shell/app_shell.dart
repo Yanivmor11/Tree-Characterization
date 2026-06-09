@@ -95,21 +95,24 @@ class _AppShellState extends State<AppShell> {
                     ),
                   ),
                   if (isDesktop)
-                    BotanicalSideNav(
-                      current: _tab,
-                      onChanged: (t) => setState(() => _tab = t),
-                      labels: labels,
-                      appTitle: l10n.appBrandTitle,
-                      appSubtitle: l10n.appBrandSubtitle,
-                      onIdentifyNew: () => AppRoutes.pushIdentifyCamera(context),
-                      userName: auth.user?.email?.split('@').first ?? l10n.defaultUserName,
-                      userSubtitle: l10n.userRoleBotanist,
-                      onHelpTap: () => AppRoutes.pushHelp(context),
-                      onProfileTap: () => AppRoutes.pushProfile(
-                        context,
-                        localeController: widget.localeController,
+                    Theme(
+                      data: buildUrbanTreeTheme(brightness: Brightness.light),
+                      child: BotanicalSideNav(
+                        current: _tab,
+                        onChanged: (t) => setState(() => _tab = t),
+                        labels: labels,
+                        appTitle: l10n.appBrandTitle,
+                        appSubtitle: l10n.appBrandSubtitle,
+                        onIdentifyNew: () => AppRoutes.pushIdentifyCamera(context),
+                        userName: auth.user?.email?.split('@').first ?? l10n.defaultUserName,
+                        userSubtitle: l10n.userRoleBotanist,
+                        onHelpTap: () => AppRoutes.pushHelp(context),
+                        onProfileTap: () => AppRoutes.pushProfile(
+                          context,
+                          localeController: widget.localeController,
+                        ),
+                        helpLabel: l10n.navHelp,
                       ),
-                      helpLabel: l10n.navHelp,
                     ),
                 ],
               ),
@@ -123,16 +126,19 @@ class _AppShellState extends State<AppShell> {
             ),
             if (_drawerOpen)
               Positioned.fill(
-                child: BotanicalDrawer(
-                  current: _tab,
-                  onTabSelected: (t) => setState(() => _tab = t),
-                  onClose: _closeDrawer,
-                  onHelpTap: () => AppRoutes.pushHelp(context),
-                  onProfileTap: () => AppRoutes.pushProfile(
-                    context,
-                    localeController: widget.localeController,
+                child: Theme(
+                  data: buildUrbanTreeTheme(brightness: Brightness.light),
+                  child: BotanicalDrawer(
+                    current: _tab,
+                    onTabSelected: (t) => setState(() => _tab = t),
+                    onClose: _closeDrawer,
+                    onHelpTap: () => AppRoutes.pushHelp(context),
+                    onProfileTap: () => AppRoutes.pushProfile(
+                      context,
+                      localeController: widget.localeController,
+                    ),
+                    onSignOut: context.read<AuthController>().signOut,
                   ),
-                  onSignOut: context.read<AuthController>().signOut,
                 ),
               ),
           ],

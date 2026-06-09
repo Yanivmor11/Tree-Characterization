@@ -120,6 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final cs = theme.colorScheme;
     final feed = context.watch<ReportFeedController>();
     final isWide = MediaQuery.sizeOf(context).width >= kDesktopBreakpoint;
     final recent = feed.recentReports.take(6).toList();
@@ -130,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Text(
           l10n.homeGreeting,
           style: theme.textTheme.labelMedium?.copyWith(
-            color: AppColors.onSurfaceVariant,
+            color: cs.onSurfaceVariant,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
           ),
@@ -138,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Text(
           l10n.homeHello(_greetingName(context, l10n)),
           style: theme.textTheme.headlineMedium?.copyWith(
-            color: AppColors.primary,
+            color: cs.primary,
             fontWeight: FontWeight.w800,
           ),
         ),
@@ -149,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onSubmitted: _submitSearch,
           decoration: InputDecoration(
             hintText: l10n.homeSearchHint,
-            prefixIcon: const Icon(Icons.search, color: AppColors.outline),
+            prefixIcon: Icon(Icons.search, color: cs.outline),
           ),
         ),
         const SizedBox(height: 32),
@@ -224,7 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (widget.embedded) return body;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Column(
         children: [
           BotanicalAppBar(
@@ -305,6 +306,7 @@ class _CtaText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final cs = theme.colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -319,7 +321,7 @@ class _CtaText extends StatelessWidget {
         Text(
           body,
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: AppColors.onPrimaryContainer,
+            color: cs.onPrimaryContainer,
           ),
         ),
         const SizedBox(height: 20),
@@ -355,6 +357,7 @@ class _RecentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final cs = Theme.of(context).colorScheme;
     return SizedBox(
       width: 180,
       child: InkWell(
@@ -394,7 +397,7 @@ class _RecentCard extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.onSurfaceVariant,
+                    color: cs.onSurfaceVariant,
                   ),
             ),
           ],
@@ -469,6 +472,7 @@ class _FeaturedCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return BentoCard(
       onTap: onTap,
       leafCorner: true,
@@ -489,27 +493,27 @@ class _FeaturedCard extends StatelessWidget {
                 Text(
                   tag,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: AppColors.secondary,
+                        color: cs.secondary,
                       ),
                 ),
                 Text(
                   title,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: AppColors.primary,
+                        color: cs.primary,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
                 Text(
                   subtitle,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.onSurfaceVariant,
+                        color: cs.onSurfaceVariant,
                         fontStyle: FontStyle.italic,
                       ),
                 ),
               ],
             ),
           ),
-          const Icon(Icons.chevron_left, color: AppColors.outlineVariant),
+          Icon(Icons.chevron_left, color: cs.outline),
         ],
       ),
     );
