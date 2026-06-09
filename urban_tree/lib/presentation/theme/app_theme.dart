@@ -71,9 +71,16 @@ ThemeData buildUrbanTreeTheme({Brightness brightness = Brightness.light}) {
     ),
     chipTheme: ChipThemeData(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
-      side: BorderSide(color: colorScheme.outlineVariant),
+      side: BorderSide(color: colorScheme.outline),
       backgroundColor: colorScheme.surfaceContainerHigh,
-      labelStyle: textTheme.labelSmall,
+      selectedColor: colorScheme.primaryContainer,
+      disabledColor: colorScheme.surfaceContainer,
+      labelStyle: textTheme.labelSmall?.copyWith(color: colorScheme.onSurface),
+      secondaryLabelStyle: textTheme.labelSmall?.copyWith(
+        color: colorScheme.onPrimaryContainer,
+        fontWeight: FontWeight.w600,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
     ),
     dividerTheme: DividerThemeData(color: colorScheme.outlineVariant),
     snackBarTheme: SnackBarThemeData(

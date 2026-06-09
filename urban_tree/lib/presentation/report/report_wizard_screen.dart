@@ -79,6 +79,9 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
 
   TreeReportDraft get _d => widget.draft;
 
+  static const _minTouchTarget = 48.0;
+  static const _wizardSteps = 3;
+
   static StressSymptom? _stressSymptomFromStorage(String symptom) {
     return switch (symptom) {
       'chlorosis' => StressSymptom.chlorosis,
@@ -515,8 +518,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    const steps = 3;
-    final progress = (_step + 1) / steps;
+    final progress = (_step + 1) / _wizardSteps;
 
     return Scaffold(
       appBar: AppBar(
@@ -542,6 +544,11 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
                   style: TextStyle(color: theme.colorScheme.onTertiaryContainer),
                 ),
                 trailing: IconButton(
+                  tooltip: l10n.a11yClose,
+                  constraints: const BoxConstraints(
+                    minWidth: _minTouchTarget,
+                    minHeight: _minTouchTarget,
+                  ),
                   icon: Icon(Icons.close, color: theme.colorScheme.onTertiaryContainer),
                   onPressed: () => setState(() => _phenologyBanner = null),
                 ),
@@ -559,6 +566,11 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
                   style: TextStyle(color: theme.colorScheme.onErrorContainer),
                 ),
                 trailing: IconButton(
+                  tooltip: l10n.a11yClose,
+                  constraints: const BoxConstraints(
+                    minWidth: _minTouchTarget,
+                    minHeight: _minTouchTarget,
+                  ),
                   icon: Icon(Icons.close, color: theme.colorScheme.onErrorContainer),
                   onPressed: () => setState(() => _accuracyTipVisible = false),
                 ),
@@ -607,6 +619,8 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
             ),
           ),
           const SizedBox(height: 16),
+          _buildStepIndicator(theme, l10n),
+          const SizedBox(height: 16),
           if (_step == 0) _buildWholeTree(theme, l10n),
           if (_step == 1) _buildFlower(theme, l10n),
           if (_step == 2) _buildLeaves(theme, l10n),
@@ -630,31 +644,40 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
               Row(
                 children: [
                   if (_step > 0)
-                    OutlinedButton(
-                      onPressed: _submitting ? null : () => setState(() => _step--),
-                      child: Text(l10n.back),
+                    SizedBox(
+                      height: _minTouchTarget,
+                      child: OutlinedButton(
+                        onPressed: _submitting ? null : () => setState(() => _step--),
+                        child: Text(l10n.back),
+                      ),
                     ),
                   const Spacer(),
-                  if (_step < steps - 1)
-                    FilledButton(
-                      onPressed: _submitting
-                          ? null
-                          : () {
-                              if (_step == 1 && !_validateStep1Flower()) return;
-                              setState(() => _step++);
-                            },
-                      child: Text(l10n.next),
+                  if (_step < _wizardSteps - 1)
+                    SizedBox(
+                      height: _minTouchTarget,
+                      child: FilledButton(
+                        onPressed: _submitting
+                            ? null
+                            : () {
+                                if (_step == 1 && !_validateStep1Flower()) return;
+                                setState(() => _step++);
+                              },
+                        child: Text(l10n.next),
+                      ),
                     )
                   else
-                    FilledButton(
-                      onPressed: _submitting ? null : _submit,
-                      child: _submitting
-                          ? const SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : Text(l10n.submitReport),
+                    SizedBox(
+                      height: _minTouchTarget,
+                      child: FilledButton(
+                        onPressed: _submitting ? null : _submit,
+                        child: _submitting
+                            ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : Text(l10n.submitReport),
+                      ),
                     ),
                 ],
               ),
@@ -1011,8 +1034,104 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     );
   }
 
+  Widget _buildStepIndicator(ThemeData theme, AppLocalizations l10n) {
+    return Row(
+      children: List.generate(_wizardSteps, (index) {
+        final active = index == _step;
+        final completed = index < _step;
+        final stepNumber = index + 1;
+        final fillColor = active
+            ? theme.colorScheme.primary
+            : completed
+                ? theme.colorScheme.primaryContainer
+                : theme.colorScheme.surfaceContainerHigh;
+        final textColor = active
+            ? theme.colorScheme.onPrimary
+            : completed
+                ? theme.colorScheme.onPrimaryContainer
+                : theme.colorScheme.onSurface;
+        final borderColor = active
+            ? theme.colorScheme.primary
+            : theme.colorScheme.outline;
+
+        return Expanded(
+          child: Padding(
+            padding: EdgeInsetsDirectional.only(
+              start: index == 0 ? 0 : 4,
+              end: index == _wizardSteps - 1 ? 0 : 4,
+            ),
+            child: Semantics(
+              label: l10n.a11yWizardStep(stepNumber, _wizardSteps),
+              selected: active,
+              child: Column(
+                children: [
+                  Container(
+                    width: _minTouchTarget,
+                    height: _minTouchTarget,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: fillColor,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: borderColor, width: active ? 2 : 1),
+                    ),
+                    child: Text(
+                      '$stepNumber',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: textColor,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Container(
+                    height: 3,
+                    decoration: BoxDecoration(
+                      color: completed || active
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.outlineVariant,
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _accessibleFilterChip({
+    required ThemeData theme,
+    required String label,
+    required bool selected,
+    required ValueChanged<bool> onSelected,
+  }) {
+    return FilterChip(
+      label: Text(label),
+      selected: selected,
+      showCheckmark: false,
+      side: BorderSide(
+        color: selected ? theme.colorScheme.primary : theme.colorScheme.outline,
+        width: selected ? 2 : 1,
+      ),
+      selectedColor: theme.colorScheme.primaryContainer,
+      backgroundColor: theme.colorScheme.surfaceContainerHigh,
+      labelStyle: theme.textTheme.labelMedium?.copyWith(
+        color: selected
+            ? theme.colorScheme.onPrimaryContainer
+            : theme.colorScheme.onSurface,
+        fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      materialTapTargetSize: MaterialTapTargetSize.padded,
+      onSelected: onSelected,
+    );
+  }
+
   Widget _thumbStrip(List<XFile> files, void Function(int) onRemove) {
     if (files.isEmpty) return const SizedBox.shrink();
+    final l10n = AppLocalizations.of(context);
     return SizedBox(
       height: 88,
       child: ListView.separated(
@@ -1023,17 +1142,21 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
           return Stack(
             clipBehavior: Clip.none,
             children: [
-              _XFileThumbnail(file: files[i]),
+              _XFileThumbnail(
+                file: files[i],
+                semanticLabel: l10n.a11yUploadedTreePreview,
+              ),
               PositionedDirectional(
-                top: 4,
-                end: 4,
+                top: 0,
+                end: 0,
                 child: IconButton.filledTonal(
-                  style: IconButton.styleFrom(
-                    minimumSize: const Size(32, 32),
-                    padding: EdgeInsets.zero,
+                  tooltip: l10n.a11yRemovePhoto,
+                  constraints: const BoxConstraints(
+                    minWidth: _minTouchTarget,
+                    minHeight: _minTouchTarget,
                   ),
                   onPressed: () => onRemove(i),
-                  icon: const Icon(Icons.close, size: 18),
+                  icon: const Icon(Icons.close, size: 20),
                 ),
               ),
             ],
@@ -1173,8 +1296,9 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
           runSpacing: 8,
           children: StructuralIssue.values.map((issue) {
             final selected = _d.structuralIssues.contains(issue);
-            return FilterChip(
-              label: Text(l10n.structuralIssueLabel(issue)),
+            return _accessibleFilterChip(
+              theme: theme,
+              label: l10n.structuralIssueLabel(issue),
               selected: selected,
               onSelected: (on) {
                 setState(() {
@@ -1326,8 +1450,9 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
                 .where((s) => s != StressSymptom.none)
                 .map((symptom) {
               final selected = _d.stressSymptoms.contains(symptom);
-              return FilterChip(
-                label: Text(l10n.stressSymptomLabel(symptom)),
+              return _accessibleFilterChip(
+                theme: theme,
+                label: l10n.stressSymptomLabel(symptom),
                 selected: selected,
                 onSelected: (on) {
                   setState(() {
@@ -1368,9 +1493,13 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
 }
 
 class _XFileThumbnail extends StatefulWidget {
-  const _XFileThumbnail({required this.file});
+  const _XFileThumbnail({
+    required this.file,
+    required this.semanticLabel,
+  });
 
   final XFile file;
+  final String semanticLabel;
 
   @override
   State<_XFileThumbnail> createState() => _XFileThumbnailState();
@@ -1381,31 +1510,46 @@ class _XFileThumbnailState extends State<_XFileThumbnail> {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: SizedBox(
-        width: 88,
-        height: 88,
-        child: FutureBuilder<Uint8List>(
-          future: _bytes,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return ColoredBox(
-                color: Theme.of(context).colorScheme.surfaceContainerHigh,
-                child: const Icon(Icons.broken_image_outlined),
+    final theme = Theme.of(context);
+    return Semantics(
+      label: widget.semanticLabel,
+      image: true,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: SizedBox(
+          width: 88,
+          height: 88,
+          child: FutureBuilder<Uint8List>(
+            future: _bytes,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return ColoredBox(
+                  color: theme.colorScheme.surfaceContainerHigh,
+                  child: Icon(
+                    Icons.broken_image_outlined,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                );
+              }
+              if (!snapshot.hasData) {
+                return ColoredBox(
+                  color: theme.colorScheme.surfaceContainerHigh,
+                  child: const Center(
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                );
+              }
+              return Image.memory(
+                snapshot.data!,
+                fit: BoxFit.cover,
+                semanticLabel: widget.semanticLabel,
               );
-            }
-            if (!snapshot.hasData) {
-              return const Center(
-                child: SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-              );
-            }
-            return Image.memory(snapshot.data!, fit: BoxFit.cover);
-          },
+            },
+          ),
         ),
       ),
     );

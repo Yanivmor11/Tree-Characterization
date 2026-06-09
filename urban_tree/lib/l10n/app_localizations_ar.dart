@@ -977,6 +977,26 @@ class AppLocalizationsAr extends AppLocalizations {
   String get a11yUserProfile => 'الملف الشخصي للمستخدم';
 
   @override
+  String get a11yClose => 'إغلاق';
+
+  @override
+  String get a11yRemovePhoto => 'إزالة الصورة';
+
+  @override
+  String get a11yUploadedTreePreview => 'معاينة الشجرة المرفوعة';
+
+  @override
+  String a11yWizardStep(int step, int total) {
+    return 'الخطوة $step من $total';
+  }
+
+  @override
+  String get a11yProfileBack => 'رجوع';
+
+  @override
+  String get a11yBookmarkTree => 'حفظ الشجرة في المجموعة';
+
+  @override
   String imageOf(String name) {
     return 'صورة $name';
   }

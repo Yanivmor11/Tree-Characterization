@@ -6,10 +6,12 @@ import 'app_colors.dart';
 
 abstract final class AppTypography {
   static TextTheme textTheme(Brightness brightness) {
+    final colorScheme = brightness == Brightness.dark
+        ? AppColors.darkColorScheme
+        : AppColors.lightColorScheme;
     final base = ThemeData(
       useMaterial3: true,
-      brightness: brightness,
-      colorScheme: AppColors.lightColorScheme,
+      colorScheme: colorScheme,
     ).textTheme;
 
     if (kIsWeb) {

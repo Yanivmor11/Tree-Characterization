@@ -308,7 +308,7 @@ class _MapScreenState extends State<MapScreen> {
       final tip = _gemTooltip(l10n, r);
       final icon = Icon(
         gem ? Icons.auto_awesome : Icons.forest_rounded,
-        color: gem ? Colors.amber.shade800 : r.landType.layerColor(1),
+        color: gem ? theme.colorScheme.secondary : r.landType.layerColor(1),
         size: gem ? 36 : 34,
       );
       final markerIcon = GestureDetector(
@@ -352,9 +352,9 @@ class _MapScreenState extends State<MapScreen> {
             point: LatLng(h.latitude, h.longitude),
             radius: h.radiusM,
             useRadiusInMeter: true,
-            color: Colors.deepOrange.withValues(alpha: 0.14),
+            color: theme.colorScheme.error.withValues(alpha: 0.18),
             borderStrokeWidth: 2,
-            borderColor: Colors.deepOrange.shade800,
+            borderColor: theme.colorScheme.error,
           ),
         )
         .toList();
@@ -365,16 +365,22 @@ class _MapScreenState extends State<MapScreen> {
       children: [
         if (pestBanner != null)
           Material(
-            color: theme.colorScheme.errorContainer,
+            color: theme.brightness == Brightness.dark
+                ? theme.colorScheme.errorContainer
+                : theme.colorScheme.error.withValues(alpha: 0.12),
             child: ListTile(
-              dense: true,
               leading: Icon(
                 Icons.warning_amber_rounded,
-                color: theme.colorScheme.onErrorContainer,
+                color: theme.colorScheme.error,
               ),
               title: Text(
                 pestBanner,
-                style: TextStyle(color: theme.colorScheme.onErrorContainer),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.brightness == Brightness.dark
+                      ? theme.colorScheme.onErrorContainer
+                      : theme.colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -414,7 +420,7 @@ class _MapScreenState extends State<MapScreen> {
     if (widget.embedded) {
       final selected = _selectedReport;
       return Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: theme.colorScheme.surface,
         body: Stack(
           children: [
             Column(
@@ -434,7 +440,7 @@ class _MapScreenState extends State<MapScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 child: Row(
                   children: [
-                    const Icon(Icons.search, color: AppColors.outline),
+                    Icon(Icons.search, color: theme.colorScheme.outline),
                     const SizedBox(width: 8),
                     Expanded(
                       child: TextField(
@@ -445,8 +451,10 @@ class _MapScreenState extends State<MapScreen> {
                       ),
                     ),
                     IconButton(
+                      tooltip: l10n.mapLayersTooltip,
+                      constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
                       onPressed: _openLayerSheet,
-                      icon: const Icon(Icons.filter_list, color: AppColors.primary),
+                      icon: Icon(Icons.filter_list, color: theme.colorScheme.primary),
                     ),
                   ],
                 ),
@@ -455,11 +463,18 @@ class _MapScreenState extends State<MapScreen> {
             Positioned(
               top: 160,
               right: 24,
-              child: FloatingActionButton.small(
-                heroTag: 'map-loc',
-                backgroundColor: AppColors.surfaceContainerLowest.withValues(alpha: 0.95),
-                onPressed: _recenterOnUser,
-                child: const Icon(Icons.my_location, color: AppColors.primary),
+              child: SizedBox(
+                width: 48,
+                height: 48,
+                child: FloatingActionButton(
+                  heroTag: 'map-loc',
+                  elevation: 2,
+                  backgroundColor: theme.colorScheme.surfaceContainerLowest
+                      .withValues(alpha: 0.95),
+                  onPressed: _recenterOnUser,
+                  tooltip: l10n.mapMyLocationTooltip,
+                  child: Icon(Icons.my_location, color: theme.colorScheme.primary),
+                ),
               ),
             ),
             if (selected != null)
@@ -472,6 +487,19 @@ class _MapScreenState extends State<MapScreen> {
                   l10n: l10n,
                   onClose: () => setState(() => _selectedReport = null),
                   onDetails: () => _openReportDetail(selected.id),
+                ),
+              ),
+            if (kE2eSemantics)
+              Positioned(
+                left: 24,
+                right: 24,
+                bottom: 100,
+                child: FloatingActionButton.extended(
+                  heroTag: 'map-report-e2e',
+                  onPressed: _startReport,
+                  tooltip: l10n.reportTreeFab,
+                  icon: const Icon(Icons.park_outlined),
+                  label: Text(l10n.reportTreeFab),
                 ),
               ),
           ],
@@ -506,15 +534,20 @@ class _MapScreenState extends State<MapScreen> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          FloatingActionButton.small(
-            heroTag: 'loc',
-            tooltip: l10n.mapMyLocationTooltip,
-            onPressed: _recenterOnUser,
-            child: const Icon(Icons.my_location_outlined),
+          SizedBox(
+            width: 48,
+            height: 48,
+            child: FloatingActionButton(
+              heroTag: 'loc',
+              tooltip: l10n.mapMyLocationTooltip,
+              onPressed: _recenterOnUser,
+              child: const Icon(Icons.my_location_outlined),
+            ),
           ),
           const SizedBox(height: 12),
           FloatingActionButton.extended(
             heroTag: 'report',
+            tooltip: l10n.reportTreeFab,
             onPressed: _startReport,
             icon: const Icon(Icons.park_outlined),
             label: Text(l10n.reportTreeFab),
@@ -585,7 +618,12 @@ class _MapTreeSheet extends StatelessWidget {
                     ],
                   ),
                 ),
-                IconButton(onPressed: onClose, icon: const Icon(Icons.close)),
+                IconButton(
+                  tooltip: l10n.a11yClose,
+                  constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+                  onPressed: onClose,
+                  icon: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -600,6 +638,8 @@ class _MapTreeSheet extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 IconButton.filled(
+                  tooltip: l10n.a11yBookmarkTree,
+                  constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
                   onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(l10n.speciesSavedToCollection)),
                   ),

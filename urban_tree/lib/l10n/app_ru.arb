@@ -295,6 +295,18 @@
   "helpFaq3Answer": "После успешного определения нажмите «Сохранить в коллекцию».",
 
   "a11yOpenMenu": "Открыть меню навигации",
+  "a11yClose": "Закрыть",
+  "a11yRemovePhoto": "Удалить фото",
+  "a11yUploadedTreePreview": "Предпросмотр загруженного дерева",
+  "a11yWizardStep": "Шаг {step} из {total}",
+  "@a11yWizardStep": {
+    "placeholders": {
+      "step": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "a11yProfileBack": "Назад",
+  "a11yBookmarkTree": "Сохранить дерево в коллекцию",
   "a11yUserProfile": "Профиль пользователя",
   "imageOf": "Фото: {name}",
   "imageUnavailable": "Изображение недоступно",

@@ -9,6 +9,9 @@ const double kTargetLocationAccuracyMeters = 50.0;
 /// hidden from flutter_map for a clean presentation viewport.
 const bool kShowLandUseMapOverlays = false;
 
+/// Playwright E2E: expose semantics tree and map report FAB in embedded shell.
+const bool kE2eSemantics = bool.fromEnvironment('E2E_SEMANTICS', defaultValue: false);
+
 const String kTreeReportBucket = 'tree-report-media';
 
 const int kMaxReportImagesPerSection = 3;

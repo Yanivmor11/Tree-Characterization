@@ -463,6 +463,18 @@
 
   "a11yOpenMenu": "פתיחת תפריט הניווט",
   "a11yUserProfile": "פרופיל המשתמש",
+  "a11yClose": "סגור",
+  "a11yRemovePhoto": "הסר תמונה",
+  "a11yUploadedTreePreview": "תצוגה מקדימה של עץ שהועלה",
+  "a11yWizardStep": "שלב {step} מתוך {total}",
+  "@a11yWizardStep": {
+    "placeholders": {
+      "step": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "a11yProfileBack": "חזרה",
+  "a11yBookmarkTree": "שמור עץ לאוסף",
   "imageOf": "תמונה של {name}",
   "imageUnavailable": "התמונה אינה זמינה",
   "reportPhotoLabel": "תמונת העץ שדווח",

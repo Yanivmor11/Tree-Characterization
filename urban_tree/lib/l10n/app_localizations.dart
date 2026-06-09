@@ -1872,6 +1872,42 @@ abstract class AppLocalizations {
   /// **'User profile'**
   String get a11yUserProfile;
 
+  /// No description provided for @a11yClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get a11yClose;
+
+  /// No description provided for @a11yRemovePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove photo'**
+  String get a11yRemovePhoto;
+
+  /// No description provided for @a11yUploadedTreePreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploaded tree preview'**
+  String get a11yUploadedTreePreview;
+
+  /// No description provided for @a11yWizardStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step} of {total}'**
+  String a11yWizardStep(int step, int total);
+
+  /// No description provided for @a11yProfileBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Go back'**
+  String get a11yProfileBack;
+
+  /// No description provided for @a11yBookmarkTree.
+  ///
+  /// In en, this message translates to:
+  /// **'Save tree to collection'**
+  String get a11yBookmarkTree;
+
   /// No description provided for @imageOf.
   ///
   /// In en, this message translates to:

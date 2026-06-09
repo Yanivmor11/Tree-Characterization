@@ -295,6 +295,18 @@
   "helpFaq3Answer": "بعد التعرّف الناجح، اضغط على \"احفظ في مجموعتي\".",
 
   "a11yOpenMenu": "فتح قائمة التنقل",
+  "a11yClose": "إغلاق",
+  "a11yRemovePhoto": "إزالة الصورة",
+  "a11yUploadedTreePreview": "معاينة الشجرة المرفوعة",
+  "a11yWizardStep": "الخطوة {step} من {total}",
+  "@a11yWizardStep": {
+    "placeholders": {
+      "step": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "a11yProfileBack": "رجوع",
+  "a11yBookmarkTree": "حفظ الشجرة في المجموعة",
   "a11yUserProfile": "الملف الشخصي للمستخدم",
   "imageOf": "صورة {name}",
   "imageUnavailable": "الصورة غير متاحة",

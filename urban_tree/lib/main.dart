@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -14,8 +15,13 @@ import 'presentation/auth/auth_gate_screen.dart';
 import 'presentation/theme/app_theme.dart';
 import 'state/auth_controller.dart';
 
+import 'core/constants.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (kIsWeb && (kDebugMode || kE2eSemantics)) {
+    SemanticsBinding.instance.ensureSemantics();
+  }
   try {
     await AppEnv.load();
     appLogDebug('Bootstrap APP_ENV=${AppEnv.appEnv}');

@@ -473,6 +473,18 @@
 
   "a11yOpenMenu": "Open navigation menu",
   "a11yUserProfile": "User profile",
+  "a11yClose": "Close",
+  "a11yRemovePhoto": "Remove photo",
+  "a11yUploadedTreePreview": "Uploaded tree preview",
+  "a11yWizardStep": "Step {step} of {total}",
+  "@a11yWizardStep": {
+    "placeholders": {
+      "step": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "a11yProfileBack": "Go back",
+  "a11yBookmarkTree": "Save tree to collection",
   "imageOf": "Photo of {name}",
   "@imageOf": {
     "placeholders": {

@@ -989,6 +989,26 @@ class AppLocalizationsRu extends AppLocalizations {
   String get a11yUserProfile => 'Профиль пользователя';
 
   @override
+  String get a11yClose => 'Закрыть';
+
+  @override
+  String get a11yRemovePhoto => 'Удалить фото';
+
+  @override
+  String get a11yUploadedTreePreview => 'Предпросмотр загруженного дерева';
+
+  @override
+  String a11yWizardStep(int step, int total) {
+    return 'Шаг $step из $total';
+  }
+
+  @override
+  String get a11yProfileBack => 'Назад';
+
+  @override
+  String get a11yBookmarkTree => 'Сохранить дерево в коллекцию';
+
+  @override
   String imageOf(String name) {
     return 'Фото: $name';
   }

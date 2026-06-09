@@ -983,6 +983,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get a11yUserProfile => 'User profile';
 
   @override
+  String get a11yClose => 'Close';
+
+  @override
+  String get a11yRemovePhoto => 'Remove photo';
+
+  @override
+  String get a11yUploadedTreePreview => 'Uploaded tree preview';
+
+  @override
+  String a11yWizardStep(int step, int total) {
+    return 'Step $step of $total';
+  }
+
+  @override
+  String get a11yProfileBack => 'Go back';
+
+  @override
+  String get a11yBookmarkTree => 'Save tree to collection';
+
+  @override
   String imageOf(String name) {
     return 'Photo of $name';
   }

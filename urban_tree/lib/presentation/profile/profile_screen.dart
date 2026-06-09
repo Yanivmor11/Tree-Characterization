@@ -46,6 +46,8 @@ class ProfileScreen extends StatelessWidget {
           BotanicalAppBar(
             title: l10n.appBrandTitle,
             leading: IconButton(
+              tooltip: l10n.a11yProfileBack,
+              constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
               onPressed: () => Navigator.of(context).pop(),
               icon: Icon(Icons.arrow_forward, color: theme.colorScheme.primary),
             ),
@@ -134,21 +136,22 @@ class ProfileScreen extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Icon(
+                                    Icon(
                                       Icons.stars_rounded,
-                                      color: AppColors.primaryFixed,
+                                      color: theme.colorScheme.onPrimaryContainer,
                                     ),
                                     Text(
                                       '$points',
                                       style: theme.textTheme.headlineMedium?.copyWith(
-                                        color: Colors.white,
+                                        color: theme.colorScheme.onPrimaryContainer,
                                         fontWeight: FontWeight.w800,
                                       ),
                                     ),
                                     Text(
                                       l10n.profileGamificationPoints,
                                       style: theme.textTheme.labelSmall?.copyWith(
-                                        color: Colors.white70,
+                                        color: theme.colorScheme.onPrimaryContainer
+                                            .withValues(alpha: 0.85),
                                       ),
                                     ),
                                   ],
@@ -173,7 +176,12 @@ class ProfileScreen extends StatelessWidget {
                                         fontWeight: FontWeight.w800,
                                       ),
                                     ),
-                                    Text(l10n.profileTrustScore),
+                                    Text(
+                                      l10n.profileTrustScore,
+                                      style: theme.textTheme.labelSmall?.copyWith(
+                                        color: theme.colorScheme.onSurfaceVariant,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -201,7 +209,12 @@ class ProfileScreen extends StatelessWidget {
                                         color: theme.colorScheme.primary,
                                       ),
                                     ),
-                                    Text(l10n.profileBadgesEarned),
+                                    Text(
+                                      l10n.profileBadgesEarned,
+                                      style: theme.textTheme.labelSmall?.copyWith(
+                                        color: theme.colorScheme.onSurfaceVariant,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -385,7 +398,7 @@ class _SettingsTile extends StatelessWidget {
           ),
           trailing: Icon(
             Icons.chevron_left,
-            color: AppColors.outlineVariant,
+            color: theme.colorScheme.outline,
           ),
         ),
       ),
