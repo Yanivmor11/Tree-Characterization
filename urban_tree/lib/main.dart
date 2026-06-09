@@ -125,8 +125,10 @@ class UrbanTreeApp extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
             ],
             theme: buildUrbanTreeTheme(brightness: Brightness.light),
-            darkTheme: buildUrbanTreeTheme(brightness: Brightness.dark),
-            themeMode: ThemeMode.system,
+            // The botanical-monograph design system (cards, sidebar, gradients)
+            // was designed light-only; following the OS dark mode produced
+            // unreadable light-on-light text on hardcoded light card surfaces.
+            themeMode: ThemeMode.light,
             home: AuthGateScreen(localeController: localeController),
           );
         },

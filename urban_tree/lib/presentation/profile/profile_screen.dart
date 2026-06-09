@@ -150,8 +150,7 @@ class ProfileScreen extends StatelessWidget {
                                     Text(
                                       l10n.profileGamificationPoints,
                                       style: theme.textTheme.labelSmall?.copyWith(
-                                        color: theme.colorScheme.onPrimaryContainer
-                                            .withValues(alpha: 0.85),
+                                        color: theme.colorScheme.onPrimaryContainer,
                                       ),
                                     ),
                                   ],

@@ -139,8 +139,8 @@ class PhotoGuideScreen extends StatelessWidget {
                             ),
                             Text(
                               l10n.photoGuideLightingBody,
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.8),
+                              style: const TextStyle(
+                                color: Colors.white,
                                 fontSize: 11,
                               ),
                             ),

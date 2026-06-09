@@ -313,7 +313,7 @@ class _StatBox extends StatelessWidget {
             label,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: Colors.white.withValues(alpha: 0.85),
+                  color: Colors.white,
                 ),
           ),
         ],

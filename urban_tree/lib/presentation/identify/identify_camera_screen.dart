@@ -250,7 +250,7 @@ class _IdentifyCameraScreenState extends State<IdentifyCameraScreen> {
                   Text(
                     l10n.cameraHint,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 13),
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 13),
                   ),
                 ],
               ),
@@ -290,7 +290,7 @@ class _SideAction extends StatelessWidget {
             child: Icon(icon, color: Colors.white),
           ),
           const SizedBox(height: 8),
-          Text(label, style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 10)),
+          Text(label, style: const TextStyle(color: Colors.white, fontSize: 10)),
         ],
       ),
     );
