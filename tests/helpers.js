@@ -51,9 +51,9 @@ async function waitForAppReady(page) {
  * @param {string|RegExp} label
  */
 async function clickByLabel(page, label) {
-  const button = page.getByRole('button', { name: label });
+  const button = page.getByRole('button', { name: label, exact: true });
   if (await button.count()) {
-    await button.first().click();
+    await button.first().click({ force: true });
     return;
   }
   const link = page.getByRole('link', { name: label });

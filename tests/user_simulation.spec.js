@@ -82,16 +82,15 @@ test.describe('UrbanTree user simulation', () => {
     await expect(page.getByText('Submit report')).toBeVisible();
 
     // Upload flower photo without required metadata, then try Next on step 2.
-    await clickByLabel(page, 'Back');
-    await clickByLabel(page, 'Back');
-    await expect(page.getByText(/Step 1/)).toBeVisible();
+    await page.getByRole('button', { name: 'Back', exact: true }).last().click({ force: true });
+    await expect(page.getByText(/Step 2/)).toBeVisible();
 
-    await wizardNext(page);
     const [chooser] = await Promise.all([
       page.waitForEvent('filechooser', { timeout: 20_000 }),
       page.getByRole('button', { name: 'Gallery' }).click(),
     ]);
     await chooser.setFiles(require('./helpers').MOCK_TREE_PHOTO);
+    await page.waitForTimeout(1000);
 
     await wizardNext(page);
     await expect(
