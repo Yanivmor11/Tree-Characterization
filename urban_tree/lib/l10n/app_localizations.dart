@@ -1944,6 +1944,12 @@ abstract class AppLocalizations {
   /// **'No results for \"{query}\"'**
   String searchNoResults(String query);
 
+  /// No description provided for @searchResultsFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Results for \"{query}\"'**
+  String searchResultsFor(String query);
+
   /// No description provided for @collectionEmpty.
   ///
   /// In en, this message translates to:

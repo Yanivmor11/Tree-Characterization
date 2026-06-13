@@ -480,6 +480,7 @@
 
   "homeFeaturedTitle": "מינים נבחרים",
   "searchNoResults": "אין תוצאות עבור \"{query}\"",
+  "searchResultsFor": "תוצאות עבור \"{query}\"",
   "collectionEmpty": "אין עדיין עצים באוסף שלך. זהה עץ כדי להתחיל את הארכיון.",
   "speciesSavedToCollection": "נשמר לאוסף שלך",
   "photoGuideStepLabel": "שלב {number}",

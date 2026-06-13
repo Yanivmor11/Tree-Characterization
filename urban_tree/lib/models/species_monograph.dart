@@ -298,6 +298,24 @@ class SpeciesMonographRepository {
     return null;
   }
 
+  /// Returns species whose names or family match [query] (case-insensitive).
+  List<SpeciesMonograph> filterByQuery(Iterable<SpeciesMonograph> all, String query) {
+    final lower = query.trim().toLowerCase();
+    if (lower.isEmpty) return const [];
+    return all.where((s) => matchesQuery(s, lower)).toList();
+  }
+
+  bool matchesQuery(SpeciesMonograph species, String lowerQuery) {
+    return species.hebrewName.toLowerCase().contains(lowerQuery) ||
+        species.englishName.toLowerCase().contains(lowerQuery) ||
+        species.arabicName.toLowerCase().contains(lowerQuery) ||
+        species.russianName.toLowerCase().contains(lowerQuery) ||
+        species.scientificName.toLowerCase().contains(lowerQuery) ||
+        species.family.toLowerCase().contains(lowerQuery) ||
+        species.familyHebrew.toLowerCase().contains(lowerQuery) ||
+        species.familyEnglish.toLowerCase().contains(lowerQuery);
+  }
+
   /// Resolves a monograph entry from report species fields (scientific or common).
   Future<SpeciesMonograph?> resolveForReport({
     String? scientific,

@@ -1024,6 +1024,11 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String searchResultsFor(String query) {
+    return 'Результаты по запросу «$query»';
+  }
+
+  @override
   String get collectionEmpty =>
       'В вашей коллекции пока нет деревьев. Определите дерево, чтобы начать архив.';
 

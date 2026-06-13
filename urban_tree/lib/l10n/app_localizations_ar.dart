@@ -1013,6 +1013,11 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String searchResultsFor(String query) {
+    return 'نتائج لـ \"$query\"';
+  }
+
+  @override
   String get collectionEmpty =>
       'لا توجد أشجار في مجموعتك بعد. تعرّف على شجرة لبدء أرشيفك.';
 

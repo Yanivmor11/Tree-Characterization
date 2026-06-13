@@ -1010,6 +1010,11 @@ class AppLocalizationsHe extends AppLocalizations {
   }
 
   @override
+  String searchResultsFor(String query) {
+    return 'תוצאות עבור \"$query\"';
+  }
+
+  @override
   String get collectionEmpty =>
       'אין עדיין עצים באוסף שלך. זהה עץ כדי להתחיל את הארכיון.';
 

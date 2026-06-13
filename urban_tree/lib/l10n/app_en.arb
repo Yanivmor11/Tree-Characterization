@@ -485,6 +485,12 @@
       "query": {"type": "String"}
     }
   },
+  "searchResultsFor": "Results for \"{query}\"",
+  "@searchResultsFor": {
+    "placeholders": {
+      "query": {"type": "String"}
+    }
+  },
   "collectionEmpty": "No trees in your collection yet. Identify a tree to start your archive.",
   "speciesSavedToCollection": "Saved to your collection",
   "photoGuideStepLabel": "Step {number}",

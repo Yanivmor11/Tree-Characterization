@@ -37,18 +37,30 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  static const _maxSuggestions = 6;
+
   final TextEditingController _searchController = TextEditingController();
-  List<SpeciesMonograph> _featured = const [];
+  final FocusNode _searchFocusNode = FocusNode();
+  List<SpeciesMonograph> _allSpecies = const [];
+  List<SpeciesMonograph> _suggestions = const [];
+  List<SpeciesMonograph>? _committedResults;
+  String _committedQuery = '';
+  bool _showSuggestions = false;
 
   @override
   void initState() {
     super.initState();
     _loadFeatured();
+    _searchController.addListener(_onSearchTextChanged);
+    _searchFocusNode.addListener(_onSearchFocusChanged);
   }
 
   @override
   void dispose() {
+    _searchController.removeListener(_onSearchTextChanged);
+    _searchFocusNode.removeListener(_onSearchFocusChanged);
     _searchController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
@@ -62,7 +74,74 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _loadFeatured() async {
     final species = await SpeciesMonographRepository.instance.loadAll();
-    if (mounted) setState(() => _featured = species);
+    if (mounted) {
+      setState(() {
+        _allSpecies = species;
+      });
+    }
+  }
+
+  void _onSearchFocusChanged() {
+    if (!_searchFocusNode.hasFocus) {
+      setState(() => _showSuggestions = false);
+    }
+  }
+
+  void _onSearchTextChanged() {
+    final query = _searchController.text;
+    if (query.trim().isEmpty) {
+      setState(() {
+        _suggestions = const [];
+        _committedResults = null;
+        _committedQuery = '';
+        _showSuggestions = false;
+      });
+      return;
+    }
+
+    final matches = SpeciesMonographRepository.instance.filterByQuery(
+      _allSpecies,
+      query,
+    );
+    setState(() {
+      _suggestions = matches;
+      _committedResults = null;
+      _committedQuery = '';
+      _showSuggestions = _searchFocusNode.hasFocus && matches.isNotEmpty;
+    });
+  }
+
+  void _submitSearch(String query) {
+    final trimmed = query.trim();
+    if (trimmed.isEmpty) return;
+    final l10n = AppLocalizations.of(context);
+    final matches = SpeciesMonographRepository.instance.filterByQuery(
+      _allSpecies,
+      trimmed,
+    );
+
+    setState(() {
+      _showSuggestions = false;
+      _committedQuery = trimmed;
+      _committedResults = matches;
+    });
+    _searchFocusNode.unfocus();
+
+    if (matches.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.searchNoResults(trimmed))),
+      );
+    }
+  }
+
+  void _selectSuggestion(SpeciesMonograph species) {
+    setState(() {
+      _showSuggestions = false;
+      _committedResults = null;
+      _committedQuery = '';
+    });
+    _searchFocusNode.unfocus();
+    _openSpeciesById(species.id);
   }
 
   Future<void> _startIdentify() async {
@@ -79,33 +158,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return l10n.defaultUserName;
   }
 
-  Future<void> _submitSearch(String query) async {
-    final trimmed = query.trim();
-    if (trimmed.isEmpty) return;
-    final l10n = AppLocalizations.of(context);
-    final all = await SpeciesMonographRepository.instance.loadAll();
-    final lower = trimmed.toLowerCase();
-    SpeciesMonograph? match;
-    for (final species in all) {
-      if (species.hebrewName.toLowerCase().contains(lower) ||
-          species.englishName.toLowerCase().contains(lower) ||
-          species.arabicName.toLowerCase().contains(lower) ||
-          species.russianName.toLowerCase().contains(lower) ||
-          species.scientificName.toLowerCase().contains(lower) ||
-          species.family.toLowerCase().contains(lower)) {
-        match = species;
-        break;
-      }
-    }
-    if (!mounted) return;
-    if (match != null) {
-      _openSpeciesById(match.id);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.searchNoResults(trimmed))),
-      );
-    }
-  }
 
   void _openSpeciesById(String id) {
     Navigator.of(context).push<void>(
@@ -143,15 +195,59 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         const SizedBox(height: 24),
-        TextField(
+        _HomeSpeciesSearch(
           controller: _searchController,
-          textInputAction: TextInputAction.search,
+          focusNode: _searchFocusNode,
+          hintText: l10n.homeSearchHint,
+          suggestions: _showSuggestions
+              ? _suggestions.take(_maxSuggestions).toList()
+              : const [],
           onSubmitted: _submitSearch,
-          decoration: InputDecoration(
-            hintText: l10n.homeSearchHint,
-            prefixIcon: Icon(Icons.search, color: cs.outline),
-          ),
+          onSuggestionSelected: _selectSuggestion,
+          onTap: () {
+            final query = _searchController.text.trim();
+            if (query.isEmpty) return;
+            final matches = SpeciesMonographRepository.instance.filterByQuery(
+              _allSpecies,
+              query,
+            );
+            setState(() {
+              _suggestions = matches;
+              _showSuggestions = matches.isNotEmpty;
+            });
+          },
         ),
+        if (_committedResults != null) ...[
+          const SizedBox(height: 16),
+          Text(
+            l10n.searchResultsFor(_committedQuery),
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 12),
+          if (_committedResults!.isEmpty)
+            Text(
+              l10n.searchNoResults(_committedQuery),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: cs.onSurfaceVariant,
+              ),
+            )
+          else
+            for (final species in _committedResults!) ...[
+              _FeaturedCard(
+                title: species.displayNameFor(
+                  Localizations.localeOf(context).languageCode,
+                ),
+                subtitle: species.scientificName,
+                tag:
+                    '${species.familyLabelFor(Localizations.localeOf(context).languageCode)} • ${species.scientificName}',
+                imageUrl: species.thumbnailUrl,
+                onTap: () => _openSpeciesById(species.id),
+              ),
+              const SizedBox(height: 12),
+            ],
+        ],
         const SizedBox(height: 32),
         _IdentifyCtaCard(
           title: l10n.homeIdentifyTitle,
@@ -209,7 +305,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        for (final species in _featured) ...[
+        for (final species in _allSpecies) ...[
           _FeaturedCard(
             title: species.displayNameFor(Localizations.localeOf(context).languageCode),
             subtitle: species.scientificName,
@@ -237,6 +333,104 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(child: body),
         ],
       ),
+    );
+  }
+}
+
+class _HomeSpeciesSearch extends StatelessWidget {
+  const _HomeSpeciesSearch({
+    required this.controller,
+    required this.focusNode,
+    required this.hintText,
+    required this.suggestions,
+    required this.onSubmitted,
+    required this.onSuggestionSelected,
+    required this.onTap,
+  });
+
+  final TextEditingController controller;
+  final FocusNode focusNode;
+  final String hintText;
+  final List<SpeciesMonograph> suggestions;
+  final ValueChanged<String> onSubmitted;
+  final ValueChanged<SpeciesMonograph> onSuggestionSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    final lang = Localizations.localeOf(context).languageCode;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        TextField(
+          controller: controller,
+          focusNode: focusNode,
+          textInputAction: TextInputAction.search,
+          onSubmitted: onSubmitted,
+          onTap: onTap,
+          decoration: InputDecoration(
+            hintText: hintText,
+            prefixIcon: Icon(Icons.search, color: cs.outline),
+          ),
+        ),
+        if (suggestions.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Material(
+              elevation: 4,
+              shadowColor: Colors.black26,
+              color: cs.surface,
+              borderRadius: BorderRadius.circular(12),
+              clipBehavior: Clip.antiAlias,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (var i = 0; i < suggestions.length; i++) ...[
+                    if (i > 0) Divider(height: 1, color: cs.outlineVariant),
+                    InkWell(
+                      onTap: () => onSuggestionSelected(suggestions[i]),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.eco_outlined, color: cs.primary, size: 20),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    suggestions[i].displayNameFor(lang),
+                                    style: theme.textTheme.titleSmall?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Text(
+                                    suggestions[i].scientificName,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: cs.onSurfaceVariant,
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

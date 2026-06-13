@@ -1018,6 +1018,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String searchResultsFor(String query) {
+    return 'Results for \"$query\"';
+  }
+
+  @override
   String get collectionEmpty =>
       'No trees in your collection yet. Identify a tree to start your archive.';
 

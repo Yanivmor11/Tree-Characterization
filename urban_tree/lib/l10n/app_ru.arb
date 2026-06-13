@@ -291,6 +291,7 @@
   "heightMeters": "{value} м",
   "homeFeaturedTitle": "Избранные виды",
   "searchNoResults": "Нет результатов по запросу «{query}»",
+  "searchResultsFor": "Результаты по запросу «{query}»",
   "collectionEmpty": "В вашей коллекции пока нет деревьев. Определите дерево, чтобы начать архив.",
   "speciesSavedToCollection": "Сохранено в коллекцию",
   "photoGuideStepLabel": "Шаг {number}",

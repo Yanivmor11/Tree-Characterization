@@ -291,6 +291,7 @@
   "heightMeters": "{value} م",
   "homeFeaturedTitle": "أنواع مميزة",
   "searchNoResults": "لا نتائج لـ \"{query}\"",
+  "searchResultsFor": "نتائج لـ \"{query}\"",
   "collectionEmpty": "لا توجد أشجار في مجموعتك بعد. تعرّف على شجرة لبدء أرشيفك.",
   "speciesSavedToCollection": "تم الحفظ في مجموعتك",
   "photoGuideStepLabel": "الخطوة {number}",
