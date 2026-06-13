@@ -15,6 +15,8 @@ Workflows live in [`.github/workflows/`](../.github/workflows/).
 
 Add in **GitHub → Repository → Settings → Secrets and variables → Actions**.
 
+When all deploy secrets below are set, add repository variable **`CI_AUTO_DEPLOY`** = `true` (Settings → Secrets and variables → **Variables**) so push-to-`main` also runs Vercel and Supabase deploy workflows. Until then, use **Actions → Run workflow** manually.
+
 ### Vercel (`deploy-vercel.yml`)
 
 | Secret | Value |

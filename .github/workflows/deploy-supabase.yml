@@ -12,6 +12,7 @@ on:
 jobs:
   edge-functions:
     name: Edge Functions
+    if: github.event_name == 'workflow_dispatch' || vars.CI_AUTO_DEPLOY == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:

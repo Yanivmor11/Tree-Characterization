@@ -16,6 +16,7 @@ concurrency:
 jobs:
   deploy:
     name: Production web
+    if: github.event_name == 'workflow_dispatch' || vars.CI_AUTO_DEPLOY == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
