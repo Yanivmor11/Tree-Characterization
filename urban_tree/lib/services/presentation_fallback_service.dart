@@ -1,5 +1,6 @@
 import 'package:uuid/uuid.dart';
 
+import '../core/env.dart';
 import 'ai_service.dart';
 
 /// Graceful degradation for live presentation demos.
@@ -10,8 +11,8 @@ import 'ai_service.dart';
 abstract final class PresentationFallbackService {
   static const _uuid = Uuid();
 
-  /// Enable fail-safe mocks during the presentation release.
-  static const bool enabled = true;
+  /// Fail-safe mocks for demos; disabled in production so real errors surface.
+  static bool get enabled => !AppEnv.isProd;
 
   static bool shouldUseFallback(Object error) {
     if (!enabled) return false;

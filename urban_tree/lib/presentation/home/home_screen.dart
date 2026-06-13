@@ -17,6 +17,7 @@ class HomeScreen extends StatefulWidget {
     required this.refreshTick,
     required this.onReportComplete,
     this.onMenuTap,
+    this.onProfileTap,
     this.onViewAll,
     this.embedded = false,
   });
@@ -24,6 +25,7 @@ class HomeScreen extends StatefulWidget {
   final int refreshTick;
   final VoidCallback onReportComplete;
   final VoidCallback? onMenuTap;
+  final VoidCallback? onProfileTap;
 
   /// Switches the shell to the collection tab when the user taps "view all".
   final VoidCallback? onViewAll;
@@ -231,6 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
           BotanicalAppBar(
             title: l10n.appBrandTitle,
             onMenuTap: widget.onMenuTap,
+            onProfileTap: widget.onProfileTap,
           ),
           Expanded(child: body),
         ],

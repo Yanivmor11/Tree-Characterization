@@ -111,6 +111,8 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
           ? null
           : _speciesController.text.trim();
     });
+    _assistantNotesWhole.addListener(_onAssistantNotesChanged);
+    _assistantNotesFlower.addListener(_onAssistantNotesChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_d.wholeTreeImages.isNotEmpty) {
         _scheduleVisionAnalysis();
@@ -118,9 +120,15 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     });
   }
 
+  void _onAssistantNotesChanged() {
+    if (mounted) setState(() {});
+  }
+
   @override
   void dispose() {
     _visionDebounce?.cancel();
+    _assistantNotesWhole.removeListener(_onAssistantNotesChanged);
+    _assistantNotesFlower.removeListener(_onAssistantNotesChanged);
     _assistantNotesWhole.dispose();
     _assistantNotesFlower.dispose();
     _speciesController.dispose();
@@ -170,7 +178,12 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
         mimeType: file.mimeType ?? 'image/jpeg',
       );
       if (!mounted) return;
-      setState(() => _visionSuggestion = s);
+      if (s.hasStructuredFields(flowerStepOnly: false)) {
+        _autoApplySuggestion(s, includePhenology: true);
+        setState(() => _visionSuggestion = null);
+      } else {
+        setState(() => _visionSuggestion = s);
+      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -274,14 +287,23 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
   Future<void> _runAssistantWhole() async {
     if (!_authReady) return;
     final l10n = AppLocalizations.of(context);
+    if (_assistantNotesWhole.text.trim().isEmpty) return;
     setState(() {
       _aiLoadingWhole = true;
       _suggestionWhole = null;
     });
     try {
-      final s = await _ai.suggestFromResidentText(_assistantNotesWhole.text);
+      final s = await _ai.suggestFromResidentText(
+        _assistantNotesWhole.text,
+        step: 'whole_tree',
+      );
       if (!mounted) return;
-      setState(() => _suggestionWhole = s);
+      if (s.hasStructuredFields(flowerStepOnly: false)) {
+        _autoApplySuggestion(s, includePhenology: false);
+        setState(() => _suggestionWhole = null);
+      } else {
+        setState(() => _suggestionWhole = s);
+      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -295,14 +317,32 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
   Future<void> _runAssistantFlower() async {
     if (!_authReady) return;
     final l10n = AppLocalizations.of(context);
+    final notes = _assistantNotesFlower.text.trim();
+    if (notes.isEmpty && _d.flowerImages.isEmpty) return;
     setState(() {
       _aiLoadingFlower = true;
       _suggestionFlower = null;
     });
     try {
-      final s = await _ai.suggestFromResidentText(_assistantNotesFlower.text);
+      Uint8List? imageBytes;
+      String mimeType = 'image/jpeg';
+      if (_d.flowerImages.isNotEmpty) {
+        imageBytes = await _d.flowerImages.first.readAsBytes();
+        mimeType = _d.flowerImages.first.mimeType ?? mimeType;
+      }
+      final s = await _ai.suggestFromResidentText(
+        notes,
+        step: 'flower_fruit',
+        imageBytes: imageBytes,
+        mimeType: mimeType,
+      );
       if (!mounted) return;
-      setState(() => _suggestionFlower = s);
+      if (s.hasStructuredFields(flowerStepOnly: true)) {
+        _autoApplyFlowerSuggestion(s);
+        setState(() => _suggestionFlower = null);
+      } else {
+        setState(() => _suggestionFlower = s);
+      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -688,50 +728,96 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     );
   }
 
-  void _applyVisionValidation() {
-    final s = _visionSuggestion;
-    if (s == null) return;
-    PhenologicalStage? stageEnum = switch (s.phenologicalStage) {
+  PhenologicalStage? _phenologicalStageFromSuggestion(CharacterizationSuggestion s) {
+    return switch (s.phenologicalStage) {
       'bud' => PhenologicalStage.bud,
       'open' => PhenologicalStage.open,
       'fruit' => PhenologicalStage.fruit,
       _ => null,
     };
+  }
+
+  void _applySuggestionToDraft(
+    CharacterizationSuggestion s, {
+    required bool includePhenology,
+    bool flowerOnly = false,
+  }) {
+    final stageEnum = _phenologicalStageFromSuggestion(s);
     setState(() {
-      if (s.speciesCommon != null && s.speciesCommon!.isNotEmpty) {
-        _d.speciesCommon = s.speciesCommon;
-      }
-      final displayName = s.translatedDisplayName ?? s.speciesCommon;
-      if (displayName != null && displayName.isNotEmpty) {
-        _speciesController.text = displayName;
-        _d.speciesDisplayName = displayName;
-      }
-      if (s.speciesScientific != null && s.speciesScientific!.isNotEmpty) {
-        _d.speciesScientific = s.speciesScientific;
-      }
-      _d.speciesConfidence = s.speciesConfidence;
-      if (s.healthScore != null) {
-        _d.healthScore = s.healthScore!;
-      }
-      if (s.stressSymptoms != null && s.stressSymptoms!.isNotEmpty) {
-        _d.stressSymptoms
-          ..clear()
-          ..addAll(
-            s.stressSymptoms!
-                .map(_stressSymptomFromStorage)
-                .whereType<StressSymptom>(),
-          );
-        if (_d.stressSymptoms.isNotEmpty &&
-            !_d.stressSymptoms.contains(StressSymptom.none)) {
-          _d.leafCondition = LeafCondition.stressed;
+      if (!flowerOnly) {
+        if (s.speciesCommon != null && s.speciesCommon!.isNotEmpty) {
+          _d.speciesCommon = s.speciesCommon;
+        }
+        final displayName = s.translatedDisplayName ?? s.speciesCommon;
+        if (displayName != null && displayName.isNotEmpty) {
+          _speciesController.text = displayName;
+          _d.speciesDisplayName = displayName;
+        }
+        if (s.speciesScientific != null && s.speciesScientific!.isNotEmpty) {
+          _d.speciesScientific = s.speciesScientific;
+        }
+        _d.speciesConfidence = s.speciesConfidence;
+        if (s.healthScore != null) {
+          _d.healthScore = s.healthScore!;
+        }
+        if (s.stressSymptoms != null && s.stressSymptoms!.isNotEmpty) {
+          _d.stressSymptoms
+            ..clear()
+            ..addAll(
+              s.stressSymptoms!
+                  .map(_stressSymptomFromStorage)
+                  .whereType<StressSymptom>(),
+            );
+          if (_d.stressSymptoms.isNotEmpty &&
+              !_d.stressSymptoms.contains(StressSymptom.none)) {
+            _d.leafCondition = LeafCondition.stressed;
+          }
         }
       }
-      if (stageEnum != null) {
+      if (includePhenology && stageEnum != null) {
+        _d.phenologicalStage = stageEnum;
+      } else if (flowerOnly && stageEnum != null) {
         _d.phenologicalStage = stageEnum;
       }
-      _visionSuggestion = null;
     });
+  }
+
+  void _showAppliedSnackBar(_DraftAiSnapshot snapshot) {
+    final l10n = AppLocalizations.of(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(l10n.assistantApplied),
+        action: SnackBarAction(
+          label: l10n.assistantUndo,
+          onPressed: () {
+            if (!mounted) return;
+            setState(() => snapshot.restore(_d, _speciesController));
+            unawaited(_refreshPhenologyBanner());
+          },
+        ),
+      ),
+    );
+  }
+
+  void _autoApplySuggestion(CharacterizationSuggestion s, {required bool includePhenology}) {
+    final snapshot = _DraftAiSnapshot.capture(_d, _speciesController);
+    _applySuggestionToDraft(s, includePhenology: includePhenology);
+    _showAppliedSnackBar(snapshot);
     unawaited(_refreshPhenologyBanner());
+  }
+
+  void _autoApplyFlowerSuggestion(CharacterizationSuggestion s) {
+    final snapshot = _DraftAiSnapshot.capture(_d, _speciesController);
+    _applySuggestionToDraft(s, includePhenology: false, flowerOnly: true);
+    _showAppliedSnackBar(snapshot);
+    unawaited(_refreshPhenologyBanner());
+  }
+
+  void _applyVisionValidation() {
+    final s = _visionSuggestion;
+    if (s == null) return;
+    _autoApplySuggestion(s, includePhenology: true);
+    setState(() => _visionSuggestion = null);
   }
 
   Widget _visionSuggestionCard(ThemeData theme, AppLocalizations l10n) {
@@ -755,13 +841,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     }
     final s = _visionSuggestion;
     if (s == null) return const SizedBox.shrink();
-    final has = s.speciesCommon != null ||
-        s.speciesScientific != null ||
-        s.healthScore != null ||
-        (s.stressSymptoms != null && s.stressSymptoms!.isNotEmpty) ||
-        s.phenologicalStage != null ||
-        (s.notes != null && s.notes!.isNotEmpty);
-    if (!has) {
+    if (!s.hasStructuredFields(flowerStepOnly: false)) {
       return Card(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -832,7 +912,11 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
             ),
             const SizedBox(height: 12),
             FilledButton.tonal(
-              onPressed: (_aiLoadingWhole || !_authReady) ? null : _runAssistantWhole,
+              onPressed: (_aiLoadingWhole ||
+                      !_authReady ||
+                      _assistantNotesWhole.text.trim().isEmpty)
+                  ? null
+                  : _runAssistantWhole,
               child: _aiLoadingWhole
                   ? Row(
                       mainAxisSize: MainAxisSize.min,
@@ -863,12 +947,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     AppLocalizations l10n,
     CharacterizationSuggestion s,
   ) {
-    final has = s.healthScore != null ||
-        s.speciesCommon != null ||
-        s.speciesScientific != null ||
-        (s.stressSymptoms != null && s.stressSymptoms!.isNotEmpty) ||
-        (s.notes != null && s.notes!.isNotEmpty);
-    if (!has) {
+    if (!s.hasStructuredFields(flowerStepOnly: false)) {
       return Text(
         l10n.assistantNoStructuredSuggestion,
         style: theme.textTheme.bodySmall,
@@ -892,38 +971,8 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
         const SizedBox(height: 8),
         FilledButton.tonal(
           onPressed: () {
-            setState(() {
-              if (s.speciesCommon != null && s.speciesCommon!.isNotEmpty) {
-                _d.speciesCommon = s.speciesCommon;
-              }
-              final displayName = s.translatedDisplayName ?? s.speciesCommon;
-              if (displayName != null && displayName.isNotEmpty) {
-                _speciesController.text = displayName;
-                _d.speciesDisplayName = displayName;
-              }
-              if (s.speciesScientific != null && s.speciesScientific!.isNotEmpty) {
-                _d.speciesScientific = s.speciesScientific;
-              }
-              _d.speciesConfidence = s.speciesConfidence;
-              if (s.healthScore != null) {
-                _d.healthScore = s.healthScore!;
-              }
-              if (s.stressSymptoms != null && s.stressSymptoms!.isNotEmpty) {
-                _d.stressSymptoms
-                  ..clear()
-                  ..addAll(
-                    s.stressSymptoms!
-                        .map(_stressSymptomFromStorage)
-                        .whereType<StressSymptom>(),
-                  );
-                if (_d.stressSymptoms.isNotEmpty &&
-                    !_d.stressSymptoms.contains(StressSymptom.none)) {
-                  _d.leafCondition = LeafCondition.stressed;
-                }
-              }
-              _suggestionWhole = null;
-            });
-            unawaited(_refreshPhenologyBanner());
+            _autoApplySuggestion(s, includePhenology: false);
+            setState(() => _suggestionWhole = null);
           },
           child: Text(l10n.validateCompleteSuggestions),
         ),
@@ -956,7 +1005,12 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
             ),
             const SizedBox(height: 12),
             FilledButton.tonal(
-              onPressed: (_aiLoadingFlower || !_authReady) ? null : _runAssistantFlower,
+              onPressed: (_aiLoadingFlower ||
+                      !_authReady ||
+                      (_assistantNotesFlower.text.trim().isEmpty &&
+                          _d.flowerImages.isEmpty))
+                  ? null
+                  : _runAssistantFlower,
               child: _aiLoadingFlower
                   ? Row(
                       mainAxisSize: MainAxisSize.min,
@@ -993,20 +1047,13 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
       'fruit' => l10n.assistantSuggestedStageFruit,
       _ => null,
     };
-    final has = stageLabel != null ||
-        (s.notes != null && s.notes!.isNotEmpty);
-    if (!has) {
+    if (!s.hasStructuredFields(flowerStepOnly: true)) {
       return Text(
         l10n.assistantNoStructuredSuggestion,
         style: theme.textTheme.bodySmall,
       );
     }
-    PhenologicalStage? stageEnum = switch (s.phenologicalStage) {
-      'bud' => PhenologicalStage.bud,
-      'open' => PhenologicalStage.open,
-      'fruit' => PhenologicalStage.fruit,
-      _ => null,
-    };
+    final stageEnum = _phenologicalStageFromSuggestion(s);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -1018,10 +1065,10 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
             TextButton(
               onPressed: stageEnum == null
                   ? null
-                  : () => setState(() {
-                        _d.phenologicalStage = stageEnum;
-                        _suggestionFlower = null;
-                      }),
+                  : () {
+                      _autoApplyFlowerSuggestion(s);
+                      setState(() => _suggestionFlower = null);
+                    },
               child: Text(l10n.assistantApply),
             ),
             TextButton(
@@ -1489,6 +1536,61 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
         ),
       ],
     );
+  }
+}
+
+class _DraftAiSnapshot {
+  _DraftAiSnapshot({
+    required this.speciesControllerText,
+    required this.speciesDisplayName,
+    required this.speciesCommon,
+    required this.speciesScientific,
+    required this.speciesConfidence,
+    required this.healthScore,
+    required this.stressSymptoms,
+    required this.leafCondition,
+    required this.phenologicalStage,
+  });
+
+  final String speciesControllerText;
+  final String? speciesDisplayName;
+  final String? speciesCommon;
+  final String? speciesScientific;
+  final double? speciesConfidence;
+  final int healthScore;
+  final Set<StressSymptom> stressSymptoms;
+  final LeafCondition leafCondition;
+  final PhenologicalStage? phenologicalStage;
+
+  factory _DraftAiSnapshot.capture(
+    TreeReportDraft draft,
+    TextEditingController speciesController,
+  ) {
+    return _DraftAiSnapshot(
+      speciesControllerText: speciesController.text,
+      speciesDisplayName: draft.speciesDisplayName,
+      speciesCommon: draft.speciesCommon,
+      speciesScientific: draft.speciesScientific,
+      speciesConfidence: draft.speciesConfidence,
+      healthScore: draft.healthScore,
+      stressSymptoms: Set<StressSymptom>.from(draft.stressSymptoms),
+      leafCondition: draft.leafCondition,
+      phenologicalStage: draft.phenologicalStage,
+    );
+  }
+
+  void restore(TreeReportDraft draft, TextEditingController speciesController) {
+    speciesController.text = speciesControllerText;
+    draft.speciesDisplayName = speciesDisplayName;
+    draft.speciesCommon = speciesCommon;
+    draft.speciesScientific = speciesScientific;
+    draft.speciesConfidence = speciesConfidence;
+    draft.healthScore = healthScore;
+    draft.stressSymptoms
+      ..clear()
+      ..addAll(stressSymptoms);
+    draft.leafCondition = leafCondition;
+    draft.phenologicalStage = phenologicalStage;
   }
 }
 

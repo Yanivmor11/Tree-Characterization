@@ -11,9 +11,15 @@ import '../theme/app_theme.dart';
 import '../widgets/botanical_widgets.dart';
 
 class CollectionScreen extends StatefulWidget {
-  const CollectionScreen({super.key, this.onMenuTap, this.embedded = false});
+  const CollectionScreen({
+    super.key,
+    this.onMenuTap,
+    this.onProfileTap,
+    this.embedded = false,
+  });
 
   final VoidCallback? onMenuTap;
+  final VoidCallback? onProfileTap;
   final bool embedded;
 
   @override
@@ -179,7 +185,11 @@ class _CollectionScreenState extends State<CollectionScreen> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         children: [
-          BotanicalAppBar(title: l10n.appBrandTitle, onMenuTap: widget.onMenuTap),
+          BotanicalAppBar(
+            title: l10n.appBrandTitle,
+            onMenuTap: widget.onMenuTap,
+            onProfileTap: widget.onProfileTap,
+          ),
           Expanded(child: body),
         ],
       ),

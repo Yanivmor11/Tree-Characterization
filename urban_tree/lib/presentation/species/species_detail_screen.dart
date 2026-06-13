@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../models/species_monograph.dart';
+import '../../services/saved_species_service.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import '../widgets/botanical_widgets.dart';
@@ -17,6 +18,8 @@ class SpeciesDetailScreen extends StatefulWidget {
 
 class _SpeciesDetailScreenState extends State<SpeciesDetailScreen> {
   SpeciesMonograph? _species;
+  bool _saved = false;
+  final _savedSpecies = SavedSpeciesService();
 
   @override
   void initState() {
@@ -26,7 +29,23 @@ class _SpeciesDetailScreenState extends State<SpeciesDetailScreen> {
 
   Future<void> _load() async {
     final s = await SpeciesMonographRepository.instance.byId(widget.speciesId);
-    if (mounted) setState(() => _species = s);
+    final saved = await _savedSpecies.isSaved(widget.speciesId);
+    if (mounted) {
+      setState(() {
+        _species = s;
+        _saved = saved;
+      });
+    }
+  }
+
+  Future<void> _toggleSaved() async {
+    final added = await _savedSpecies.toggle(widget.speciesId);
+    if (!mounted) return;
+    setState(() => _saved = added);
+    final l10n = AppLocalizations.of(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.speciesSavedToCollection)),
+    );
   }
 
   @override
@@ -111,10 +130,8 @@ class _SpeciesDetailScreenState extends State<SpeciesDetailScreen> {
               delegate: SliverChildListDelegate([
                 GradientButton(
                   label: l10n.speciesSaveCollection,
-                  icon: Icons.bookmark,
-                  onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.speciesSavedToCollection)),
-                  ),
+                  icon: _saved ? Icons.bookmark : Icons.bookmark_border,
+                  onPressed: _toggleSaved,
                 ),
                 const SizedBox(height: 32),
                 Text(

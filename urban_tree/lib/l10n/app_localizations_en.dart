@@ -340,7 +340,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assistantDescription =>
-      'Describe what you see (stress symptoms, flowering stage, etc.). The assistant only suggests values — confirm before saving.';
+      'Describe what you see (stress symptoms, flowering stage, etc.). Suggestions are applied automatically — review before saving.';
 
   @override
   String get assistantNotesLabel => 'Free-text description';
@@ -382,6 +382,17 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get assistantNoStructuredSuggestion =>
       'No structured suggestion. Rephrase or continue manually.';
+
+  @override
+  String get assistantEmptyDescription =>
+      'Describe what you see before requesting a suggestion.';
+
+  @override
+  String get assistantApplied =>
+      'Suggestions applied — review and edit if needed.';
+
+  @override
+  String get assistantUndo => 'Undo';
 
   @override
   String get speciesLabel => 'Species (common name)';
@@ -826,6 +837,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileFieldJournals => 'Field journals';
+
+  @override
+  String get accountEmailLabel => 'Email';
+
+  @override
+  String get accountEmailMissing => 'Not signed in with email';
+
+  @override
+  String get accountTypeLabel => 'Account type';
+
+  @override
+  String get accountTypeAnonymous => 'Anonymous guest';
+
+  @override
+  String get accountTypeEmail => 'Email account';
+
+  @override
+  String get notificationNearbyTrees => 'Nearby tree updates';
+
+  @override
+  String get notificationPestAlerts => 'Pest hotspot alerts';
+
+  @override
+  String get notificationWeeklyDigest => 'Weekly activity digest';
 
   @override
   String get journalTitle => 'Digital field journal';

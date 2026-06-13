@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:url_launcher/url_launcher.dart';
+
 import '../../l10n/app_localizations.dart';
 import '../identify/photo_guide_screen.dart';
 import '../theme/app_colors.dart';
@@ -137,9 +139,22 @@ class HelpScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       FilledButton(
-                        onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(l10n.helpContactBody)),
-                        ),
+                        onPressed: () async {
+                          final uri = Uri(
+                            scheme: 'mailto',
+                            path: 'support@urbantree.app',
+                            queryParameters: {
+                              'subject': l10n.helpContactTitle,
+                            },
+                          );
+                          if (await canLaunchUrl(uri)) {
+                            await launchUrl(uri);
+                          } else if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(l10n.helpContactBody)),
+                            );
+                          }
+                        },
                         child: Text(l10n.helpContactCta),
                       ),
                     ],

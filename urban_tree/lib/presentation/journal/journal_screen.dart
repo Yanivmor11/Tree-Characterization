@@ -12,9 +12,15 @@ import '../theme/app_theme.dart';
 import '../widgets/botanical_widgets.dart';
 
 class JournalScreen extends StatelessWidget {
-  const JournalScreen({super.key, this.onMenuTap, this.embedded = false});
+  const JournalScreen({
+    super.key,
+    this.onMenuTap,
+    this.onProfileTap,
+    this.embedded = false,
+  });
 
   final VoidCallback? onMenuTap;
+  final VoidCallback? onProfileTap;
   final bool embedded;
 
   Future<void> _openSpecies(BuildContext context, String? scientific) async {
@@ -167,7 +173,11 @@ class JournalScreen extends StatelessWidget {
       backgroundColor: AppColors.background,
       body: Column(
         children: [
-          BotanicalAppBar(title: l10n.appBrandTitle, onMenuTap: onMenuTap),
+          BotanicalAppBar(
+            title: l10n.appBrandTitle,
+            onMenuTap: onMenuTap,
+            onProfileTap: onProfileTap,
+          ),
           Expanded(child: body),
         ],
       ),

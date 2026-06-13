@@ -6,6 +6,7 @@ import '../../l10n/app_localizations.dart';
 import '../../services/badge_service.dart';
 import '../../services/profile_service.dart';
 import '../../state/auth_controller.dart';
+import '../routes/app_routes.dart';
 import '../theme/app_colors.dart';
 import '../top_guardians_screen.dart';
 import '../widgets/botanical_widgets.dart';
@@ -269,9 +270,21 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                _SettingsTile(icon: Icons.person_outline, label: l10n.profileAccount),
-                _SettingsTile(icon: Icons.notifications_active, label: l10n.profileNotifications),
-                _SettingsTile(icon: Icons.description, label: l10n.profileFieldJournals),
+                _SettingsTile(
+                  icon: Icons.person_outline,
+                  label: l10n.profileAccount,
+                  onTap: () => AppRoutes.pushAccountSettings(context),
+                ),
+                _SettingsTile(
+                  icon: Icons.notifications_active,
+                  label: l10n.profileNotifications,
+                  onTap: () => AppRoutes.pushNotificationSettings(context),
+                ),
+                _SettingsTile(
+                  icon: Icons.description,
+                  label: l10n.profileFieldJournals,
+                  onTap: () => AppRoutes.pushJournal(context),
+                ),
                 _SettingsTile(
                   icon: Icons.emoji_events_outlined,
                   label: l10n.openLeaderboard,
@@ -384,6 +397,7 @@ class _SettingsTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: ListTile(
           onTap: onTap,
+          enabled: onTap != null,
           leading: Icon(
             icon,
             color: destructive ? AppColors.error : theme.colorScheme.primary,
@@ -395,10 +409,12 @@ class _SettingsTile extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          trailing: Icon(
-            Icons.chevron_left,
-            color: theme.colorScheme.outline,
-          ),
+          trailing: onTap != null
+              ? Icon(
+                  Icons.chevron_left,
+                  color: theme.colorScheme.outline,
+                )
+              : null,
         ),
       ),
     );

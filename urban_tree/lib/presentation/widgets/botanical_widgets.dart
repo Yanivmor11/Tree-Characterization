@@ -376,6 +376,7 @@ class BotanicalAppBar extends StatelessWidget {
     super.key,
     required this.title,
     this.onMenuTap,
+    this.onProfileTap,
     this.leading,
     this.avatarUrl,
     this.showMenu = true,
@@ -383,6 +384,7 @@ class BotanicalAppBar extends StatelessWidget {
 
   final String title;
   final VoidCallback? onMenuTap;
+  final VoidCallback? onProfileTap;
   final Widget? leading;
   final String? avatarUrl;
   final bool showMenu;
@@ -417,19 +419,33 @@ class BotanicalAppBar extends StatelessWidget {
         ],
       ),
       actions: [
-        Semantics(
-          label: l10n.a11yUserProfile,
-          button: true,
-          image: avatarUrl != null,
-          child: CircleAvatar(
-            radius: 20,
-            backgroundColor: AppColors.surfaceContainer,
-            backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl!) : null,
-            child: avatarUrl == null
-                ? const Icon(Icons.person, color: AppColors.primary, size: 20)
-                : null,
+        if (onProfileTap != null)
+          IconButton(
+            onPressed: onProfileTap,
+            tooltip: l10n.a11yUserProfile,
+            icon: CircleAvatar(
+              radius: 20,
+              backgroundColor: AppColors.surfaceContainer,
+              backgroundImage:
+                  avatarUrl != null ? NetworkImage(avatarUrl!) : null,
+              child: avatarUrl == null
+                  ? const Icon(Icons.person, color: AppColors.primary, size: 20)
+                  : null,
+            ),
+          )
+        else
+          Semantics(
+            label: l10n.a11yUserProfile,
+            child: CircleAvatar(
+              radius: 20,
+              backgroundColor: AppColors.surfaceContainer,
+              backgroundImage:
+                  avatarUrl != null ? NetworkImage(avatarUrl!) : null,
+              child: avatarUrl == null
+                  ? const Icon(Icons.person, color: AppColors.primary, size: 20)
+                  : null,
+            ),
           ),
-        ),
       ],
     );
   }

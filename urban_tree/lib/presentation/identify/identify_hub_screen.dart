@@ -10,9 +10,15 @@ import 'photo_gallery_screen.dart';
 import 'photo_guide_screen.dart';
 
 class IdentifyHubScreen extends StatelessWidget {
-  const IdentifyHubScreen({super.key, this.onMenuTap, this.embedded = false});
+  const IdentifyHubScreen({
+    super.key,
+    this.onMenuTap,
+    this.onProfileTap,
+    this.embedded = false,
+  });
 
   final VoidCallback? onMenuTap;
+  final VoidCallback? onProfileTap;
   final bool embedded;
 
   @override
@@ -84,6 +90,7 @@ class IdentifyHubScreen extends StatelessWidget {
           BotanicalAppBar(
             title: l10n.appBrandTitle,
             onMenuTap: onMenuTap,
+            onProfileTap: onProfileTap,
           ),
           Expanded(child: content),
         ],

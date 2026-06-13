@@ -705,7 +705,7 @@ abstract class AppLocalizations {
   /// No description provided for @assistantDescription.
   ///
   /// In en, this message translates to:
-  /// **'Describe what you see (stress symptoms, flowering stage, etc.). The assistant only suggests values — confirm before saving.'**
+  /// **'Describe what you see (stress symptoms, flowering stage, etc.). Suggestions are applied automatically — review before saving.'**
   String get assistantDescription;
 
   /// No description provided for @assistantNotesLabel.
@@ -779,6 +779,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No structured suggestion. Rephrase or continue manually.'**
   String get assistantNoStructuredSuggestion;
+
+  /// No description provided for @assistantEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe what you see before requesting a suggestion.'**
+  String get assistantEmptyDescription;
+
+  /// No description provided for @assistantApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestions applied — review and edit if needed.'**
+  String get assistantApplied;
+
+  /// No description provided for @assistantUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get assistantUndo;
 
   /// No description provided for @speciesLabel.
   ///
@@ -1589,6 +1607,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Field journals'**
   String get profileFieldJournals;
+
+  /// No description provided for @accountEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get accountEmailLabel;
+
+  /// No description provided for @accountEmailMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Not signed in with email'**
+  String get accountEmailMissing;
+
+  /// No description provided for @accountTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account type'**
+  String get accountTypeLabel;
+
+  /// No description provided for @accountTypeAnonymous.
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymous guest'**
+  String get accountTypeAnonymous;
+
+  /// No description provided for @accountTypeEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email account'**
+  String get accountTypeEmail;
+
+  /// No description provided for @notificationNearbyTrees.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearby tree updates'**
+  String get notificationNearbyTrees;
+
+  /// No description provided for @notificationPestAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Pest hotspot alerts'**
+  String get notificationPestAlerts;
+
+  /// No description provided for @notificationWeeklyDigest.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly activity digest'**
+  String get notificationWeeklyDigest;
 
   /// No description provided for @journalTitle.
   ///

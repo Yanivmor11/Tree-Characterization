@@ -338,7 +338,7 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get assistantDescription =>
-      'תארו במילים את מה שרואים (תסמיני מצוקה, שלב פריחה וכו׳). העוזר מציע ערכים בלבד — אשרו לפני השמירה.';
+      'תארו במילים את מה שרואים (תסמיני מצוקה, שלב פריחה וכו׳). ההצעות מוחלות אוטומטית — בדקו לפני השמירה.';
 
   @override
   String get assistantNotesLabel => 'תיאור חופשי';
@@ -380,6 +380,15 @@ class AppLocalizationsHe extends AppLocalizations {
   @override
   String get assistantNoStructuredSuggestion =>
       'לא התקבלה הצעה מובנית. נסחו מחדש או המשיכו ידנית.';
+
+  @override
+  String get assistantEmptyDescription => 'תארו מה שאתם רואים לפני בקשת הצעה.';
+
+  @override
+  String get assistantApplied => 'ההצעות הוחלו — בדקו וערכו לפי הצורך.';
+
+  @override
+  String get assistantUndo => 'ביטול';
 
   @override
   String get speciesLabel => 'מין (שם עממי)';
@@ -820,6 +829,30 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get profileFieldJournals => 'יומני שדה';
+
+  @override
+  String get accountEmailLabel => 'דוא\"ל';
+
+  @override
+  String get accountEmailMissing => 'לא מחובר עם דוא\"ל';
+
+  @override
+  String get accountTypeLabel => 'סוג חשבון';
+
+  @override
+  String get accountTypeAnonymous => 'אורח אנונימי';
+
+  @override
+  String get accountTypeEmail => 'חשבון דוא\"ל';
+
+  @override
+  String get notificationNearbyTrees => 'עדכונים על עצים בסביבה';
+
+  @override
+  String get notificationPestAlerts => 'התראות על מוקדי מזיקים';
+
+  @override
+  String get notificationWeeklyDigest => 'סיכום פעילות שבועי';
 
   @override
   String get journalTitle => 'יומן שדה דיגיטלי';

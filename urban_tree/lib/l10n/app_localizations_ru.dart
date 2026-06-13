@@ -386,6 +386,17 @@ class AppLocalizationsRu extends AppLocalizations {
       'Нет структурированного предложения. Переформулируйте или продолжите вручную.';
 
   @override
+  String get assistantEmptyDescription =>
+      'Describe what you see before requesting a suggestion.';
+
+  @override
+  String get assistantApplied =>
+      'Suggestions applied — review and edit if needed.';
+
+  @override
+  String get assistantUndo => 'Undo';
+
+  @override
   String get speciesLabel => 'Вид (обычное название)';
 
   @override
@@ -830,6 +841,30 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get profileFieldJournals => 'Полевые дневники';
+
+  @override
+  String get accountEmailLabel => 'Email';
+
+  @override
+  String get accountEmailMissing => 'Not signed in with email';
+
+  @override
+  String get accountTypeLabel => 'Account type';
+
+  @override
+  String get accountTypeAnonymous => 'Anonymous guest';
+
+  @override
+  String get accountTypeEmail => 'Email account';
+
+  @override
+  String get notificationNearbyTrees => 'Nearby tree updates';
+
+  @override
+  String get notificationPestAlerts => 'Pest hotspot alerts';
+
+  @override
+  String get notificationWeeklyDigest => 'Weekly activity digest';
 
   @override
   String get journalTitle => 'Цифровой полевой дневник';

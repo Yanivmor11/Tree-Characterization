@@ -383,6 +383,17 @@ class AppLocalizationsAr extends AppLocalizations {
       'لا يوجد اقتراح منظم. أعد الصياغة أو تابع يدويًا.';
 
   @override
+  String get assistantEmptyDescription =>
+      'Describe what you see before requesting a suggestion.';
+
+  @override
+  String get assistantApplied =>
+      'Suggestions applied — review and edit if needed.';
+
+  @override
+  String get assistantUndo => 'Undo';
+
+  @override
   String get speciesLabel => 'النوع (الاسم الشائع)';
 
   @override
@@ -822,6 +833,30 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileFieldJournals => 'المذكرات الميدانية';
+
+  @override
+  String get accountEmailLabel => 'Email';
+
+  @override
+  String get accountEmailMissing => 'Not signed in with email';
+
+  @override
+  String get accountTypeLabel => 'Account type';
+
+  @override
+  String get accountTypeAnonymous => 'Anonymous guest';
+
+  @override
+  String get accountTypeEmail => 'Email account';
+
+  @override
+  String get notificationNearbyTrees => 'Nearby tree updates';
+
+  @override
+  String get notificationPestAlerts => 'Pest hotspot alerts';
+
+  @override
+  String get notificationWeeklyDigest => 'Weekly activity digest';
 
   @override
   String get journalTitle => 'المذكرة الميدانية الرقمية';

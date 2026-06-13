@@ -162,7 +162,7 @@
   "damageHigh": "גבוה (>50%)",
 
   "assistantTitle": "עוזר אפיון (בינה מלאכותית)",
-  "assistantDescription": "תארו במילים את מה שרואים (תסמיני מצוקה, שלב פריחה וכו׳). העוזר מציע ערכים בלבד — אשרו לפני השמירה.",
+  "assistantDescription": "תארו במילים את מה שרואים (תסמיני מצוקה, שלב פריחה וכו׳). ההצעות מוחלות אוטומטית — בדקו לפני השמירה.",
   "assistantNotesLabel": "תיאור חופשי",
   "assistantNotesHint": "למשל: עלים מצהיבים בחלק העליון של הצמרת…",
   "assistantSuggest": "קבלת הצעה",
@@ -185,6 +185,9 @@
   "assistantSuggestedStageOpen": "הצעת שלב: פרח פתוח",
   "assistantSuggestedStageFruit": "הצעת שלב: פרי",
   "assistantNoStructuredSuggestion": "לא התקבלה הצעה מובנית. נסחו מחדש או המשיכו ידנית.",
+  "assistantEmptyDescription": "תארו מה שאתם רואים לפני בקשת הצעה.",
+  "assistantApplied": "ההצעות הוחלו — בדקו וערכו לפי הצורך.",
+  "assistantUndo": "ביטול",
 
   "speciesLabel": "מין (שם עממי)",
   "speciesHint": "למשל: Olive, Jacaranda",
@@ -406,6 +409,14 @@
   "profileAccount": "פרטי חשבון",
   "profileNotifications": "התראות שטח",
   "profileFieldJournals": "יומני שדה",
+  "accountEmailLabel": "דוא\"ל",
+  "accountEmailMissing": "לא מחובר עם דוא\"ל",
+  "accountTypeLabel": "סוג חשבון",
+  "accountTypeAnonymous": "אורח אנונימי",
+  "accountTypeEmail": "חשבון דוא\"ל",
+  "notificationNearbyTrees": "עדכונים על עצים בסביבה",
+  "notificationPestAlerts": "התראות על מוקדי מזיקים",
+  "notificationWeeklyDigest": "סיכום פעילות שבועי",
 
   "journalTitle": "יומן שדה דיגיטלי",
   "journalObservations": "התצפיות שלי",

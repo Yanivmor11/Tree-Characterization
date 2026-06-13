@@ -13,7 +13,51 @@ type ChatBody = {
   text?: string;
   image_base64?: string;
   mime_type?: string;
+  step?: string;
 };
+
+function normalizePhenologicalStage(raw: unknown): string | null {
+  if (raw == null) return null;
+  const normalized = String(raw).trim().toLowerCase().replace(/\s+/g, "_");
+  const synonyms: Record<string, string> = {
+    bud: "bud",
+    buds: "bud",
+    budding: "bud",
+    open: "open",
+    flower: "open",
+    flowers: "open",
+    flowering: "open",
+    bloom: "open",
+    blooming: "open",
+    fruit: "fruit",
+    fruits: "fruit",
+  };
+  return synonyms[normalized] ?? null;
+}
+
+function buildSystemPrompt(step?: string): string {
+  let prompt =
+    'You assist urban tree citizen science. Output ONLY valid JSON with keys: ' +
+    'species_common_en (canonical English common name or null), ' +
+    'species_scientific_latin (canonical Latin binomial or null), ' +
+    'translated_display_name (localized display name for UI, matching user language, or null), ' +
+    'species_common (same value as species_common_en for backward compatibility), ' +
+    'species_scientific (same value as species_scientific_latin for backward compatibility), ' +
+    'source_language (BCP-47 code like "he", "ar", "ru", "en", or null), ' +
+    'species_confidence (number 0-1 or null), health_score (integer 1-5 or null), ' +
+    'stress_symptoms (array with any of: "chlorosis","necrosis","wilting","leaf_spot","defoliation","gummosis","pest_damage","none","other", or null), ' +
+    'phenological_stage (exactly one of: "bud", "open", "fruit", or null), ' +
+    "notes (short reasoning in user's language when possible, or null). " +
+    "Use null when uncertain. Normalize typos in canonical fields. " +
+    'If user mentions flowers or blooming, set phenological_stage to "open". ' +
+    'If buds only, use "bud". If fruit visible, use "fruit". ' +
+    "Phenological stage only if clearly visible in the image or text.";
+  if (step === "flower_fruit") {
+    prompt +=
+      " The reporter is on the flower/fruit step — prioritize phenological_stage and notes.";
+  }
+  return prompt;
+}
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -47,6 +91,7 @@ Deno.serve(async (req: Request) => {
   const text = (body.text ?? "").trim();
   const imageB64 = (body.image_base64 ?? "").trim();
   const mime = (body.mime_type ?? "image/jpeg").trim() || "image/jpeg";
+  const step = (body.step ?? "").trim() || undefined;
 
   if (!text && !imageB64) {
     return new Response(
@@ -67,20 +112,7 @@ Deno.serve(async (req: Request) => {
     );
   }
 
-  const system =
-    'You assist urban tree citizen science. Output ONLY valid JSON with keys: ' +
-    'species_common_en (canonical English common name or null), ' +
-    'species_scientific_latin (canonical Latin binomial or null), ' +
-    'translated_display_name (localized display name for UI, matching user language, or null), ' +
-    'species_common (same value as species_common_en for backward compatibility), ' +
-    'species_scientific (same value as species_scientific_latin for backward compatibility), ' +
-    'source_language (BCP-47 code like "he", "ar", "ru", "en", or null), ' +
-    'species_confidence (number 0-1 or null), health_score (integer 1-5 or null), ' +
-    'stress_symptoms (array with any of: "chlorosis","necrosis","wilting","leaf_spot","defoliation","gummosis","pest_damage","none","other", or null), ' +
-    'phenological_stage (string "bud", "open", "fruit", or null), ' +
-    "notes (short reasoning in user's language when possible, or null). " +
-    "Use null when uncertain. Normalize typos in canonical fields. " +
-    "Phenological stage only if clearly visible in the image or text.";
+  const system = buildSystemPrompt(step);
 
   const userContent: Array<
     | { type: "text"; text: string }
@@ -161,6 +193,7 @@ Deno.serve(async (req: Request) => {
   parsed.species_common = commonEn;
   parsed.species_scientific_latin = scientificLatin;
   parsed.species_scientific = scientificLatin;
+  parsed.phenological_stage = normalizePhenologicalStage(parsed.phenological_stage);
 
   if (!Array.isArray(parsed.stress_symptoms)) {
     parsed.stress_symptoms = null;

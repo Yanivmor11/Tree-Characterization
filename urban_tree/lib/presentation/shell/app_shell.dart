@@ -37,6 +37,11 @@ class _AppShellState extends State<AppShell> {
   void _openDrawer() => setState(() => _drawerOpen = true);
   void _closeDrawer() => setState(() => _drawerOpen = false);
 
+  void _openProfile() => AppRoutes.pushProfile(
+        context,
+        localeController: widget.localeController,
+      );
+
   Map<AppTab, String> _labels(AppLocalizations l10n) => {
         AppTab.home: l10n.navHome,
         AppTab.identify: l10n.navIdentify,
@@ -68,24 +73,29 @@ class _AppShellState extends State<AppShell> {
                         refreshTick: _statsRefreshTick,
                         onReportComplete: _onReportComplete,
                         onMenuTap: isDesktop ? null : _openDrawer,
+                        onProfileTap: isDesktop ? null : _openProfile,
                         onViewAll: () => setState(() => _tab = AppTab.collection),
                         embedded: isDesktop,
                       ),
                       IdentifyHubScreen(
                         onMenuTap: isDesktop ? null : _openDrawer,
+                        onProfileTap: isDesktop ? null : _openProfile,
                         embedded: isDesktop,
                       ),
                       CollectionScreen(
                         onMenuTap: isDesktop ? null : _openDrawer,
+                        onProfileTap: isDesktop ? null : _openProfile,
                         embedded: isDesktop,
                       ),
                       MapScreen(
                         onReportFlowComplete: _onReportComplete,
                         onMenuTap: isDesktop ? null : _openDrawer,
+                        onProfileTap: isDesktop ? null : _openProfile,
                         embedded: true,
                       ),
                       JournalScreen(
                         onMenuTap: isDesktop ? null : _openDrawer,
+                        onProfileTap: isDesktop ? null : _openProfile,
                         embedded: isDesktop,
                       ),
                     ],
@@ -108,7 +118,6 @@ class _AppShellState extends State<AppShell> {
                         context,
                         localeController: widget.localeController,
                       ),
-                      helpLabel: l10n.navHelp,
                     ),
                   ),
               ],

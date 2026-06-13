@@ -162,7 +162,7 @@
   "damageHigh": "High (>50%)",
 
   "assistantTitle": "Characterization assistant (AI)",
-  "assistantDescription": "Describe what you see (stress symptoms, flowering stage, etc.). The assistant only suggests values — confirm before saving.",
+  "assistantDescription": "Describe what you see (stress symptoms, flowering stage, etc.). Suggestions are applied automatically — review before saving.",
   "assistantNotesLabel": "Free-text description",
   "assistantNotesHint": "e.g. yellowing leaves on the upper crown…",
   "assistantSuggest": "Get suggestion",
@@ -185,6 +185,9 @@
   "assistantSuggestedStageOpen": "Suggested stage: open flower",
   "assistantSuggestedStageFruit": "Suggested stage: fruit",
   "assistantNoStructuredSuggestion": "No structured suggestion. Rephrase or continue manually.",
+  "assistantEmptyDescription": "Describe what you see before requesting a suggestion.",
+  "assistantApplied": "Suggestions applied — review and edit if needed.",
+  "assistantUndo": "Undo",
 
   "speciesLabel": "Species (common name)",
   "speciesHint": "e.g. Olive, Jacaranda",
@@ -406,6 +409,14 @@
   "profileAccount": "Account details",
   "profileNotifications": "Field alerts",
   "profileFieldJournals": "Field journals",
+  "accountEmailLabel": "Email",
+  "accountEmailMissing": "Not signed in with email",
+  "accountTypeLabel": "Account type",
+  "accountTypeAnonymous": "Anonymous guest",
+  "accountTypeEmail": "Email account",
+  "notificationNearbyTrees": "Nearby tree updates",
+  "notificationPestAlerts": "Pest hotspot alerts",
+  "notificationWeeklyDigest": "Weekly activity digest",
 
   "journalTitle": "Digital field journal",
   "journalObservations": "My observations",

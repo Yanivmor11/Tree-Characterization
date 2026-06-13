@@ -137,35 +137,55 @@ class BotanicalDrawer extends StatelessWidget {
                         padding: const EdgeInsets.all(24),
                         child: Column(
                           children: [
-                            Row(
-                              children: [
-                                const CircleAvatar(
-                                  radius: 20,
-                                  child: Icon(Icons.person),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        auth.user?.email?.split('@').first ??
-                                            l10n.defaultUserName,
-                                        style: theme.textTheme.titleSmall?.copyWith(
-                                          color: cs.onSurface,
-                                          fontWeight: FontWeight.w700,
-                                        ),
+                            Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: onProfileTap == null
+                                    ? null
+                                    : () {
+                                        onClose();
+                                        onProfileTap?.call();
+                                      },
+                                borderRadius: BorderRadius.circular(12),
+                                child: Row(
+                                  children: [
+                                    const CircleAvatar(
+                                      radius: 20,
+                                      child: Icon(Icons.person),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            auth.user?.email?.split('@').first ??
+                                                l10n.defaultUserName,
+                                            style: theme.textTheme.titleSmall
+                                                ?.copyWith(
+                                              color: cs.onSurface,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                          Text(
+                                            l10n.userRoleBotanist,
+                                            style: theme.textTheme.bodySmall
+                                                ?.copyWith(
+                                              color: cs.onSurfaceVariant,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        l10n.userRoleBotanist,
-                                        style: theme.textTheme.bodySmall?.copyWith(
-                                          color: cs.onSurfaceVariant,
-                                        ),
+                                    ),
+                                    if (onProfileTap != null)
+                                      Icon(
+                                        Icons.chevron_left,
+                                        color: cs.outline,
                                       ),
-                                    ],
-                                  ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
                             const SizedBox(height: 16),
                             OutlinedButton.icon(

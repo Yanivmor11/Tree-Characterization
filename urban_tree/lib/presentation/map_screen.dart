@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -31,11 +34,13 @@ class MapScreen extends StatefulWidget {
     super.key,
     this.onReportFlowComplete,
     this.onMenuTap,
+    this.onProfileTap,
     this.embedded = false,
   });
 
   final VoidCallback? onReportFlowComplete;
   final VoidCallback? onMenuTap;
+  final VoidCallback? onProfileTap;
   final bool embedded;
 
   @override
@@ -62,6 +67,9 @@ class _MapScreenState extends State<MapScreen> {
   };
 
   TreeReportRow? _selectedReport;
+  String _mapSearchQuery = '';
+  final Set<String> _bookmarkedReportIds = {};
+  final TextEditingController _mapSearchController = TextEditingController();
 
   RealtimeChannel? _reportsChannel;
   String? _lastAlertHotspotId;
@@ -73,12 +81,34 @@ class _MapScreenState extends State<MapScreen> {
     _loadZones();
     _loadMapContext();
     _subscribeReports();
+    unawaited(_loadBookmarks());
+  }
+
+  Future<void> _loadBookmarks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final ids = prefs.getStringList('bookmarked_report_ids') ?? [];
+    if (!mounted) return;
+    setState(() => _bookmarkedReportIds.addAll(ids));
+  }
+
+  Future<void> _toggleBookmark(String reportId) async {
+    setState(() {
+      if (!_bookmarkedReportIds.add(reportId)) {
+        _bookmarkedReportIds.remove(reportId);
+      }
+    });
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(
+      'bookmarked_report_ids',
+      _bookmarkedReportIds.toList(),
+    );
   }
 
   @override
   void dispose() {
     _reportsChannel?.unsubscribe();
     _mapController.dispose();
+    _mapSearchController.dispose();
     super.dispose();
   }
 
@@ -301,9 +331,17 @@ class _MapScreenState extends State<MapScreen> {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final reportPins = context.watch<ReportFeedController>().recentReports;
+    final query = _mapSearchQuery.trim().toLowerCase();
+    final filteredPins = query.isEmpty
+        ? reportPins
+        : reportPins.where((r) {
+            final species = (r.species ?? '').toLowerCase();
+            final scientific = (r.speciesScientific ?? '').toLowerCase();
+            return species.contains(query) || scientific.contains(query);
+          }).toList();
     final markers = <Marker>[];
 
-    for (final r in reportPins) {
+    for (final r in filteredPins) {
       final gem = _isHiddenGem(r);
       final tip = _gemTooltip(l10n, r);
       final icon = Icon(
@@ -428,6 +466,7 @@ class _MapScreenState extends State<MapScreen> {
                 BotanicalAppBar(
                   title: l10n.appBrandTitle,
                   onMenuTap: widget.onMenuTap,
+                  onProfileTap: widget.onProfileTap,
                 ),
                 Expanded(child: mapWidget),
               ],
@@ -444,10 +483,13 @@ class _MapScreenState extends State<MapScreen> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: TextField(
+                        controller: _mapSearchController,
                         decoration: InputDecoration(
                           hintText: l10n.mapSearchHint,
                           border: InputBorder.none,
                         ),
+                        onChanged: (value) =>
+                            setState(() => _mapSearchQuery = value),
                       ),
                     ),
                     IconButton(
@@ -485,8 +527,10 @@ class _MapScreenState extends State<MapScreen> {
                 child: _MapTreeSheet(
                   report: selected,
                   l10n: l10n,
+                  bookmarked: _bookmarkedReportIds.contains(selected.id),
                   onClose: () => setState(() => _selectedReport = null),
                   onDetails: () => _openReportDetail(selected.id),
+                  onBookmark: () => _toggleBookmark(selected.id),
                 ),
               ),
             if (kE2eSemantics)
@@ -562,14 +606,18 @@ class _MapTreeSheet extends StatelessWidget {
   const _MapTreeSheet({
     required this.report,
     required this.l10n,
+    required this.bookmarked,
     required this.onClose,
     required this.onDetails,
+    required this.onBookmark,
   });
 
   final TreeReportRow report;
   final AppLocalizations l10n;
+  final bool bookmarked;
   final VoidCallback onClose;
   final VoidCallback onDetails;
+  final VoidCallback onBookmark;
 
   @override
   Widget build(BuildContext context) {
@@ -640,10 +688,13 @@ class _MapTreeSheet extends StatelessWidget {
                 IconButton.filled(
                   tooltip: l10n.a11yBookmarkTree,
                   constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-                  onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.speciesSavedToCollection)),
-                  ),
-                  icon: const Icon(Icons.bookmark_border),
+                  onPressed: () {
+                    onBookmark();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(l10n.speciesSavedToCollection)),
+                    );
+                  },
+                  icon: Icon(bookmarked ? Icons.bookmark : Icons.bookmark_border),
                 ),
               ],
             ),

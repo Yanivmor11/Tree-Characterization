@@ -37,6 +37,21 @@ class CharacterizationSuggestion {
   final String? phenologicalStage;
   final String? notes;
 
+  /// Whether the suggestion contains fields usable in the wizard UI.
+  bool hasStructuredFields({required bool flowerStepOnly}) {
+    if (flowerStepOnly) {
+      return phenologicalStage != null ||
+          (notes != null && notes!.trim().isNotEmpty);
+    }
+    return healthScore != null ||
+        speciesCommon != null ||
+        speciesScientific != null ||
+        (translatedDisplayName != null && translatedDisplayName!.isNotEmpty) ||
+        (stressSymptoms != null && stressSymptoms!.isNotEmpty) ||
+        phenologicalStage != null ||
+        (notes != null && notes!.trim().isNotEmpty);
+  }
+
   Map<String, dynamic> toAuditJson() {
     return {
       if (speciesCommon != null) 'species_common': speciesCommon,
@@ -154,23 +169,47 @@ class AIService {
   }
 
   /// Text-based characterization from free-form resident description (any language).
-  Future<CharacterizationSuggestion> suggestFromResidentText(String text) async {
+  ///
+  /// [step] hints the model: `whole_tree` or `flower_fruit`. Optional [imageBytes]
+  /// adds vision context (e.g. flower/fruit photos on step 2).
+  Future<CharacterizationSuggestion> suggestFromResidentText(
+    String text, {
+    String? step,
+    Uint8List? imageBytes,
+    String mimeType = 'image/jpeg',
+  }) async {
     final trimmed = text.trim();
-    if (trimmed.isEmpty) {
+    if (trimmed.isEmpty && imageBytes == null) {
       return CharacterizationSuggestion();
     }
 
     try {
       if (kIsWeb) {
-        return await _suggestTextViaEdge(trimmed);
+        return await _suggestTextViaEdge(
+          trimmed,
+          step: step,
+          imageBytes: imageBytes,
+          mimeType: mimeType,
+        );
       }
 
       final key = AppEnv.openAiApiKey.trim();
       if (key.isEmpty) {
-        return await _suggestTextViaEdge(trimmed);
+        return await _suggestTextViaEdge(
+          trimmed,
+          step: step,
+          imageBytes: imageBytes,
+          mimeType: mimeType,
+        );
       }
 
-      return await _suggestTextDirect(trimmed, key);
+      return await _suggestTextDirect(
+        trimmed,
+        key,
+        step: step,
+        imageBytes: imageBytes,
+        mimeType: mimeType,
+      );
     } catch (e) {
       if (PresentationFallbackService.shouldUseFallback(e)) {
         return PresentationFallbackService.mockCharacterizationSuggestion();
@@ -233,11 +272,25 @@ class AIService {
     }
   }
 
-  Future<CharacterizationSuggestion> _suggestTextViaEdge(String trimmed) async {
+  Future<CharacterizationSuggestion> _suggestTextViaEdge(
+    String trimmed, {
+    String? step,
+    Uint8List? imageBytes,
+    String mimeType = 'image/jpeg',
+  }) async {
     try {
+      final body = <String, dynamic>{
+        'text': trimmed,
+        if (step != null && step.isNotEmpty) 'step': step,
+      };
+      if (imageBytes != null) {
+        final prepared = _resizeForVision(imageBytes);
+        body['image_base64'] = base64Encode(prepared);
+        body['mime_type'] = mimeType;
+      }
       final res = await _invokeEdgeFunction(
         _edgeSuggest,
-        body: {'text': trimmed},
+        body: body,
       );
       if (res.status != 200) {
         throw StateError(
@@ -316,30 +369,62 @@ class AIService {
     return _parseOpenAiJsonObject(obj);
   }
 
+  static String _textSystemPrompt({String? step}) {
+    var prompt =
+        'You assist urban tree citizen science. Given a resident description in any language, '
+        'output ONLY valid JSON with keys: species_common_en (canonical English common name or null), '
+        'species_scientific_latin (canonical Latin binomial or null), '
+        'translated_display_name (localized display name for UI or null), '
+        'species_common (same as species_common_en), species_scientific (same as species_scientific_latin), '
+        'source_language (BCP-47 language code or null), '
+        'species_confidence (0-1 or null), health_score (integer 1-5 or null), '
+        'stress_symptoms (array with any of: "chlorosis","necrosis","wilting","leaf_spot","defoliation","gummosis","pest_damage","none","other", or null), '
+        'phenological_stage (exactly one of: "bud", "open", "fruit", or null), '
+        'notes (short summary in user language or null). '
+        'Use null when uncertain. '
+        'If user mentions flowers or blooming, set phenological_stage to "open". '
+        'If buds only, use "bud". If fruit visible, use "fruit".';
+    if (step == 'flower_fruit') {
+      prompt +=
+          ' Focus on phenological_stage and notes; infer stage from visible flowers, buds, or fruit.';
+    }
+    return prompt;
+  }
+
   Future<CharacterizationSuggestion> _suggestTextDirect(
     String trimmed,
-    String apiKey,
-  ) async {
+    String apiKey, {
+    String? step,
+    Uint8List? imageBytes,
+    String mimeType = 'image/jpeg',
+  }) async {
+    final userContent = <Map<String, dynamic>>[];
+    if (trimmed.isNotEmpty) {
+      userContent.add({'type': 'text', 'text': trimmed});
+    }
+    if (imageBytes != null) {
+      final prepared = _resizeForVision(imageBytes);
+      final dataUrl = 'data:$mimeType;base64,${base64Encode(prepared)}';
+      userContent.add({
+        'type': 'image_url',
+        'image_url': {'url': dataUrl, 'detail': 'low'},
+      });
+    }
+
     final body = jsonEncode({
       'model': _model,
       'response_format': {'type': 'json_object'},
       'messages': [
         {
           'role': 'system',
-          'content':
-              'You assist urban tree citizen science. Given a resident description in any language, '
-              'output ONLY valid JSON with keys: species_common_en (canonical English common name or null), '
-              'species_scientific_latin (canonical Latin binomial or null), '
-              'translated_display_name (localized display name for UI or null), '
-              'species_common (same as species_common_en), species_scientific (same as species_scientific_latin), '
-              'source_language (BCP-47 language code or null), '
-              'species_confidence (0-1 or null), health_score (integer 1-5 or null), '
-              'stress_symptoms (array with any of: "chlorosis","necrosis","wilting","leaf_spot","defoliation","gummosis","pest_damage","none","other", or null), '
-              'phenological_stage (string "bud", "open", "fruit", or null), '
-              'notes (short Hebrew summary of reasoning or null). '
-              'Use null when uncertain.',
+          'content': _textSystemPrompt(step: step),
         },
-        {'role': 'user', 'content': trimmed},
+        {
+          'role': 'user',
+          'content': userContent.length == 1 && userContent.first['type'] == 'text'
+              ? trimmed
+              : userContent,
+        },
       ],
     });
 
@@ -385,23 +470,45 @@ class AIService {
 
   /// Normalizes model JSON into typed fields; prefers `species_common_en` /
   /// `species_scientific_latin` aliases for multilingual pipeline consistency.
+  static String? _normalizePhenologicalStage(dynamic raw) {
+    if (raw == null) return null;
+    final normalized = raw.toString().trim().toLowerCase().replaceAll(' ', '_');
+    const synonyms = {
+      'bud': 'bud',
+      'buds': 'bud',
+      'budding': 'bud',
+      'ניצן': 'bud',
+      'open': 'open',
+      'flower': 'open',
+      'flowers': 'open',
+      'flowering': 'open',
+      'bloom': 'open',
+      'blooming': 'open',
+      'פרח': 'open',
+      'פריחה': 'open',
+      'fruit': 'fruit',
+      'fruits': 'fruit',
+      'פרי': 'fruit',
+      'פירות': 'fruit',
+    };
+    return synonyms[normalized];
+  }
+
+  static int? _parseHealthScore(dynamic hs) {
+    if (hs is int) return hs.clamp(1, 5);
+    if (hs is num) return hs.toInt().clamp(1, 5);
+    if (hs is String) {
+      final parsed = int.tryParse(hs.trim());
+      if (parsed != null) return parsed.clamp(1, 5);
+    }
+    return null;
+  }
+
   static CharacterizationSuggestion _parseOpenAiJsonObject(
     Map<String, dynamic> obj,
   ) {
-    int? health;
-    final hs = obj['health_score'];
-    if (hs is int) {
-      health = hs.clamp(1, 5);
-    } else if (hs is num) {
-      health = hs.toInt().clamp(1, 5);
-    }
-
-    String? stage;
-    final st = obj['phenological_stage'];
-    if (st is String) {
-      const allowed = {'bud', 'open', 'fruit'};
-      if (allowed.contains(st)) stage = st;
-    }
+    final health = _parseHealthScore(obj['health_score']);
+    final stage = _normalizePhenologicalStage(obj['phenological_stage']);
 
     final notes = obj['notes'];
     List<String>? stressSymptoms;
