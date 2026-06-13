@@ -79,7 +79,30 @@ class _AppShellState extends State<AppShell> {
     final l10n = AppLocalizations.of(context);
     final auth = context.watch<AuthController>();
     final isDesktop = MediaQuery.sizeOf(context).width >= kDesktopBreakpoint;
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
     final labels = _labels(l10n);
+
+    final sideNav = isDesktop
+        ? Theme(
+            data: buildUrbanTreeTheme(brightness: Brightness.light),
+            child: BotanicalSideNav(
+              current: _tab,
+              onChanged: (t) => setState(() => _tab = t),
+              labels: labels,
+              appTitle: l10n.appBrandTitle,
+              appSubtitle: l10n.appBrandSubtitle,
+              onIdentifyNew: () => AppRoutes.startIdentifyFlow(context),
+              userName: auth.user?.email?.split('@').first ?? l10n.defaultUserName,
+              userSubtitle: l10n.userRoleBotanist,
+              onHelpTap: () => AppRoutes.pushHelp(context),
+              onProfileTap: () => AppRoutes.pushProfile(
+                context,
+                localeController: widget.localeController,
+              ),
+              innerEdgeAtStart: isRtl,
+            ),
+          )
+        : null;
 
     return ShakeReportHost(
       onReportComplete: _onReportComplete,
@@ -88,7 +111,9 @@ class _AppShellState extends State<AppShell> {
           Scaffold(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             body: Row(
+              textDirection: TextDirection.ltr,
               children: [
+                if (sideNav != null && !isRtl) sideNav,
                 Expanded(
                   child: IndexedStack(
                     index: _tab.index,
@@ -125,25 +150,7 @@ class _AppShellState extends State<AppShell> {
                     ],
                   ),
                 ),
-                if (isDesktop)
-                  Theme(
-                    data: buildUrbanTreeTheme(brightness: Brightness.light),
-                    child: BotanicalSideNav(
-                      current: _tab,
-                      onChanged: (t) => setState(() => _tab = t),
-                      labels: labels,
-                      appTitle: l10n.appBrandTitle,
-                      appSubtitle: l10n.appBrandSubtitle,
-                      onIdentifyNew: () => AppRoutes.pushIdentifyCamera(context),
-                      userName: auth.user?.email?.split('@').first ?? l10n.defaultUserName,
-                      userSubtitle: l10n.userRoleBotanist,
-                      onHelpTap: () => AppRoutes.pushHelp(context),
-                      onProfileTap: () => AppRoutes.pushProfile(
-                        context,
-                        localeController: widget.localeController,
-                      ),
-                    ),
-                  ),
+                if (sideNav != null && isRtl) sideNav,
               ],
             ),
             bottomNavigationBar: isDesktop

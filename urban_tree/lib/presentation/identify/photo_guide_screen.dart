@@ -196,7 +196,7 @@ class PhotoGuideScreen extends StatelessWidget {
                   icon: Icons.photo_camera,
                   onPressed: () {
                     Navigator.of(context).pop();
-                    AppRoutes.pushIdentifyCamera(context);
+                    AppRoutes.startIdentifyFlow(context);
                   },
                 ),
               ],

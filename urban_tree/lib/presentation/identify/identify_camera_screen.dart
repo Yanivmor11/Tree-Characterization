@@ -14,7 +14,6 @@ class IdentifyCameraScreen extends StatefulWidget {
 }
 
 class _IdentifyCameraScreenState extends State<IdentifyCameraScreen> {
-  int _mode = 0;
   final _picker = ImagePicker();
   final _launcher = ReportFlowLauncher();
 
@@ -28,7 +27,6 @@ class _IdentifyCameraScreenState extends State<IdentifyCameraScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final modes = [l10n.cameraLeafMode, l10n.cameraBarkMode, l10n.cameraFruitMode];
     final bottomInset = MediaQuery.paddingOf(context).bottom;
 
     return Scaffold(
@@ -180,42 +178,6 @@ class _IdentifyCameraScreenState extends State<IdentifyCameraScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.black45,
-                    borderRadius: BorderRadius.circular(999),
-                    border: Border.all(color: Colors.white10),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: List.generate(modes.length, (i) {
-                      final selected = i == _mode;
-                      return GestureDetector(
-                        onTap: () => setState(() => _mode = i),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: selected ? Colors.white : Colors.transparent,
-                            borderRadius: BorderRadius.circular(999),
-                          ),
-                          child: Text(
-                            modes[i],
-                            style: TextStyle(
-                              color: selected ? AppColors.primary : Colors.white70,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
-                  ),
-                ),
-                const SizedBox(height: 24),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [

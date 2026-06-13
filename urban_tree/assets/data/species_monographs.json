@@ -8,7 +8,14 @@
       "family": "FAGACEAE",
       "familyHebrew": "משפחת האלונים",
       "familyEnglish": "Beech family",
-      "tags": ["עץ ארץ-ישראלי", "ירוק-עד"],
+      "familyArabic": "عائلة البلوط",
+      "familyRussian": "Семейство буковые",
+      "arabicName": "البلوط الكرمزي",
+      "russianName": "Дуб кермесовый",
+      "tags": [
+        "עץ ארץ-ישראלי",
+        "ירוק-עד"
+      ],
       "summary": "האלון המצוי הוא עץ החורש הים-תיכוני הנפוץ ביותר בישראל. הוא מתאפיין בחוסן רב, צמיחה איטית ואורך חיים מופלג שיכול להגיע למאות שנים.",
       "heroImageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuBOW3Pk2N2FAJIOLT6bvn_mYdCIQTAF67vmbPuyR_q52qvpJI_A2VLu7-YXkvxXwYXmuXGAmVuZunPsrBtBHJmznlweXfzkgDNsOXnCurtzReHTj9PcKUfEQxsgai2QoBudG8WkB3nw3Amky_XQQpRJ9P82VqEZSplCxa16-vYLXIg0sWUCIsghKcPEzzFIJNugncM_JpZBKa_gi9IaFHMDZF1nXtXo_InhJIXF5YzT1cKl1O5ELrEF-z6CzIYi_seA0-9F2ho6keM",
       "thumbnailUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuBy101X7up5cPdnjhcIfCdmg7uaQ2ytzmN86OtzUomQbG7XU0FyzFA999kSWENmXk2CgIYK6WrBNvNGI0sIlzZe1EVC0uowYRTC3BZUiX1yVQtbg1uhaImxqnMU0tz5j1z-5r04urvuS31B8CZTIe0SmBvSDmhisp8dq4taef_jA7dr64o80p9-uz9UlhXVLAcAE7nLmG6EWo0QtNcgV-psOJxrgKz3rp86ONzRwrjDdrXpwO02oxJYtRKetki2jzSY_tocpThNHWw",
@@ -39,7 +46,11 @@
       },
       "distribution": {
         "description": "האלון המצוי הוא המרכיב העיקרי של החורש הים-תיכוני בישראל. הוא נפוץ מהחרמון בצפון ועד להרי יהודה בדרום.",
-        "regions": ["הרי הגליל", "הכרמל", "הרי יהודה"],
+        "regions": [
+          "הרי הגליל",
+          "הכרמל",
+          "הרי יהודה"
+        ],
         "mapImageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuBdFfGinQY_NNuDSi65E_Dh3pORYazkbEvt5VtLmy6k7BFZW1cUOsLrZlT68lkgAbnUxYapek_-Bgs3u4O9DOQCLEfxN-sLKVmNPl7hC_sPJa3oqIqM6PLC6OnabBWcreLQyakIO74_f1l24TrtG2dBh2XJ9tZmk33xUvnaJWYBKvS9BcHGjmE-szxMlRyVjulIIb1iqB8XrLCduh08dv3kGhaQu-GSNYMZWg1AEXDpjeEnKLaj-9dkNb9VDX7OFcAnNFDoILR3DNE"
       },
       "uses": [
@@ -75,7 +86,234 @@
           "body": "הגזע חסון ומכוסה בקליפה עבה, אפורה ומחורצת עמוק.",
           "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuCDI5TzXFJSAAJN7DEDmHpfwb2RcFmsRbsjJzr7zmtaNM5EZ_QXONrJiCtDQfLuDpLsqEgbjqNjA0ci4x-S_gt-RZB1k_9vSBeAQGk0Y_Z56PiK6Zcx05n3uM3X9B2GVF-DnOA0Dzqc9L-fIqOtV6TDFYYI5pj4PTDf4A15a2m_9z6ybnsrjZ5tVsMieYBxSWb-bFniTqcX_yzj2yUkyw9HixxyyDma3fR9m935dWmSRcOjH7hrVs115ZTWwVnZaMv1woX24c2x4DI"
         }
-      ]
+      ],
+      "locales": {
+        "en": {
+          "tags": [
+            "Native Israeli tree",
+            "Evergreen"
+          ],
+          "summary": "Kermes oak is the most common Mediterranean maquis tree in Israel. It is remarkably hardy, grows slowly, and can live for hundreds of years.",
+          "category": "Evergreen",
+          "stats": {
+            "maxHeight": "15 m",
+            "lifespan": "800 yr",
+            "photosynthesis": "C3",
+            "avgHeight": "5–12 meters",
+            "water": "Very low",
+            "flowering": "March – April",
+            "soil": "Limestone and terra rossa"
+          },
+          "morphology": {
+            "leaves": {
+              "title": "Foliage",
+              "body": "Leaves are leathery with a spiny, wavy margin. The upper surface is dark glossy green and the lower surface is paler. Leaves stay on the tree year-round, making this an evergreen oak."
+            },
+            "fruit": {
+              "title": "Fruit: acorn",
+              "body": "The acorn sits in a cup covered with hard scales. It is an important food source for forest wildlife."
+            },
+            "bark": {
+              "title": "Trunk and bark",
+              "body": "Bark is gray, rough, and longitudinally cracked on mature trees. Its sturdy structure helps the tree survive fire.",
+              "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuAAHfsEzt4QRrFpV_FRkptvqYckBNhdupa4kKAujcYGx7IMb_5ilhBAIhtpQRCNwk9553evPKyIZuMx6U_yBDSmVjxJ64jcbtDry1GnyRBhqEqCPCKJF4fSA3qOLwBajcv8taZ1fp79dOxA9or9GvV16Qc9PaTDmMQTgBrLec95tHO75Mu80kcecwDle8nnsIGO0OFunSE7FOs1a7cW7vDVSYROkh5AYv-3LtCNwsEjETvh3Fp7yoZmvVXzNOxOmIdcb29o3mVxSE0"
+            }
+          },
+          "distribution": {
+            "description": "Kermes oak is the dominant species of Mediterranean maquis in Israel, common from Mount Hermon in the north to the Judean Hills in the south.",
+            "regions": [
+              "Galilee Hills",
+              "Mount Carmel",
+              "Judean Hills"
+            ],
+            "mapImageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuBdFfGinQY_NNuDSi65E_Dh3pORYazkbEvt5VtLmy6k7BFZW1cUOsLrZlT68lkgAbnUxYapek_-Bgs3u4O9DOQCLEfxN-sLKVmNPl7hC_sPJa3oqIqM6PLC6OnabBWcreLQyakIO74_f1l24TrtG2dBh2XJ9tZmk33xUvnaJWYBKvS9BcHGjmE-szxMlRyVjulIIb1iqB8XrLCduh08dv3kGhaQu-GSNYMZWg1AEXDpjeEnKLaj-9dkNb9VDX7OFcAnNFDoILR3DNE"
+          },
+          "uses": [
+            {
+              "title": "Timber industry",
+              "body": "Oak wood is prized for its strength and density. Historically it was used for boats, tools, and olive presses.",
+              "icon": "handyman"
+            },
+            {
+              "title": "Folk medicine",
+              "body": "Acorn cups and bark are rich in tannins and were used to stop bleeding and treat throat inflammation.",
+              "icon": "medication"
+            }
+          ],
+          "funFacts": [
+            "After fire, kermes oak can resprout quickly from dormant buds at the base of the trunk.",
+            "In Israel there are centuries-old kermes oaks revered in local traditions.",
+            "The word for oak appears dozens of times in the Bible, symbolizing strength and stability."
+          ],
+          "anatomyCards": [
+            {
+              "title": "Leaf structure",
+              "body": "Leathery (sclerophyll) leaves help conserve water. The upper surface is dark and glossy; the lower surface is lighter.",
+              "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuA-OdY4Fk9PNKo5fwvrQK4qCCXpcAeVd0lzVgvimBA-UJegHtvVT6jeXn7ftJkwwMgBl_o9zQB3WS_Or46elrjD9FVBm3ZEc8tKyHMZbGVtAkgbiOj_dp5AYYfy-6vnSuOuRgK_2gp4aYWGIkX0sY7WoaivLOqDSejYgWT9jhiUubkwq3cgjbDL09of9gqXSI09LH5sUfXxbhJQB0CXLWWwZV97bplGCxVenFrjf9KLgRkyenNvMfrtchNOum96ynxx3Sp7Nswi1Gg"
+            },
+            {
+              "title": "Fruit (acorn)",
+              "body": "The acorn sits in a cup covered with hard scales. Ripening takes about 18 months.",
+              "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuBlcHp1os8fXuGg62FpKHEp0Kr41F2q1UNJ1e7h20F1_9gBj9AHCytYb9jPJkkmXC-aTgenWS_WPkK7FNNbPEHEqhXppPHEIe5a2mlHTbpgFSBl3zKqiibF8sCHc2EntATm-W7KzTnSfwidqBLddsVa5lijaijATzcYkXXZZ4lqUwfl1uxhClP1V-kKtNXPewnEj_RuOm4kQqHY7EimJQgxyg_77m9Dhpk3XFrS_H6Yzur7jY5aYRM-yUWmOgv1slhDpS6hx6gQNc4"
+            },
+            {
+              "title": "Trunk and bark",
+              "body": "The trunk is sturdy and covered with thick, gray, deeply furrowed bark.",
+              "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuCDI5TzXFJSAAJN7DEDmHpfwb2RcFmsRbsjJzr7zmtaNM5EZ_QXONrJiCtDQfLuDpLsqEgbjqNjA0ci4x-S_gt-RZB1k_9vSBeAQGk0Y_Z56PiK6Zcx05n3uM3X9B2GVF-DnOA0Dzqc9L-fIqOtV6TDFYYI5pj4PTDf4A15a2m_9z6ybnsrjZ5tVsMieYBxSWb-bFniTqcX_yzj2yUkyw9HixxyyDma3fR9m935dWmSRcOjH7hrVs115ZTWwVnZaMv1woX24c2x4DI"
+            }
+          ]
+        },
+        "ar": {
+          "tags": [
+            "شجرة محلية في إسرائيل",
+            "دائمة الخضرة"
+          ],
+          "summary": "البلوط الكرمزي هو أكثر أشجار الغابة المتوسطية شيوعًا في إسرائيل. يتميز بمتانته العالية، ونموه البطيء، وطول عمره الذي قد يمتد إلى مئات السنين.",
+          "category": "دائمة الخضرة",
+          "stats": {
+            "maxHeight": "15 م",
+            "lifespan": "800 سنة",
+            "photosynthesis": "C3",
+            "avgHeight": "5–12 مترًا",
+            "water": "منخفضة جدًا",
+            "flowering": "مارس – أبريل",
+            "soil": "الحجر الجيري والتربة الحمراء"
+          },
+          "morphology": {
+            "leaves": {
+              "title": "الأوراق",
+              "body": "الأوراق جلدية، حافتها مسننة وشائكة بشكل متموّج. السطح العلوي أخضر داكن لامع، والسطح السفلي أفتح. تبقى الأوراق على الشجرة طوال العام، ما يجعل هذا البلوط دائم الخضرة."
+            },
+            "fruit": {
+              "title": "الثمرة: الجوز",
+              "body": "يجلس الجوز داخل كأس مغطّى بحراشف صلبة. وهو مصدر غذاء مهم لحيوانات الغابة."
+            },
+            "bark": {
+              "title": "الجذع واللحاء",
+              "body": "اللحاء رمادي، خشن، ومتشقّق طوليًا في الأشجار البالغة. يمنحه بناؤه المتين مقاومة عالية للحرائق.",
+              "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuAAHfsEzt4QRrFpV_FRkptvqYckBNhdupa4kKAujcYGx7IMb_5ilhBAIhtpQRCNwk9553evPKyIZuMx6U_yBDSmVjxJ64jcbtDry1GnyRBhqEqCPCKJF4fSA3qOLwBajcv8taZ1fp79dOxA9or9GvV16Qc9PaTDmMQTgBrLec95tHO75Mu80kcecwDle8nnsIGO0OFunSE7FOs1a7cW7vDVSYROkh5AYv-3LtCNwsEjETvh3Fp7yoZmvVXzNOxOmIdcb29o3mVxSE0"
+            }
+          },
+          "distribution": {
+            "description": "البلوط الكرمزي هو المكوّن الرئيسي للغابة المتوسطية في إسرائيل. ينتشر من جبل الشيخ في الشمال إلى جبال يهودا في الجنوب.",
+            "regions": [
+              "جبال الجليل",
+              "جبل الكرمل",
+              "جبال يهودا"
+            ],
+            "mapImageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuBdFfGinQY_NNuDSi65E_Dh3pORYazkbEvt5VtLmy6k7BFZW1cUOsLrZlT68lkgAbnUxYapek_-Bgs3u4O9DOQCLEfxN-sLKVmNPl7hC_sPJa3oqIqM6PLC6OnabBWcreLQyakIO74_f1l24TrtG2dBh2XJ9tZmk33xUvnaJWYBKvS9BcHGjmE-szxMlRyVjulIIb1iqB8XrLCduh08dv3kGhaQu-GSNYMZWg1AEXDpjeEnKLaj-9dkNb9VDX7OFcAnNFDoILR3DNE"
+          },
+          "uses": [
+            {
+              "title": "صناعة الأخشاب",
+              "body": "يُعرف خشب البلوط بقوته وكثافته. استُخدم تاريخيًا في بناء السفن والأدوات ومكابس الزيت.",
+              "icon": "handyman"
+            },
+            {
+              "title": "الطب الشعبي",
+              "body": "أكواب الجوز ولحاء الشجرة غنية بالعفص واستُخدمت لوقف النزيف وعلاج التهاب الحلق.",
+              "icon": "medication"
+            }
+          ],
+          "funFacts": [
+            "يمكن للبلوط أن ينمو من جديد بسرعة بعد الحريق عبر براعم خامدة عند قاعدة الجذع.",
+            "في إسرائيل توجد أشجار بلوط كرمزي يُقدّر عمرها بمئات السنين وهي مقدّسة في تقاليد محلية.",
+            "يظهر اسم البلوط عشرات المرات في الكتاب المقدس، ويرمز إلى القوة والثبات."
+          ],
+          "anatomyCards": [
+            {
+              "title": "بنية الورقة",
+              "body": "أوراق جلدية (صلبة) تساعد على حفظ الماء. السطح العلوي داكن ولامع، والسطح السفلي أفتح.",
+              "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuA-OdY4Fk9PNKo5fwvrQK4qCCXpcAeVd0lzVgvimBA-UJegHtvVT6jeXn7ftJkwwMgBl_o9zQB3WS_Or46elrjD9FVBm3ZEc8tKyHMZbGVtAkgbiOj_dp5AYYfy-6vnSuOuRgK_2gp4aYWGIkX0sY7WoaivLOqDSejYgWT9jhiUubkwq3cgjbDL09of9gqXSI09LH5sUfXxbhJQB0CXLWWwZV97bplGCxVenFrjf9KLgRkyenNvMfrtchNOum96ynxx3Sp7Nswi1Gg"
+            },
+            {
+              "title": "الثمرة (الجوز)",
+              "body": "يجلس الجوز داخل كأس مغطّى بحراشف صلبة. يستغرق نضج الثمرة نحو 18 شهرًا.",
+              "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuBlcHp1os8fXuGg62FpKHEp0Kr41F2q1UNJ1e7h20F1_9gBj9AHCytYb9jPJkkmXC-aTgenWS_WPkK7FNNbPEHEqhXppPHEIe5a2mlHTbpgFSBl3zKqiibF8sCHc2EntATm-W7KzTnSfwidqBLddsVa5lijaijATzcYkXXZZ4lqUwfl1uxhClP1V-kKtNXPewnEj_RuOm4kQqHY7EimJQgxyg_77m9Dhpk3XFrS_H6Yzur7jY5aYRM-yUWmOgv1slhDpS6hx6gQNc4"
+            },
+            {
+              "title": "الجذع واللحاء",
+              "body": "الجذع متين ومغطّى بلحاء سميك رمادي ومتشقّق بعمق.",
+              "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuCDI5TzXFJSAAJN7DEDmHpfwb2RcFmsRbsjJzr7zmtaNM5EZ_QXONrJiCtDQfLuDpLsqEgbjqNjA0ci4x-S_gt-RZB1k_9vSBeAQGk0Y_Z56PiK6Zcx05n3uM3X9B2GVF-DnOA0Dzqc9L-fIqOtV6TDFYYI5pj4PTDf4A15a2m_9z6ybnsrjZ5tVsMieYBxSWb-bFniTqcX_yzj2yUkyw9HixxyyDma3fR9m935dWmSRcOjH7hrVs115ZTWwVnZaMv1woX24c2x4DI"
+            }
+          ]
+        },
+        "ru": {
+          "tags": [
+            "Местное дерево Израиля",
+            "Вечнозелёное"
+          ],
+          "summary": "Дуб кермесовый — самое распространённое дерево средиземноморской макии в Израиле. Он отличается исключительной стойкостью, медленным ростом и может жить сотни лет.",
+          "category": "Вечнозелёное",
+          "stats": {
+            "maxHeight": "15 м",
+            "lifespan": "800 лет",
+            "photosynthesis": "C3",
+            "avgHeight": "5–12 метров",
+            "water": "Очень низкая",
+            "flowering": "март – апрель",
+            "soil": "Известняк и краснозём (terra rossa)"
+          },
+          "morphology": {
+            "leaves": {
+              "title": "Листва",
+              "body": "Листья кожистые, с колючей волнистой каймой. Верхняя сторона тёмно-зелёная и блестящая, нижняя — светлее. Листья сохраняются на дереве круглый год, поэтому дуб вечнозелёный."
+            },
+            "fruit": {
+              "title": "Плод: желудь",
+              "body": "Желудь расположен в чашечке, покрытой твёрдыми чешуйками. Это важный источник пищи для лесных животных."
+            },
+            "bark": {
+              "title": "Ствол и кора",
+              "body": "Кора серая, шероховатая, с продольными трещинами у взрослых деревьев. Прочная структура помогает переживать пожары.",
+              "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuAAHfsEzt4QRrFpV_FRkptvqYckBNhdupa4kKAujcYGx7IMb_5ilhBAIhtpQRCNwk9553evPKyIZuMx6U_yBDSmVjxJ64jcbtDry1GnyRBhqEqCPCKJF4fSA3qOLwBajcv8taZ1fp79dOxA9or9GvV16Qc9PaTDmMQTgBrLec95tHO75Mu80kcecwDle8nnsIGO0OFunSE7FOs1a7cW7vDVSYROkh5AYv-3LtCNwsEjETvh3Fp7yoZmvVXzNOxOmIdcb29o3mVxSE0"
+            }
+          },
+          "distribution": {
+            "description": "Дуб кермесовый — главный вид средиземноморской макии в Израиле. Распространён от горы Хермон на севере до Иудейских гор на юге.",
+            "regions": [
+              "Галилейские горы",
+              "Гора Кармель",
+              "Иудейские горы"
+            ],
+            "mapImageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuBdFfGinQY_NNuDSi65E_Dh3pORYazkbEvt5VtLmy6k7BFZW1cUOsLrZlT68lkgAbnUxYapek_-Bgs3u4O9DOQCLEfxN-sLKVmNPl7hC_sPJa3oqIqM6PLC6OnabBWcreLQyakIO74_f1l24TrtG2dBh2XJ9tZmk33xUvnaJWYBKvS9BcHGjmE-szxMlRyVjulIIb1iqB8XrLCduh08dv3kGhaQu-GSNYMZWg1AEXDpjeEnKLaj-9dkNb9VDX7OFcAnNFDoILR3DNE"
+          },
+          "uses": [
+            {
+              "title": "Деревообрабатывающая промышленность",
+              "body": "Дуб ценится за прочность и плотность древесины. Исторически его использовали для лодок, инструментов и маслобоен.",
+              "icon": "handyman"
+            },
+            {
+              "title": "Народная медицина",
+              "body": "Чашечки желудя и кора богаты танинами; их применяли для остановки кровотечений и лечения воспаления горла.",
+              "icon": "medication"
+            }
+          ],
+          "funFacts": [
+            "После пожара дуб быстро отрастает за счёт спящих почек у основания ствола.",
+            "В Израиле есть вековые экземпляры, почитаемые в местных традициях.",
+            "Слово «дуб» десятки раз встречается в Библии и символизирует силу и устойчивость."
+          ],
+          "anatomyCards": [
+            {
+              "title": "Строение листа",
+              "body": "Кожистые (склерофиллные) листья помогают сохранять воду. Верхняя сторона тёмная и блестящая, нижняя — светлее.",
+              "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuA-OdY4Fk9PNKo5fwvrQK4qCCXpcAeVd0lzVgvimBA-UJegHtvVT6jeXn7ftJkwwMgBl_o9zQB3WS_Or46elrjD9FVBm3ZEc8tKyHMZbGVtAkgbiOj_dp5AYYfy-6vnSuOuRgK_2gp4aYWGIkX0sY7WoaivLOqDSejYgWT9jhiUubkwq3cgjbDL09of9gqXSI09LH5sUfXxbhJQB0CXLWWwZV97bplGCxVenFrjf9KLgRkyenNvMfrtchNOum96ynxx3Sp7Nswi1Gg"
+            },
+            {
+              "title": "Плод (желудь)",
+              "body": "Желудь находится в чашечке с твёрдыми чешуйками. Созревание занимает около 18 месяцев.",
+              "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuBlcHp1os8fXuGg62FpKHEp0Kr41F2q1UNJ1e7h20F1_9gBj9AHCytYb9jPJkkmXC-aTgenWS_WPkK7FNNbPEHEqhXppPHEIe5a2mlHTbpgFSBl3zKqiibF8sCHc2EntATm-W7KzTnSfwidqBLddsVa5lijaijATzcYkXXZZ4lqUwfl1uxhClP1V-kKtNXPewnEj_RuOm4kQqHY7EimJQgxyg_77m9Dhpk3XFrS_H6Yzur7jY5aYRM-yUWmOgv1slhDpS6hx6gQNc4"
+            },
+            {
+              "title": "Ствол и кора",
+              "body": "Ствол прочный, покрыт толстой серой корой с глубокими бороздами.",
+              "imageUrl": "https://lh3.googleusercontent.com/aida-public/AB6AXuCDI5TzXFJSAAJN7DEDmHpfwb2RcFmsRbsjJzr7zmtaNM5EZ_QXONrJiCtDQfLuDpLsqEgbjqNjA0ci4x-S_gt-RZB1k_9vSBeAQGk0Y_Z56PiK6Zcx05n3uM3X9B2GVF-DnOA0Dzqc9L-fIqOtV6TDFYYI5pj4PTDf4A15a2m_9z6ybnsrjZ5tVsMieYBxSWb-bFniTqcX_yzj2yUkyw9HixxyyDma3fR9m935dWmSRcOjH7hrVs115ZTWwVnZaMv1woX24c2x4DI"
+            }
+          ]
+        }
+      }
     }
   ]
 }

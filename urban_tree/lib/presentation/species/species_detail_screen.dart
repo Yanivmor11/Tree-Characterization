@@ -53,10 +53,15 @@ class _SpeciesDetailScreenState extends State<SpeciesDetailScreen> {
     final l10n = AppLocalizations.of(context);
     final species = _species;
     final isWide = MediaQuery.sizeOf(context).width >= kDesktopBreakpoint;
+    final lang = Localizations.localeOf(context).languageCode;
 
     if (species == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
+
+    final content = species.contentFor(lang);
+    final displayName = species.displayNameFor(lang);
+    final familyLabel = species.familyLabelFor(lang);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -69,7 +74,7 @@ class _SpeciesDetailScreenState extends State<SpeciesDetailScreen> {
             leading: IconButton(
               onPressed: () => Navigator.of(context).pop(),
               tooltip: l10n.back,
-              icon: const Icon(Icons.arrow_forward, color: AppColors.primary),
+              icon: const Icon(Icons.arrow_back, color: AppColors.primary),
             ),
             flexibleSpace: FlexibleSpaceBar(
               background: Stack(
@@ -78,7 +83,7 @@ class _SpeciesDetailScreenState extends State<SpeciesDetailScreen> {
                   BotanicalNetworkImage(
                     url: species.heroImageUrl,
                     fit: BoxFit.cover,
-                    semanticLabel: l10n.imageOf(species.hebrewName),
+                    semanticLabel: l10n.imageOf(displayName),
                   ),
                   Container(
                     decoration: BoxDecoration(
@@ -100,11 +105,11 @@ class _SpeciesDetailScreenState extends State<SpeciesDetailScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SpeciesBadge(
-                          label: '${species.family} • ${species.familyHebrew}',
+                          label: '${species.family} • $familyLabel',
                           tint: SpeciesBadgeTint.tertiary,
                         ),
                         Text(
-                          species.hebrewName,
+                          displayName,
                           style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.w800,
@@ -146,26 +151,26 @@ class _SpeciesDetailScreenState extends State<SpeciesDetailScreen> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(flex: 7, child: _MorphCard(section: species.morphology.leaves)),
+                      Expanded(flex: 7, child: _MorphCard(section: content.morphology.leaves)),
                       const SizedBox(width: 16),
-                      Expanded(flex: 5, child: _MorphCard(section: species.morphology.fruit)),
+                      Expanded(flex: 5, child: _MorphCard(section: content.morphology.fruit)),
                     ],
                   )
                 else ...[
-                  _MorphCard(section: species.morphology.leaves),
+                  _MorphCard(section: content.morphology.leaves),
                   const SizedBox(height: 12),
-                  _MorphCard(section: species.morphology.fruit),
+                  _MorphCard(section: content.morphology.fruit),
                 ],
                 const SizedBox(height: 12),
-                _MorphCard(section: species.morphology.bark),
+                _MorphCard(section: content.morphology.bark),
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    Expanded(child: _StatBox(label: l10n.statMaxHeight, value: species.stats.maxHeight, color: AppColors.primaryContainer)),
+                    Expanded(child: _StatBox(label: l10n.statMaxHeight, value: content.stats.maxHeight, color: AppColors.primaryContainer)),
                     const SizedBox(width: 12),
-                    Expanded(child: _StatBox(label: l10n.statLifespan, value: species.stats.lifespan, color: AppColors.secondaryContainer)),
+                    Expanded(child: _StatBox(label: l10n.statLifespan, value: content.stats.lifespan, color: AppColors.secondaryContainer)),
                     const SizedBox(width: 12),
-                    Expanded(child: _StatBox(label: l10n.statPhotosynthesis, value: species.stats.photosynthesis, color: AppColors.tertiaryContainer)),
+                    Expanded(child: _StatBox(label: l10n.statPhotosynthesis, value: content.stats.photosynthesis, color: AppColors.tertiaryContainer)),
                   ],
                 ),
                 const SizedBox(height: 32),
@@ -177,17 +182,17 @@ class _SpeciesDetailScreenState extends State<SpeciesDetailScreen> {
                       ),
                 ),
                 const SizedBox(height: 12),
-                Text(species.distribution.description),
+                Text(content.distribution.description),
                 const SizedBox(height: 12),
                 Wrap(
                   spacing: 8,
-                  children: species.distribution.regions
+                  children: content.distribution.regions
                       .map((r) => SpeciesBadge(label: r, tint: SpeciesBadgeTint.neutral))
                       .toList(),
                 ),
                 const SizedBox(height: 16),
                 BotanicalNetworkImage(
-                  url: species.distribution.mapImageUrl,
+                  url: content.distribution.mapImageUrl,
                   height: 200,
                   width: double.infinity,
                   fit: BoxFit.cover,
@@ -209,7 +214,7 @@ class _SpeciesDetailScreenState extends State<SpeciesDetailScreen> {
                             ),
                       ),
                       const SizedBox(height: 16),
-                      for (final use in species.uses) ...[
+                      for (final use in content.uses) ...[
                         ListTile(
                           contentPadding: EdgeInsets.zero,
                           leading: CircleAvatar(
@@ -225,7 +230,7 @@ class _SpeciesDetailScreenState extends State<SpeciesDetailScreen> {
                         l10n.speciesDidYouKnow,
                         style: const TextStyle(fontWeight: FontWeight.w700),
                       ),
-                      for (final fact in species.funFacts)
+                      for (final fact in content.funFacts)
                         Padding(
                           padding: const EdgeInsets.only(top: 8),
                           child: Row(
@@ -242,7 +247,7 @@ class _SpeciesDetailScreenState extends State<SpeciesDetailScreen> {
                 if (isWide) ...[
                   const SizedBox(height: 32),
                   Text(
-                    l10n.speciesAnatomy(species.hebrewName),
+                    l10n.speciesAnatomy(displayName),
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w700,
@@ -250,7 +255,7 @@ class _SpeciesDetailScreenState extends State<SpeciesDetailScreen> {
                   ),
                   const SizedBox(height: 16),
                   Row(
-                    children: species.anatomyCards
+                    children: content.anatomyCards
                         .map(
                           (c) => Expanded(
                             child: Padding(

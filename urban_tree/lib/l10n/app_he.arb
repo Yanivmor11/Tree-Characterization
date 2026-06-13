@@ -305,6 +305,7 @@
   "identifyHubTipsTitle": "טיפים לצילום",
   "identifyHubTipsBody": "השתמשו באור טבעי, מלאו את המסגרת במה שמזהים, והימנעו מתמונות מטושטשות.",
   "identifyStartCamera": "התחל זיהוי חדש",
+  "identifyUploadPhoto": "העלאת תמונה מהמחשב",
   "identifyFromGallery": "בחירה מהגלריה",
   "identifyPhotoGuide": "מדריך צילום",
   "identifyGalleryTitle": "גלריית זיהוי",
@@ -390,7 +391,7 @@
       "name": {"type": "String"}
     }
   },
-  "speciesWhereToFind": "איפה ניתן למצוא את האלון?",
+  "speciesWhereToFind": "איפה ניתן למצוא את העץ?",
   "speciesViewDistributionMap": "צפייה במפת תפוצה ארצית",
 
   "profileExplorerRank": "דרגת חוקר",

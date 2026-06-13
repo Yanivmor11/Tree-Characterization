@@ -20,6 +20,7 @@ class BotanicalSideNav extends StatelessWidget {
     this.onHelpTap,
     this.onProfileTap,
     this.helpLabel,
+    this.innerEdgeAtStart = false,
   });
 
   final AppTab current;
@@ -34,6 +35,8 @@ class BotanicalSideNav extends StatelessWidget {
   final VoidCallback? onHelpTap;
   final VoidCallback? onProfileTap;
   final String? helpLabel;
+  /// When true, the border/selection accent faces the start edge (sidebar on the end side in RTL).
+  final bool innerEdgeAtStart;
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +46,13 @@ class BotanicalSideNav extends StatelessWidget {
       width: kSideNavWidth,
       decoration: BoxDecoration(
         color: AppColors.surfaceContainer,
-        border: Border(
-          left: BorderSide(color: AppColors.outlineVariant.withValues(alpha: 0.2)),
+        border: BorderDirectional(
+          start: innerEdgeAtStart
+              ? BorderSide(color: AppColors.outlineVariant.withValues(alpha: 0.2))
+              : BorderSide.none,
+          end: innerEdgeAtStart
+              ? BorderSide.none
+              : BorderSide(color: AppColors.outlineVariant.withValues(alpha: 0.2)),
         ),
       ),
       child: SafeArea(
@@ -151,9 +159,14 @@ class BotanicalSideNav extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             child: Container(
               decoration: selected
-                  ? const BoxDecoration(
-                      border: Border(
-                        right: BorderSide(color: AppColors.primary, width: 4),
+                  ? BoxDecoration(
+                      border: BorderDirectional(
+                        start: innerEdgeAtStart
+                            ? const BorderSide(color: AppColors.primary, width: 4)
+                            : BorderSide.none,
+                        end: innerEdgeAtStart
+                            ? BorderSide.none
+                            : const BorderSide(color: AppColors.primary, width: 4),
                       ),
                     )
                   : null,

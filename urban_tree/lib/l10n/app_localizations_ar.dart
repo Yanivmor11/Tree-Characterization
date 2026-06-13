@@ -602,6 +602,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get identifyStartCamera => 'ابدأ تعرّفًا جديدًا';
 
   @override
+  String get identifyUploadPhoto => 'رفع صورة من الكمبيوتر';
+
+  @override
   String get identifyFromGallery => 'اختر من المعرض';
 
   @override

@@ -1170,6 +1170,12 @@ abstract class AppLocalizations {
   /// **'Start new identification'**
   String get identifyStartCamera;
 
+  /// No description provided for @identifyUploadPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload photo from computer'**
+  String get identifyUploadPhoto;
+
   /// No description provided for @identifyFromGallery.
   ///
   /// In en, this message translates to:

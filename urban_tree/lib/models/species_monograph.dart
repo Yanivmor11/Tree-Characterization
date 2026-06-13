@@ -2,19 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
-class SpeciesMonograph {
-  SpeciesMonograph({
-    required this.id,
-    required this.hebrewName,
-    required this.englishName,
-    required this.scientificName,
-    required this.family,
-    required this.familyHebrew,
-    required this.familyEnglish,
-    required this.tags,
+class SpeciesLocaleContent {
+  SpeciesLocaleContent({
     required this.summary,
-    required this.heroImageUrl,
-    required this.thumbnailUrl,
+    required this.tags,
     required this.category,
     required this.stats,
     required this.morphology,
@@ -24,17 +15,8 @@ class SpeciesMonograph {
     required this.anatomyCards,
   });
 
-  final String id;
-  final String hebrewName;
-  final String englishName;
-  final String scientificName;
-  final String family;
-  final String familyHebrew;
-  final String familyEnglish;
-  final List<String> tags;
   final String summary;
-  final String heroImageUrl;
-  final String thumbnailUrl;
+  final List<String> tags;
   final String category;
   final SpeciesStats stats;
   final SpeciesMorphology morphology;
@@ -43,31 +25,10 @@ class SpeciesMonograph {
   final List<String> funFacts;
   final List<AnatomyCard> anatomyCards;
 
-  String displayNameFor(String languageCode) {
-    if (languageCode == 'he') return hebrewName;
-    if (englishName.isNotEmpty) return englishName;
-    return scientificName;
-  }
-
-  String familyLabelFor(String languageCode) {
-    if (languageCode == 'he') return familyHebrew;
-    if (familyEnglish.isNotEmpty) return familyEnglish;
-    return family;
-  }
-
-  factory SpeciesMonograph.fromJson(Map<String, dynamic> json) {
-    return SpeciesMonograph(
-      id: json['id'] as String,
-      hebrewName: json['hebrewName'] as String,
-      englishName: json['englishName'] as String? ?? '',
-      scientificName: json['scientificName'] as String,
-      family: json['family'] as String,
-      familyHebrew: json['familyHebrew'] as String,
-      familyEnglish: json['familyEnglish'] as String? ?? '',
-      tags: (json['tags'] as List).cast<String>(),
+  factory SpeciesLocaleContent.fromJson(Map<String, dynamic> json) {
+    return SpeciesLocaleContent(
       summary: json['summary'] as String,
-      heroImageUrl: json['heroImageUrl'] as String,
-      thumbnailUrl: json['thumbnailUrl'] as String,
+      tags: (json['tags'] as List).cast<String>(),
       category: json['category'] as String,
       stats: SpeciesStats.fromJson(json['stats'] as Map<String, dynamic>),
       morphology:
@@ -82,6 +43,103 @@ class SpeciesMonograph {
       anatomyCards: (json['anatomyCards'] as List)
           .map((e) => AnatomyCard.fromJson(e as Map<String, dynamic>))
           .toList(),
+    );
+  }
+}
+
+class SpeciesMonograph {
+  SpeciesMonograph({
+    required this.id,
+    required this.hebrewName,
+    required this.englishName,
+    required this.arabicName,
+    required this.russianName,
+    required this.scientificName,
+    required this.family,
+    required this.familyHebrew,
+    required this.familyEnglish,
+    required this.familyArabic,
+    required this.familyRussian,
+    required this.heroImageUrl,
+    required this.thumbnailUrl,
+    required this.hebrewContent,
+    required this.locales,
+  });
+
+  final String id;
+  final String hebrewName;
+  final String englishName;
+  final String arabicName;
+  final String russianName;
+  final String scientificName;
+  final String family;
+  final String familyHebrew;
+  final String familyEnglish;
+  final String familyArabic;
+  final String familyRussian;
+  final String heroImageUrl;
+  final String thumbnailUrl;
+  final SpeciesLocaleContent hebrewContent;
+  final Map<String, SpeciesLocaleContent> locales;
+
+  String displayNameFor(String languageCode) {
+    switch (languageCode) {
+      case 'he':
+        return hebrewName;
+      case 'ar':
+        if (arabicName.isNotEmpty) return arabicName;
+      case 'ru':
+        if (russianName.isNotEmpty) return russianName;
+    }
+    if (englishName.isNotEmpty) return englishName;
+    return scientificName;
+  }
+
+  String familyLabelFor(String languageCode) {
+    switch (languageCode) {
+      case 'he':
+        return familyHebrew;
+      case 'ar':
+        if (familyArabic.isNotEmpty) return familyArabic;
+      case 'ru':
+        if (familyRussian.isNotEmpty) return familyRussian;
+    }
+    if (familyEnglish.isNotEmpty) return familyEnglish;
+    return family;
+  }
+
+  SpeciesLocaleContent contentFor(String languageCode) {
+    if (languageCode == 'he') return hebrewContent;
+    return locales[languageCode] ?? locales['en'] ?? hebrewContent;
+  }
+
+  factory SpeciesMonograph.fromJson(Map<String, dynamic> json) {
+    final hebrewContent = SpeciesLocaleContent.fromJson(json);
+    final localesRaw = json['locales'] as Map<String, dynamic>?;
+    final locales = <String, SpeciesLocaleContent>{};
+    if (localesRaw != null) {
+      for (final entry in localesRaw.entries) {
+        locales[entry.key] =
+            SpeciesLocaleContent.fromJson(entry.value as Map<String, dynamic>);
+      }
+    }
+
+    return SpeciesMonograph(
+      id: json['id'] as String,
+      hebrewName: json['hebrewName'] as String,
+      englishName: json['englishName'] as String? ?? '',
+      arabicName: json['arabicName'] as String? ?? '',
+      russianName: json['russianName'] as String? ?? '',
+      scientificName: json['scientificName'] as String,
+      family: json['family'] as String,
+      familyHebrew: json['familyHebrew'] as String,
+      familyEnglish: json['familyEnglish'] as String? ?? '',
+      familyArabic: json['familyArabic'] as String? ?? '',
+      familyRussian: json['familyRussian'] as String? ?? '',
+      heroImageUrl: json['heroImageUrl'] as String,
+      thumbnailUrl: json['thumbnailUrl'] as String,
+      hebrewContent: hebrewContent,
+      locales: locales,
     );
   }
 }
@@ -259,7 +317,10 @@ class SpeciesMonographRepository {
     if (com != null && com.isNotEmpty) {
       for (final s in all) {
         if (s.scientificName.toLowerCase() == com ||
-            s.hebrewName.toLowerCase() == com) {
+            s.hebrewName.toLowerCase() == com ||
+            s.englishName.toLowerCase() == com ||
+            s.arabicName.toLowerCase() == com ||
+            s.russianName.toLowerCase() == com) {
           return s;
         }
       }

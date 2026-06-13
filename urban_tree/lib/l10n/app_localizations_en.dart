@@ -605,6 +605,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get identifyStartCamera => 'Start new identification';
 
   @override
+  String get identifyUploadPhoto => 'Upload photo from computer';
+
+  @override
   String get identifyFromGallery => 'Choose from gallery';
 
   @override

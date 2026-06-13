@@ -599,6 +599,9 @@ class AppLocalizationsHe extends AppLocalizations {
   String get identifyStartCamera => 'התחל זיהוי חדש';
 
   @override
+  String get identifyUploadPhoto => 'העלאת תמונה מהמחשב';
+
+  @override
   String get identifyFromGallery => 'בחירה מהגלריה';
 
   @override
@@ -792,7 +795,7 @@ class AppLocalizationsHe extends AppLocalizations {
   }
 
   @override
-  String get speciesWhereToFind => 'איפה ניתן למצוא את האלון?';
+  String get speciesWhereToFind => 'איפה ניתן למצוא את העץ?';
 
   @override
   String get speciesViewDistributionMap => 'צפייה במפת תפוצה ארצית';

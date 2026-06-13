@@ -33,7 +33,7 @@ class IdentifyHubScreen extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(child: _HeroPanel(l10n: l10n)),
+                Expanded(child: _HeroPanel(l10n: l10n, isDesktop: isWide)),
                 const SizedBox(width: 24),
                 Expanded(
                   flex: 4,
@@ -42,7 +42,7 @@ class IdentifyHubScreen extends StatelessWidget {
               ],
             )
           else
-            _HeroPanel(l10n: l10n),
+            _HeroPanel(l10n: l10n, isDesktop: isWide),
         ],
       ),
     );
@@ -66,9 +66,10 @@ class IdentifyHubScreen extends StatelessWidget {
 }
 
 class _HeroPanel extends StatelessWidget {
-  const _HeroPanel({required this.l10n});
+  const _HeroPanel({required this.l10n, required this.isDesktop});
 
   final AppLocalizations l10n;
+  final bool isDesktop;
 
   @override
   Widget build(BuildContext context) {
@@ -94,9 +95,9 @@ class _HeroPanel extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           GradientButton(
-            label: l10n.identifyStartCamera,
-            icon: Icons.photo_camera,
-            onPressed: () => AppRoutes.pushIdentifyCamera(context),
+            label: isDesktop ? l10n.identifyUploadPhoto : l10n.identifyStartCamera,
+            icon: isDesktop ? Icons.upload_file : Icons.photo_camera,
+            onPressed: () => AppRoutes.startIdentifyFlow(context),
           ),
           const SizedBox(height: 12),
           OutlinedButton.icon(

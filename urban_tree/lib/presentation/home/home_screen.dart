@@ -66,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _startIdentify() async {
-    await AppRoutes.pushIdentifyCamera(context);
+    await AppRoutes.startIdentifyFlow(context);
   }
 
   String _greetingName(BuildContext context, AppLocalizations l10n) {
@@ -88,6 +88,9 @@ class _HomeScreenState extends State<HomeScreen> {
     SpeciesMonograph? match;
     for (final species in all) {
       if (species.hebrewName.toLowerCase().contains(lower) ||
+          species.englishName.toLowerCase().contains(lower) ||
+          species.arabicName.toLowerCase().contains(lower) ||
+          species.russianName.toLowerCase().contains(lower) ||
           species.scientificName.toLowerCase().contains(lower) ||
           species.family.toLowerCase().contains(lower)) {
         match = species;
@@ -153,7 +156,8 @@ class _HomeScreenState extends State<HomeScreen> {
         _IdentifyCtaCard(
           title: l10n.homeIdentifyTitle,
           body: l10n.homeIdentifyBody,
-          cta: l10n.homeIdentifyCta,
+          cta: isWide ? l10n.identifyUploadPhoto : l10n.homeIdentifyCta,
+          ctaIcon: isWide ? Icons.upload_file : Icons.photo_camera,
           onTap: _startIdentify,
           isWide: isWide,
         ),
@@ -242,6 +246,7 @@ class _IdentifyCtaCard extends StatelessWidget {
     required this.title,
     required this.body,
     required this.cta,
+    required this.ctaIcon,
     required this.onTap,
     required this.isWide,
   });
@@ -249,6 +254,7 @@ class _IdentifyCtaCard extends StatelessWidget {
   final String title;
   final String body;
   final String cta;
+  final IconData ctaIcon;
   final VoidCallback onTap;
   final bool isWide;
 
@@ -265,7 +271,13 @@ class _IdentifyCtaCard extends StatelessWidget {
           ? Row(
               children: [
                 Expanded(
-                  child: _CtaText(title: title, body: body, cta: cta, onTap: onTap),
+                  child: _CtaText(
+                    title: title,
+                    body: body,
+                    cta: cta,
+                    ctaIcon: ctaIcon,
+                    onTap: onTap,
+                  ),
                 ),
                 const SizedBox(width: 32),
                 Container(
@@ -283,7 +295,13 @@ class _IdentifyCtaCard extends StatelessWidget {
                 ),
               ],
             )
-          : _CtaText(title: title, body: body, cta: cta, onTap: onTap),
+          : _CtaText(
+              title: title,
+              body: body,
+              cta: cta,
+              ctaIcon: ctaIcon,
+              onTap: onTap,
+            ),
     );
   }
 }
@@ -293,12 +311,14 @@ class _CtaText extends StatelessWidget {
     required this.title,
     required this.body,
     required this.cta,
+    required this.ctaIcon,
     required this.onTap,
   });
 
   final String title;
   final String body;
   final String cta;
+  final IconData ctaIcon;
   final VoidCallback onTap;
 
   @override
@@ -329,7 +349,7 @@ class _CtaText extends StatelessWidget {
             backgroundColor: AppColors.surfaceContainerLowest,
             foregroundColor: AppColors.primary,
           ),
-          icon: const Icon(Icons.center_focus_weak),
+          icon: Icon(ctaIcon),
           label: Text(cta),
         ),
       ],

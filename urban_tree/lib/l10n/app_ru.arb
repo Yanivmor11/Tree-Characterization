@@ -167,6 +167,7 @@
   "identifyHubTitle": "ИИ-определение растений",
   "identifyHubBody": "Сфотографируйте лист, кору или плод для мгновенного определения вида дерева.",
   "identifyStartCamera": "Начать новое определение",
+  "identifyUploadPhoto": "Загрузить фото с компьютера",
   "identifyFromGallery": "Выбрать из галереи",
   "identifyPhotoGuide": "Руководство по фото",
   "identifyGalleryTitle": "Галерея определений",

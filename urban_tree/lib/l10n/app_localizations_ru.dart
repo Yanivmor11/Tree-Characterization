@@ -607,6 +607,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get identifyStartCamera => 'Начать новое определение';
 
   @override
+  String get identifyUploadPhoto => 'Загрузить фото с компьютера';
+
+  @override
   String get identifyFromGallery => 'Выбрать из галереи';
 
   @override
