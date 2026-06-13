@@ -1416,6 +1416,24 @@ abstract class AppLocalizations {
   /// **'Navigate to tree'**
   String get mapNavigate;
 
+  /// No description provided for @mapNavigationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigate to coordinates'**
+  String get mapNavigationTitle;
+
+  /// No description provided for @mapOpenGoogleMaps.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Maps'**
+  String get mapOpenGoogleMaps;
+
+  /// No description provided for @mapOpenWaze.
+  ///
+  /// In en, this message translates to:
+  /// **'Waze'**
+  String get mapOpenWaze;
+
   /// No description provided for @mapTreesNearby.
   ///
   /// In en, this message translates to:

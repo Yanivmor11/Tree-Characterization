@@ -78,6 +78,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
   Timer? _visionDebounce;
   PhenologyWarning? _phenologyBanner;
   bool _applyingAi = false;
+  bool _landTypeManuallyEdited = false;
   final Set<_AiFilledField> _aiFilledFields = {};
 
   TreeReportDraft get _d => widget.draft;
@@ -113,9 +114,13 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     _assistantNotesWhole.addListener(_onAssistantNotesWholeChanged);
     _assistantNotesFlower.addListener(_onAssistantNotesFlowerChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_d.landTypeAuto) {
+        _aiFilledFields.add(_AiFilledField.landType);
+      }
       if (_d.wholeTreeImages.isNotEmpty) {
         _scheduleVisionAnalysis();
       }
+      unawaited(_refreshLandUseFromCoordinates());
     });
   }
 
@@ -182,6 +187,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
       });
       if (hasSession) {
         _scheduleVisionAnalysis();
+        unawaited(_refreshLandUseFromCoordinates());
       }
     } catch (_) {
       if (!mounted) return;
@@ -194,6 +200,26 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
 
   String get _uiLanguageCode =>
       Localizations.localeOf(context).languageCode;
+
+  Future<void> _refreshLandUseFromCoordinates() async {
+    if (!_authReady || _landTypeManuallyEdited) return;
+    try {
+      final zones = await _landUseService.fetchZones();
+      if (!mounted || zones.isEmpty) return;
+      final classification = _landUseService.classify(
+        LatLng(_d.latitude, _d.longitude),
+        zones,
+      );
+      if (!mounted || classification == null) return;
+      setState(() {
+        _d.landType = classification.type;
+        _d.landTypeAuto = true;
+        _aiFilledFields.add(_AiFilledField.landType);
+      });
+    } catch (_) {
+      // GIS unavailable — leave manual selection; no By AI badge.
+    }
+  }
 
   Future<void> _runVisionOnFirstPhoto() async {
     if (!mounted || _d.wholeTreeImages.isEmpty || !_authReady) return;
@@ -657,7 +683,12 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(l10n.landUseSection, style: theme.textTheme.titleMedium),
+                  _fieldLabelWithAiBadge(
+                    label: l10n.landUseSection,
+                    style: theme.textTheme.titleMedium,
+                    aiFilled: _aiFilledFields.contains(_AiFilledField.landType),
+                    l10n: l10n,
+                  ),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<LandUseType>(
                     // ignore: deprecated_member_use — controlled field; `initialValue` is not suitable here
@@ -673,13 +704,16 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
                         .toList(),
                     onChanged: (v) {
                       if (v == null) return;
+                      _landTypeManuallyEdited = true;
+                      _clearAiField(_AiFilledField.landType);
                       setState(() {
                         _d.landType = v;
                         _d.landTypeAuto = false;
                       });
                     },
                   ),
-                  if (_d.landTypeAuto)
+                  if (_d.landTypeAuto &&
+                      _aiFilledFields.contains(_AiFilledField.landType))
                     Padding(
                       padding: const EdgeInsets.only(top: 8),
                       child: Text(
@@ -947,9 +981,11 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
 
   void _showAppliedSnackBar(_DraftAiSnapshot snapshot) {
     final l10n = AppLocalizations.of(context);
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(l10n.assistantApplied),
+        duration: const Duration(seconds: 5),
         action: SnackBarAction(
           label: l10n.assistantUndo,
           onPressed: () {
@@ -1768,6 +1804,8 @@ class _DraftAiSnapshot {
     required this.hazardAssessment,
     required this.canopyDensity,
     required this.structuralIssues,
+    required this.landType,
+    required this.landTypeAuto,
     required this.stressSymptoms,
     required this.leafCondition,
     required this.phenologicalStage,
@@ -1784,6 +1822,8 @@ class _DraftAiSnapshot {
   final HazardAssessment hazardAssessment;
   final CanopyDensity canopyDensity;
   final Set<StructuralIssue> structuralIssues;
+  final LandUseType landType;
+  final bool landTypeAuto;
   final Set<StressSymptom> stressSymptoms;
   final LeafCondition leafCondition;
   final PhenologicalStage? phenologicalStage;
@@ -1806,6 +1846,8 @@ class _DraftAiSnapshot {
       hazardAssessment: draft.hazardAssessment,
       canopyDensity: draft.canopyDensity,
       structuralIssues: Set<StructuralIssue>.from(draft.structuralIssues),
+      landType: draft.landType,
+      landTypeAuto: draft.landTypeAuto,
       stressSymptoms: Set<StressSymptom>.from(draft.stressSymptoms),
       leafCondition: draft.leafCondition,
       phenologicalStage: draft.phenologicalStage,
@@ -1830,6 +1872,8 @@ class _DraftAiSnapshot {
     draft.structuralIssues
       ..clear()
       ..addAll(structuralIssues);
+    draft.landType = landType;
+    draft.landTypeAuto = landTypeAuto;
     draft.stressSymptoms
       ..clear()
       ..addAll(stressSymptoms);
@@ -1845,6 +1889,7 @@ enum _AiFilledField {
   hazardAssessment,
   canopyDensity,
   structuralIssues,
+  landType,
 }
 
 class _XFileThumbnail extends StatefulWidget {

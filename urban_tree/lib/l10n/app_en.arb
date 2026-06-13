@@ -365,6 +365,9 @@
     }
   },
   "mapNavigate": "Navigate to tree",
+  "mapNavigationTitle": "Navigate to coordinates",
+  "mapOpenGoogleMaps": "Google Maps",
+  "mapOpenWaze": "Waze",
   "mapTreesNearby": "Trees near you",
   "mapTotalMarked": "Total marked trees",
   "mapRareSpecies": "Rare species",

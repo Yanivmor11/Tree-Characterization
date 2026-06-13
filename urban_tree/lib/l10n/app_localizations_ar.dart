@@ -736,6 +736,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get mapNavigate => 'التوجّه إلى الشجرة';
 
   @override
+  String get mapNavigationTitle => 'Navigate to coordinates';
+
+  @override
+  String get mapOpenGoogleMaps => 'Google Maps';
+
+  @override
+  String get mapOpenWaze => 'Waze';
+
+  @override
   String get mapTreesNearby => 'أشجار بالقرب منك';
 
   @override

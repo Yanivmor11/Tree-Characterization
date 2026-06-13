@@ -740,6 +740,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mapNavigate => 'Navigate to tree';
 
   @override
+  String get mapNavigationTitle => 'Navigate to coordinates';
+
+  @override
+  String get mapOpenGoogleMaps => 'Google Maps';
+
+  @override
+  String get mapOpenWaze => 'Waze';
+
+  @override
   String get mapTreesNearby => 'Trees near you';
 
   @override

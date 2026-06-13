@@ -12,6 +12,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../core/constants.dart';
 import '../core/geo_utils.dart';
+import '../core/map_navigation.dart';
 import '../l10n/app_localizations.dart';
 import '../l10n/l10n_extensions.dart';
 import '../models/land_use.dart';
@@ -21,7 +22,6 @@ import '../services/land_use_service.dart';
 import '../services/location_service.dart';
 import '../services/pest_hotspot_service.dart';
 import '../services/species_rarity_service.dart';
-import 'report/report_detail_screen.dart';
 import 'report/report_flow_launcher.dart';
 import 'top_guardians_screen.dart';
 
@@ -318,11 +318,11 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  Future<void> _openReportDetail(String reportId) async {
-    await Navigator.of(context).push<void>(
-      MaterialPageRoute<void>(
-        builder: (_) => ReportDetailScreen(reportId: reportId),
-      ),
+  Future<void> _openTreeNavigation(TreeReportRow report) {
+    return MapNavigation.showChooser(
+      context,
+      latitude: report.latitude,
+      longitude: report.longitude,
     );
   }
 
@@ -350,13 +350,7 @@ class _MapScreenState extends State<MapScreen> {
         size: gem ? 36 : 34,
       );
       final markerIcon = GestureDetector(
-        onTap: () {
-          if (widget.embedded) {
-            setState(() => _selectedReport = r);
-          } else {
-            _openReportDetail(r.id);
-          }
-        },
+        onTap: () => setState(() => _selectedReport = r),
         child: tip != null ? Tooltip(message: tip, child: icon) : icon,
       );
       markers.add(
@@ -529,7 +523,7 @@ class _MapScreenState extends State<MapScreen> {
                   l10n: l10n,
                   bookmarked: _bookmarkedReportIds.contains(selected.id),
                   onClose: () => setState(() => _selectedReport = null),
-                  onDetails: () => _openReportDetail(selected.id),
+                  onNavigate: () => _openTreeNavigation(selected),
                   onBookmark: () => _toggleBookmark(selected.id),
                 ),
               ),
@@ -573,7 +567,25 @@ class _MapScreenState extends State<MapScreen> {
           ),
         ],
       ),
-      body: mapWidget,
+      body: Stack(
+        children: [
+          mapWidget,
+          if (_selectedReport != null)
+            Positioned(
+              left: 16,
+              right: 16,
+              bottom: 16,
+              child: _MapTreeSheet(
+                report: _selectedReport!,
+                l10n: l10n,
+                bookmarked: _bookmarkedReportIds.contains(_selectedReport!.id),
+                onClose: () => setState(() => _selectedReport = null),
+                onNavigate: () => _openTreeNavigation(_selectedReport!),
+                onBookmark: () => _toggleBookmark(_selectedReport!.id),
+              ),
+            ),
+        ],
+      ),
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -608,7 +620,7 @@ class _MapTreeSheet extends StatelessWidget {
     required this.l10n,
     required this.bookmarked,
     required this.onClose,
-    required this.onDetails,
+    required this.onNavigate,
     required this.onBookmark,
   });
 
@@ -616,7 +628,7 @@ class _MapTreeSheet extends StatelessWidget {
   final AppLocalizations l10n;
   final bool bookmarked;
   final VoidCallback onClose;
-  final VoidCallback onDetails;
+  final VoidCallback onNavigate;
   final VoidCallback onBookmark;
 
   @override
@@ -681,7 +693,7 @@ class _MapTreeSheet extends StatelessWidget {
                   child: GradientButton(
                     label: l10n.mapNavigate,
                     icon: Icons.navigation,
-                    onPressed: onDetails,
+                    onPressed: onNavigate,
                   ),
                 ),
                 const SizedBox(width: 12),

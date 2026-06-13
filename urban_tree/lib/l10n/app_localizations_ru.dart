@@ -743,6 +743,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get mapNavigate => 'Маршрут к дереву';
 
   @override
+  String get mapNavigationTitle => 'Navigate to coordinates';
+
+  @override
+  String get mapOpenGoogleMaps => 'Google Maps';
+
+  @override
+  String get mapOpenWaze => 'Waze';
+
+  @override
   String get mapTreesNearby => 'Деревья рядом с вами';
 
   @override

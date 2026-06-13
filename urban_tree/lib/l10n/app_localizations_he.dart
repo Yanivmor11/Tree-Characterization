@@ -732,6 +732,15 @@ class AppLocalizationsHe extends AppLocalizations {
   String get mapNavigate => 'ניווט לעץ';
 
   @override
+  String get mapNavigationTitle => 'ניווט לנקודת הציון';
+
+  @override
+  String get mapOpenGoogleMaps => 'Google Maps';
+
+  @override
+  String get mapOpenWaze => 'Waze';
+
+  @override
   String get mapTreesNearby => 'עצים בסביבתך';
 
   @override

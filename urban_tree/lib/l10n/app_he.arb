@@ -365,6 +365,9 @@
     }
   },
   "mapNavigate": "ניווט לעץ",
+  "mapNavigationTitle": "ניווט לנקודת הציון",
+  "mapOpenGoogleMaps": "Google Maps",
+  "mapOpenWaze": "Waze",
   "mapTreesNearby": "עצים בסביבתך",
   "mapTotalMarked": "סה\"כ עצים מסומנים",
   "mapRareSpecies": "מינים נדירים",
