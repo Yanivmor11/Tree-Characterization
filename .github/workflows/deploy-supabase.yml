@@ -1,0 +1,61 @@
+name: Deploy Supabase
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'urban_tree/supabase/functions/**'
+      - 'urban_tree/supabase/migrations/**'
+      - '.github/workflows/deploy-supabase.yml'
+  workflow_dispatch:
+
+jobs:
+  edge-functions:
+    name: Edge Functions
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: urban_tree
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Link project
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase link --project-ref "${{ secrets.SUPABASE_PROJECT_REF }}" --yes
+
+      - name: Deploy functions
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          for fn in openai-suggest openai-tree-insights data-quality-weekly; do
+            supabase functions deploy "$fn" \
+              --project-ref "${{ secrets.SUPABASE_PROJECT_REF }}" \
+              --use-api
+          done
+
+  migrations:
+    name: Database migrations
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    defaults:
+      run:
+        working-directory: urban_tree
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Push migrations
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          supabase link --project-ref "${{ secrets.SUPABASE_PROJECT_REF }}" --yes -p "$SUPABASE_DB_PASSWORD"
+          supabase db push --yes -p "$SUPABASE_DB_PASSWORD"

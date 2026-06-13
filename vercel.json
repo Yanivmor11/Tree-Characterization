@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "echo \"Flutter web build runs in urban_tree/scripts/vercel_build.sh\"",
+  "buildCommand": "cd urban_tree && bash scripts/vercel_build.sh",
+  "outputDirectory": "urban_tree/build/web",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}

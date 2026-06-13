@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:urban_tree/l10n/app_localizations.dart';
 import 'package:urban_tree/presentation/map_screen.dart';
+import 'package:urban_tree/state/map_focus_controller.dart';
 import 'package:urban_tree/state/report_feed_controller.dart';
 
 class _MemoryPkceStorage extends GotrueAsyncStorage {
@@ -53,8 +54,11 @@ void main() {
           GlobalCupertinoLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
         ],
-        home: ChangeNotifierProvider(
-          create: (_) => ReportFeedController(),
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => ReportFeedController()),
+            ChangeNotifierProvider(create: (_) => MapFocusController()),
+          ],
           child: const MapScreen(embedded: true),
         ),
       ),

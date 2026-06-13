@@ -27,7 +27,8 @@ From **repository root** (`Tree-Characterization`): `./scripts/build_web_prod.sh
 ## Web hosting
 
 - [ ] Build: `flutter build web --release` (subpath: add `--base-href=/your-path/`).
-- [ ] **Supabase**: Dashboard → Project Settings → API → add your production **origin** (e.g. `https://trees.example.com`) to allowed CORS origins.
+- [ ] **CI/CD:** See [`.github/CI_AND_DEPLOY.md`](../.github/CI_AND_DEPLOY.md) — GitHub Actions for analyze/test, Vercel production deploy, Supabase Edge Functions, and weekly Playwright E2E.
+- [ ] **Supabase**: Dashboard → Project Settings → API → add your production **origin** (e.g. `https://urbantree.vercel.app`) to allowed CORS origins.
 - [ ] Serve `build/web/` over HTTPS; confirm REST, Auth, Storage, and Functions from the browser.
 
 ## Store policy and privacy
