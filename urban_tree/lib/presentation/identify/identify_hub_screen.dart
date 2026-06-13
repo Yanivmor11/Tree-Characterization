@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../l10n/app_localizations.dart';
@@ -6,7 +5,6 @@ import '../routes/app_routes.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import '../widgets/botanical_widgets.dart';
-import 'photo_gallery_screen.dart';
 import 'photo_guide_screen.dart';
 
 class IdentifyHubScreen extends StatelessWidget {
@@ -42,41 +40,12 @@ class IdentifyHubScreen extends StatelessWidget {
                 const SizedBox(width: 24),
                 Expanded(
                   flex: 4,
-                  child: _DropZone(l10n: l10n),
+                  child: _GuidePanel(l10n: l10n),
                 ),
               ],
             )
-          else ...[
+          else
             _HeroPanel(l10n: l10n),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => Navigator.of(context).push<void>(
-                      MaterialPageRoute<void>(
-                        builder: (_) => const PhotoGalleryScreen(),
-                      ),
-                    ),
-                    icon: const Icon(Icons.collections),
-                    label: Text(l10n.identifyFromGallery),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => Navigator.of(context).push<void>(
-                      MaterialPageRoute<void>(
-                        builder: (_) => const PhotoGuideScreen(),
-                      ),
-                    ),
-                    icon: const Icon(Icons.help_outline),
-                    label: Text(l10n.identifyPhotoGuide),
-                  ),
-                ),
-              ],
-            ),
-          ],
         ],
       ),
     );
@@ -110,7 +79,7 @@ class _HeroPanel extends StatelessWidget {
     return BentoCard(
       backgroundColor: AppColors.surfaceContainerLow,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             l10n.identifyHubTitle,
@@ -136,11 +105,11 @@ class _HeroPanel extends StatelessWidget {
           OutlinedButton.icon(
             onPressed: () => Navigator.of(context).push<void>(
               MaterialPageRoute<void>(
-                builder: (_) => const PhotoGalleryScreen(),
+                builder: (_) => const PhotoGuideScreen(),
               ),
             ),
-            icon: const Icon(Icons.collections),
-            label: Text(l10n.identifyFromGallery),
+            icon: const Icon(Icons.help_outline),
+            label: Text(l10n.identifyPhotoGuide),
           ),
         ],
       ),
@@ -148,48 +117,47 @@ class _HeroPanel extends StatelessWidget {
   }
 }
 
-class _DropZone extends StatelessWidget {
-  const _DropZone({required this.l10n});
+class _GuidePanel extends StatelessWidget {
+  const _GuidePanel({required this.l10n});
 
   final AppLocalizations l10n;
 
   @override
   Widget build(BuildContext context) {
-    return DragTarget<Object>(
-      onWillAcceptWithDetails: (_) => kIsWeb,
-      onAcceptWithDetails: (_) {
-        AppRoutes.pushIdentifyCamera(context);
-      },
-      builder: (context, candidate, rejected) {
-        final cs = Theme.of(context).colorScheme;
-        return Container(
-          height: 400,
-          decoration: BoxDecoration(
-            color: AppColors.surfaceContainer,
-            borderRadius: AppRadii.card,
-            border: Border.all(
-              color: candidate.isNotEmpty
-                  ? cs.primary
-                  : cs.outline.withValues(alpha: 0.5),
-              width: 2,
-            ),
+    final cs = Theme.of(context).colorScheme;
+    return BentoCard(
+      backgroundColor: AppColors.surfaceContainer,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.camera_enhance, size: 48, color: cs.primary.withValues(alpha: 0.8)),
+          const SizedBox(height: 12),
+          Text(
+            l10n.identifyPhotoGuide,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: cs.primary,
+                ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.upload_file, size: 48, color: cs.primary.withValues(alpha: 0.8)),
-              const SizedBox(height: 12),
-              Text(l10n.identifyFromGallery, style: Theme.of(context).textTheme.titleMedium),
-              Text(
-                'JPG, PNG',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: cs.onSurfaceVariant,
-                    ),
+          const SizedBox(height: 8),
+          Text(
+            l10n.identifyHubBody,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: cs.onSurfaceVariant,
+                ),
+          ),
+          const SizedBox(height: 20),
+          OutlinedButton.icon(
+            onPressed: () => Navigator.of(context).push<void>(
+              MaterialPageRoute<void>(
+                builder: (_) => const PhotoGuideScreen(),
               ),
-            ],
+            ),
+            icon: const Icon(Icons.menu_book_outlined),
+            label: Text(l10n.identifyPhotoGuide),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 }

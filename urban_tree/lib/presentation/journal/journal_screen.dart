@@ -23,9 +23,11 @@ class JournalScreen extends StatelessWidget {
   final VoidCallback? onProfileTap;
   final bool embedded;
 
-  Future<void> _openSpecies(BuildContext context, String? scientific) async {
-    final species =
-        await SpeciesMonographRepository.instance.byScientificName(scientific);
+  Future<void> _openSpecies(BuildContext context, TreeReportRow row) async {
+    final species = await SpeciesMonographRepository.instance.resolveForReport(
+      scientific: row.speciesScientific,
+      common: row.species,
+    );
     if (!context.mounted || species == null) return;
     Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
@@ -95,7 +97,7 @@ class JournalScreen extends StatelessWidget {
                 (context, i) => _JournalCard(
                   row: entries[i],
                   l10n: l10n,
-                  onTap: () => _openSpecies(context, entries[i].speciesScientific),
+                  onTap: () => _openSpecies(context, entries[i]),
                 ),
                 childCount: entries.length,
               ),
@@ -206,70 +208,82 @@ class _JournalCard extends StatelessWidget {
           );
     final image = row.wholeTreeImageUrls.isNotEmpty ? row.wholeTreeImageUrls.first : null;
 
-    return BentoCard(
-      padding: EdgeInsets.zero,
-      onTap: onTap,
-      backgroundColor: AppColors.surfaceContainerLowest,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Stack(
+    return FutureBuilder<SpeciesMonograph?>(
+      future: SpeciesMonographRepository.instance.resolveForReport(
+        scientific: row.speciesScientific,
+        common: row.species,
+      ),
+      builder: (context, snapshot) {
+        final canReadMore = snapshot.data != null;
+
+        return BentoCard(
+          padding: EdgeInsets.zero,
+          onTap: canReadMore ? onTap : null,
+          backgroundColor: AppColors.surfaceContainerLowest,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(
-                height: 160,
-                width: double.infinity,
-                child: BotanicalNetworkImage(
-                  url: image,
-                  fit: BoxFit.cover,
-                  fallbackIcon: Icons.park_rounded,
-                  semanticLabel:
-                      image != null ? l10n.reportPhotoLabel : null,
-                ),
+              Stack(
+                children: [
+                  SizedBox(
+                    height: 160,
+                    width: double.infinity,
+                    child: BotanicalNetworkImage(
+                      url: image,
+                      fit: BoxFit.cover,
+                      fallbackIcon: Icons.park_rounded,
+                      semanticLabel:
+                          image != null ? l10n.reportPhotoLabel : null,
+                    ),
+                  ),
+                  Positioned(
+                    top: 12,
+                    left: 12,
+                    child: SpeciesBadge(
+                      label: dateLabel,
+                      tint: SpeciesBadgeTint.neutral,
+                    ),
+                  ),
+                ],
               ),
-              Positioned(
-                top: 12,
-                left: 12,
-                child: SpeciesBadge(
-                  label: dateLabel,
-                  tint: SpeciesBadgeTint.neutral,
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primary,
+                          ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      bodyText,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    if (canReadMore) ...[
+                      const SizedBox(height: 12),
+                      Text(
+                        l10n.journalReadMore,
+                        style: const TextStyle(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.primary,
-                      ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  bodyText,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  l10n.journalReadMore,
-                  style: const TextStyle(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

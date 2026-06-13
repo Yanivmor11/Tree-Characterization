@@ -14,7 +14,27 @@ type ChatBody = {
   image_base64?: string;
   mime_type?: string;
   step?: string;
+  locale?: string;
 };
+
+function normalizeLocale(locale?: string): string {
+  const code = (locale ?? "en").trim().toLowerCase();
+  const supported = new Set(["he", "en", "ar", "ru"]);
+  return supported.has(code) ? code : "en";
+}
+
+function languageName(code: string): string {
+  switch (code) {
+    case "he":
+      return "Hebrew";
+    case "ar":
+      return "Arabic";
+    case "ru":
+      return "Russian";
+    default:
+      return "English";
+  }
+}
 
 function normalizePhenologicalStage(raw: unknown): string | null {
   if (raw == null) return null;
@@ -35,24 +55,44 @@ function normalizePhenologicalStage(raw: unknown): string | null {
   return synonyms[normalized] ?? null;
 }
 
-function buildSystemPrompt(step?: string): string {
+function buildSystemPrompt(options: {
+  step?: string;
+  locale?: string;
+  hasImage?: boolean;
+}): string {
+  const languageCode = normalizeLocale(options.locale);
+  const langName = languageName(languageCode);
+
   let prompt =
-    'You assist urban tree citizen science. Output ONLY valid JSON with keys: ' +
-    'species_common_en (canonical English common name or null), ' +
-    'species_scientific_latin (canonical Latin binomial or null), ' +
-    'translated_display_name (localized display name for UI, matching user language, or null), ' +
-    'species_common (same value as species_common_en for backward compatibility), ' +
-    'species_scientific (same value as species_scientific_latin for backward compatibility), ' +
-    'source_language (BCP-47 code like "he", "ar", "ru", "en", or null), ' +
-    'species_confidence (number 0-1 or null), health_score (integer 1-5 or null), ' +
+    "You assist urban tree citizen science. The user interface language is " +
+    `"${languageCode}" (${langName}). ` +
+    "Output ONLY valid JSON with keys: " +
+    "species_common_en (canonical English common name or null), " +
+    "species_scientific_latin (canonical Latin binomial or null), " +
+    `translated_display_name (species common name in ${langName} for the UI — required when identifiable), ` +
+    "species_common (same value as species_common_en for backward compatibility), " +
+    "species_scientific (same value as species_scientific_latin for backward compatibility), " +
+    `source_language (BCP-47 code "${languageCode}"), ` +
+    "species_confidence (number 0-1 or null), " +
+    "health_score (integer 1-5 — provide your best estimate when the tree is visible; typical healthy urban trees are 3-5), " +
     'stress_symptoms (array with any of: "chlorosis","necrosis","wilting","leaf_spot","defoliation","gummosis","pest_damage","none","other", or null), ' +
     'phenological_stage (exactly one of: "bud", "open", "fruit", or null), ' +
-    "notes (short reasoning in user's language when possible, or null). " +
-    "Use null when uncertain. Normalize typos in canonical fields. " +
+    `notes (40-80 words in ${langName} describing the tree: species cues, crown shape, leaf condition, bark, setting, and visible health — required when the image or text is usable). ` +
+    `Write translated_display_name and notes ONLY in ${langName}. ` +
+    "Keep species_common_en and species_scientific_latin in English/Latin. " +
+    "Fill every field you can infer; use null only when truly uncertain or not visible. " +
+    "Normalize typos in canonical fields. " +
     'If user mentions flowers or blooming, set phenological_stage to "open". ' +
     'If buds only, use "bud". If fruit visible, use "fruit". ' +
     "Phenological stage only if clearly visible in the image or text.";
-  if (step === "flower_fruit") {
+
+  if (options.hasImage) {
+    prompt +=
+      " Analyze the tree photo carefully: identify species from leaves, bark, crown, and fruit if visible; " +
+      "assess overall health (1=very poor, 5=excellent); note stress symptoms; infer phenological stage when clear.";
+  }
+
+  if (options.step === "flower_fruit") {
     prompt +=
       " The reporter is on the flower/fruit step — prioritize phenological_stage and notes.";
   }
@@ -92,6 +132,7 @@ Deno.serve(async (req: Request) => {
   const imageB64 = (body.image_base64 ?? "").trim();
   const mime = (body.mime_type ?? "image/jpeg").trim() || "image/jpeg";
   const step = (body.step ?? "").trim() || undefined;
+  const locale = (body.locale ?? "").trim() || undefined;
 
   if (!text && !imageB64) {
     return new Response(
@@ -112,7 +153,11 @@ Deno.serve(async (req: Request) => {
     );
   }
 
-  const system = buildSystemPrompt(step);
+  const system = buildSystemPrompt({
+    step,
+    locale,
+    hasImage: imageB64.length > 0,
+  });
 
   const userContent: Array<
     | { type: "text"; text: string }
@@ -126,7 +171,7 @@ Deno.serve(async (req: Request) => {
     const url = `data:${mime};base64,${imageB64}`;
     userContent.push({
       type: "image_url",
-      image_url: { url, detail: "low" },
+      image_url: { url, detail: "high" },
     });
   }
 

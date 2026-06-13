@@ -163,6 +163,9 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     }
   }
 
+  String get _uiLanguageCode =>
+      Localizations.localeOf(context).languageCode;
+
   Future<void> _runVisionOnFirstPhoto() async {
     if (!mounted || _d.wholeTreeImages.isEmpty || !_authReady) return;
     final l10n = AppLocalizations.of(context);
@@ -176,6 +179,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
       final s = await _ai.suggestFromTreeImage(
         imageBytes: bytes,
         mimeType: file.mimeType ?? 'image/jpeg',
+        locale: _uiLanguageCode,
       );
       if (!mounted) return;
       if (s.hasStructuredFields(flowerStepOnly: false)) {
@@ -296,6 +300,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
       final s = await _ai.suggestFromResidentText(
         _assistantNotesWhole.text,
         step: 'whole_tree',
+        locale: _uiLanguageCode,
       );
       if (!mounted) return;
       if (s.hasStructuredFields(flowerStepOnly: false)) {
@@ -335,6 +340,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
         step: 'flower_fruit',
         imageBytes: imageBytes,
         mimeType: mimeType,
+        locale: _uiLanguageCode,
       );
       if (!mounted) return;
       if (s.hasStructuredFields(flowerStepOnly: true)) {
@@ -773,11 +779,19 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
             _d.leafCondition = LeafCondition.stressed;
           }
         }
+        if (s.notes != null && s.notes!.trim().isNotEmpty) {
+          _assistantNotesWhole.text = s.notes!.trim();
+        }
       }
       if (includePhenology && stageEnum != null) {
         _d.phenologicalStage = stageEnum;
       } else if (flowerOnly && stageEnum != null) {
         _d.phenologicalStage = stageEnum;
+      }
+      if (s.notes != null && s.notes!.trim().isNotEmpty) {
+        if (flowerOnly) {
+          _assistantNotesFlower.text = s.notes!.trim();
+        }
       }
     });
   }

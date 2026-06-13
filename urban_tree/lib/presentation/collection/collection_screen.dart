@@ -55,9 +55,11 @@ class _CollectionScreenState extends State<CollectionScreen> {
     }).toList();
   }
 
-  Future<void> _openSpecies(String? scientific) async {
-    final species =
-        await SpeciesMonographRepository.instance.byScientificName(scientific);
+  Future<void> _openSpecies(TreeReportRow row) async {
+    final species = await SpeciesMonographRepository.instance.resolveForReport(
+      scientific: row.speciesScientific,
+      common: row.species,
+    );
     if (!mounted || species == null) return;
     Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
@@ -164,7 +166,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
               return _ReportCollectionCard(
                 row: row,
                 landLabel: _landLabel(l10n, row.landType),
-                onTap: () => _openSpecies(row.speciesScientific),
+                onTap: () => _openSpecies(row),
               );
             },
           ),
@@ -243,52 +245,63 @@ class _ReportCollectionCard extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final thumb = row.wholeTreeImageUrls.isNotEmpty ? row.wholeTreeImageUrls.first : null;
     final title = row.species ?? row.speciesScientific ?? '—';
-    return BentoCard(
-      leafCorner: true,
-      padding: EdgeInsets.zero,
-      onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: BotanicalNetworkImage(
-              url: thumb,
-              fit: BoxFit.cover,
-              fallbackIcon: Icons.park_rounded,
-              semanticLabel: thumb != null
-                  ? AppLocalizations.of(context).imageOf(title)
-                  : null,
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(16)),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  row.species ?? row.speciesScientific ?? '—',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                ),
-                Text(
-                  row.speciesScientific ?? landLabel,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: cs.onSurfaceVariant,
-                        fontStyle: FontStyle.italic,
-                      ),
-                ),
-              ],
-            ),
-          ),
-        ],
+
+    return FutureBuilder<SpeciesMonograph?>(
+      future: SpeciesMonographRepository.instance.resolveForReport(
+        scientific: row.speciesScientific,
+        common: row.species,
       ),
+      builder: (context, snapshot) {
+        final canOpen = snapshot.data != null;
+
+        return BentoCard(
+          leafCorner: true,
+          padding: EdgeInsets.zero,
+          onTap: canOpen ? onTap : null,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: BotanicalNetworkImage(
+                  url: thumb,
+                  fit: BoxFit.cover,
+                  fallbackIcon: Icons.park_rounded,
+                  semanticLabel: thumb != null
+                      ? AppLocalizations.of(context).imageOf(title)
+                      : null,
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(16)),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      row.species ?? row.speciesScientific ?? '—',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                    ),
+                    Text(
+                      row.speciesScientific ?? landLabel,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: cs.onSurfaceVariant,
+                            fontStyle: FontStyle.italic,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

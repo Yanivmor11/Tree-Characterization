@@ -145,21 +145,23 @@ class AIService {
   Future<CharacterizationSuggestion> suggestFromTreeImage({
     required Uint8List imageBytes,
     String mimeType = 'image/jpeg',
+    String? locale,
   }) async {
     try {
       final prepared = _resizeForVision(imageBytes);
       final b64 = base64Encode(prepared);
+      final languageCode = _normalizeLocale(locale);
 
       if (kIsWeb) {
-        return await _suggestVisionViaEdge(b64, mimeType);
+        return await _suggestVisionViaEdge(b64, mimeType, languageCode);
       }
 
       final key = AppEnv.openAiApiKey.trim();
       if (key.isEmpty) {
-        return await _suggestVisionViaEdge(b64, mimeType);
+        return await _suggestVisionViaEdge(b64, mimeType, languageCode);
       }
 
-      return await _suggestVisionDirect(b64, mimeType, key);
+      return await _suggestVisionDirect(b64, mimeType, key, languageCode);
     } catch (e) {
       if (PresentationFallbackService.shouldUseFallback(e)) {
         return PresentationFallbackService.mockCharacterizationSuggestion();
@@ -177,11 +179,14 @@ class AIService {
     String? step,
     Uint8List? imageBytes,
     String mimeType = 'image/jpeg',
+    String? locale,
   }) async {
     final trimmed = text.trim();
     if (trimmed.isEmpty && imageBytes == null) {
       return CharacterizationSuggestion();
     }
+
+    final languageCode = _normalizeLocale(locale);
 
     try {
       if (kIsWeb) {
@@ -190,6 +195,7 @@ class AIService {
           step: step,
           imageBytes: imageBytes,
           mimeType: mimeType,
+          locale: languageCode,
         );
       }
 
@@ -200,6 +206,7 @@ class AIService {
           step: step,
           imageBytes: imageBytes,
           mimeType: mimeType,
+          locale: languageCode,
         );
       }
 
@@ -209,6 +216,7 @@ class AIService {
         step: step,
         imageBytes: imageBytes,
         mimeType: mimeType,
+        locale: languageCode,
       );
     } catch (e) {
       if (PresentationFallbackService.shouldUseFallback(e)) {
@@ -254,14 +262,72 @@ class AIService {
     }
   }
 
+  static String _normalizeLocale(String? locale) {
+    final code = locale?.trim().toLowerCase();
+    if (code == null || code.isEmpty) return 'en';
+    const supported = {'he', 'en', 'ar', 'ru'};
+    return supported.contains(code) ? code : 'en';
+  }
+
+  static String _characterizationSystemPrompt({
+    required String languageCode,
+    String? step,
+    bool vision = false,
+  }) {
+    final langName = switch (languageCode) {
+      'he' => 'Hebrew',
+      'ar' => 'Arabic',
+      'ru' => 'Russian',
+      _ => 'English',
+    };
+
+    var prompt =
+        'You assist urban tree citizen science. The user interface language is '
+        '"$languageCode" ($langName). '
+        'Output ONLY valid JSON with keys: '
+        'species_common_en (canonical English common name or null), '
+        'species_scientific_latin (canonical Latin binomial or null), '
+        'translated_display_name (species common name in $langName for the UI — required when identifiable), '
+        'species_common (same as species_common_en), species_scientific (same as species_scientific_latin), '
+        'source_language (BCP-47 code "$languageCode"), '
+        'species_confidence (number 0-1 or null), '
+        'health_score (integer 1-5 — provide your best estimate when the tree is visible; typical healthy urban trees are 3-5), '
+        'stress_symptoms (array with any of: "chlorosis","necrosis","wilting","leaf_spot","defoliation","gummosis","pest_damage","none","other", or null), '
+        'phenological_stage (exactly one of: "bud", "open", "fruit", or null), '
+        'notes (40-80 words in $langName describing the tree: species cues, crown shape, leaf condition, bark, setting, and visible health — required when the image or text is usable). '
+        'Write translated_display_name and notes ONLY in $langName. '
+        'Keep species_common_en and species_scientific_latin in English/Latin. '
+        'Fill every field you can infer; use null only when truly uncertain or not visible. '
+        'If user mentions flowers or blooming, set phenological_stage to "open". '
+        'If buds only, use "bud". If fruit visible, use "fruit".';
+
+    if (vision) {
+      prompt +=
+          ' Analyze the tree photo carefully: identify species from leaves, bark, crown, and fruit if visible; '
+          'assess overall health (1=very poor, 5=excellent); note stress symptoms; infer phenological stage when clear.';
+    }
+
+    if (step == 'flower_fruit') {
+      prompt +=
+          ' Focus on phenological_stage and notes; infer stage from visible flowers, buds, or fruit.';
+    }
+
+    return prompt;
+  }
+
   Future<CharacterizationSuggestion> _suggestVisionViaEdge(
     String b64,
     String mimeType,
+    String languageCode,
   ) async {
     try {
       final res = await _invokeEdgeFunction(
         _edgeSuggest,
-        body: {'image_base64': b64, 'mime_type': mimeType},
+        body: {
+          'image_base64': b64,
+          'mime_type': mimeType,
+          'locale': languageCode,
+        },
       );
       if (res.status != 200) {
         throw StateError('Assistant proxy HTTP ${res.status}: ${res.data}');
@@ -277,10 +343,12 @@ class AIService {
     String? step,
     Uint8List? imageBytes,
     String mimeType = 'image/jpeg',
+    String locale = 'en',
   }) async {
     try {
       final body = <String, dynamic>{
         'text': trimmed,
+        'locale': locale,
         if (step != null && step.isNotEmpty) 'step': step,
       };
       if (imageBytes != null) {
@@ -307,6 +375,7 @@ class AIService {
     String b64,
     String mimeType,
     String apiKey,
+    String languageCode,
   ) async {
     final dataUrl = 'data:$mimeType;base64,$b64';
     final body = jsonEncode({
@@ -315,25 +384,17 @@ class AIService {
       'messages': [
         {
           'role': 'system',
-          'content':
-              'You assist urban tree citizen science. Output ONLY valid JSON with keys: '
-              'species_common_en (canonical English common name or null), '
-              'species_scientific_latin (canonical Latin binomial or null), '
-              'translated_display_name (localized display name for UI or null), '
-              'species_common (same as species_common_en), species_scientific (same as species_scientific_latin), '
-              'source_language (BCP-47 language code or null), '
-              'species_confidence (number 0-1 or null), health_score (integer 1-5 or null), '
-              'stress_symptoms (array with any of: "chlorosis","necrosis","wilting","leaf_spot","defoliation","gummosis","pest_damage","none","other", or null), '
-              'phenological_stage (string "bud", "open", "fruit", or null), '
-              'notes (short Hebrew summary of reasoning or null). '
-              'Use null when uncertain.',
+          'content': _characterizationSystemPrompt(
+            languageCode: languageCode,
+            vision: true,
+          ),
         },
         {
           'role': 'user',
           'content': [
             {
               'type': 'image_url',
-              'image_url': {'url': dataUrl, 'detail': 'low'},
+              'image_url': {'url': dataUrl, 'detail': 'high'},
             },
           ],
         },
@@ -369,26 +430,11 @@ class AIService {
     return _parseOpenAiJsonObject(obj);
   }
 
-  static String _textSystemPrompt({String? step}) {
-    var prompt =
-        'You assist urban tree citizen science. Given a resident description in any language, '
-        'output ONLY valid JSON with keys: species_common_en (canonical English common name or null), '
-        'species_scientific_latin (canonical Latin binomial or null), '
-        'translated_display_name (localized display name for UI or null), '
-        'species_common (same as species_common_en), species_scientific (same as species_scientific_latin), '
-        'source_language (BCP-47 language code or null), '
-        'species_confidence (0-1 or null), health_score (integer 1-5 or null), '
-        'stress_symptoms (array with any of: "chlorosis","necrosis","wilting","leaf_spot","defoliation","gummosis","pest_damage","none","other", or null), '
-        'phenological_stage (exactly one of: "bud", "open", "fruit", or null), '
-        'notes (short summary in user language or null). '
-        'Use null when uncertain. '
-        'If user mentions flowers or blooming, set phenological_stage to "open". '
-        'If buds only, use "bud". If fruit visible, use "fruit".';
-    if (step == 'flower_fruit') {
-      prompt +=
-          ' Focus on phenological_stage and notes; infer stage from visible flowers, buds, or fruit.';
-    }
-    return prompt;
+  static String _textSystemPrompt({String? step, String languageCode = 'en'}) {
+    return _characterizationSystemPrompt(
+      languageCode: languageCode,
+      step: step,
+    );
   }
 
   Future<CharacterizationSuggestion> _suggestTextDirect(
@@ -397,6 +443,7 @@ class AIService {
     String? step,
     Uint8List? imageBytes,
     String mimeType = 'image/jpeg',
+    String locale = 'en',
   }) async {
     final userContent = <Map<String, dynamic>>[];
     if (trimmed.isNotEmpty) {
@@ -407,7 +454,7 @@ class AIService {
       final dataUrl = 'data:$mimeType;base64,${base64Encode(prepared)}';
       userContent.add({
         'type': 'image_url',
-        'image_url': {'url': dataUrl, 'detail': 'low'},
+        'image_url': {'url': dataUrl, 'detail': 'high'},
       });
     }
 
@@ -417,7 +464,7 @@ class AIService {
       'messages': [
         {
           'role': 'system',
-          'content': _textSystemPrompt(step: step),
+          'content': _textSystemPrompt(step: step, languageCode: locale),
         },
         {
           'role': 'user',

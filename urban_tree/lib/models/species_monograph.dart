@@ -213,12 +213,40 @@ class SpeciesMonographRepository {
   }
 
   Future<SpeciesMonograph?> byScientificName(String? name) async {
-    if (name == null || name.isEmpty) return null;
+    if (name == null || name.trim().isEmpty) return null;
     final all = await loadAll();
-    final lower = name.toLowerCase();
+    final lower = name.trim().toLowerCase();
     for (final s in all) {
       if (s.scientificName.toLowerCase() == lower) return s;
     }
-    return all.isEmpty ? null : all.first;
+    return null;
+  }
+
+  /// Resolves a monograph entry from report species fields (scientific or common).
+  Future<SpeciesMonograph?> resolveForReport({
+    String? scientific,
+    String? common,
+  }) async {
+    final all = await loadAll();
+    if (all.isEmpty) return null;
+
+    final sci = scientific?.trim().toLowerCase();
+    if (sci != null && sci.isNotEmpty) {
+      for (final s in all) {
+        if (s.scientificName.toLowerCase() == sci) return s;
+      }
+    }
+
+    final com = common?.trim().toLowerCase();
+    if (com != null && com.isNotEmpty) {
+      for (final s in all) {
+        if (s.scientificName.toLowerCase() == com ||
+            s.hebrewName.toLowerCase() == com) {
+          return s;
+        }
+      }
+    }
+
+    return null;
   }
 }
