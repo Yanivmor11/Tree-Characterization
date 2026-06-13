@@ -893,6 +893,29 @@ class AppLocalizationsAr extends AppLocalizations {
   String get journalReadMore => 'اقرأ المزيد';
 
   @override
+  String get journalNavigateInstead => 'التنقل إلى الشجرة';
+
+  @override
+  String get treeActionSheetTitle => 'إجراءات الشجرة';
+
+  @override
+  String get treeActionShowOnMap => 'عرض على الخريطة';
+
+  @override
+  String get treeActionNavigate => 'التنقل إلى الموقع';
+
+  @override
+  String get treeActionShareLocation => 'مشاركة الموقع';
+
+  @override
+  String treeActionShareText(String species, String mapsUrl) {
+    return '$species — $mapsUrl';
+  }
+
+  @override
+  String get treeActionViewReport => 'عرض التقرير الكامل';
+
+  @override
   String get journalWeeklySummary => 'ملخص النشاط الأسبوعي';
 
   @override

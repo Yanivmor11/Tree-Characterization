@@ -27,6 +27,9 @@ class CharacterizationSuggestion {
     this.structuralIssues,
     this.stressSymptoms,
     this.phenologicalStage,
+    this.flowerAbundance,
+    this.leafCondition,
+    this.damageExtent,
     this.notes,
   });
 
@@ -44,12 +47,27 @@ class CharacterizationSuggestion {
   final List<String>? structuralIssues;
   final List<String>? stressSymptoms;
   final String? phenologicalStage;
+  /// One of: `low`, `medium`, `high`.
+  final String? flowerAbundance;
+  /// One of: `healthy`, `stressed`.
+  final String? leafCondition;
+  /// One of: `minimal`, `low`, `moderate`, `high`.
+  final String? damageExtent;
   final String? notes;
 
   /// Whether the suggestion contains fields usable in the wizard UI.
-  bool hasStructuredFields({required bool flowerStepOnly}) {
+  bool hasStructuredFields({
+    required bool flowerStepOnly,
+    bool leavesStepOnly = false,
+  }) {
+    if (leavesStepOnly) {
+      return leafCondition != null ||
+          damageExtent != null ||
+          (stressSymptoms != null && stressSymptoms!.isNotEmpty);
+    }
     if (flowerStepOnly) {
       return phenologicalStage != null ||
+          flowerAbundance != null ||
           (notes != null && notes!.trim().isNotEmpty);
     }
     return healthScore != null ||
@@ -80,6 +98,9 @@ class CharacterizationSuggestion {
       if (structuralIssues != null) 'structural_issues': structuralIssues,
       if (stressSymptoms != null) 'stress_symptoms': stressSymptoms,
       if (phenologicalStage != null) 'phenological_stage': phenologicalStage,
+      if (flowerAbundance != null) 'flower_abundance': flowerAbundance,
+      if (leafCondition != null) 'leaf_condition': leafCondition,
+      if (damageExtent != null) 'damage_extent': damageExtent,
       if (notes != null) 'notes': notes,
     };
   }
@@ -312,6 +333,9 @@ class AIService {
         'structural_issues (array with any of: "dead_branches","leaning","cracks","exposed_roots","cavity","other", or empty array if none visible), '
         'stress_symptoms (array with any of: "chlorosis","necrosis","wilting","leaf_spot","defoliation","gummosis","pest_damage","none","other", or null), '
         'phenological_stage (exactly one of: "bud", "open", "fruit", or null), '
+        'flower_abundance (exactly one of: "low", "medium", "high", or null — estimate from visible flower/fruit density), '
+        'leaf_condition (exactly one of: "healthy", "stressed", or null), '
+        'damage_extent (exactly one of: "minimal", "low", "moderate", "high", or null — foliar damage area), '
         'notes (10-20 words in $langName describing the tree: species cues, crown, leaf condition, and visible health — required when the image or text is usable). '
         'Write translated_display_name and notes ONLY in $langName. '
         'Keep species_common_en and species_scientific_latin in English/Latin. '
@@ -329,7 +353,13 @@ class AIService {
 
     if (step == 'flower_fruit') {
       prompt +=
-          ' Focus on phenological_stage and notes; infer stage from visible flowers, buds, or fruit.';
+          ' Focus on phenological_stage, flower_abundance, and notes; infer stage from visible flowers, buds, or fruit.';
+    }
+
+    if (step == 'leaves') {
+      prompt +=
+          ' Focus on leaf_condition, stress_symptoms, and damage_extent from the leaf photo; '
+          'set leaf_condition to "stressed" when any stress symptom is visible.';
     }
 
     return prompt;
@@ -603,6 +633,27 @@ class AIService {
     return normalized.isEmpty ? null : normalized;
   }
 
+  static String? _normalizeFlowerAbundance(dynamic raw) {
+    if (raw == null) return null;
+    final normalized = raw.toString().trim().toLowerCase();
+    const allowed = {'low', 'medium', 'high'};
+    return allowed.contains(normalized) ? normalized : null;
+  }
+
+  static String? _normalizeLeafCondition(dynamic raw) {
+    if (raw == null) return null;
+    final normalized = raw.toString().trim().toLowerCase();
+    const allowed = {'healthy', 'stressed'};
+    return allowed.contains(normalized) ? normalized : null;
+  }
+
+  static String? _normalizeDamageExtent(dynamic raw) {
+    if (raw == null) return null;
+    final normalized = raw.toString().trim().toLowerCase();
+    const allowed = {'minimal', 'low', 'moderate', 'high'};
+    return allowed.contains(normalized) ? normalized : null;
+  }
+
   static CharacterizationSuggestion _parseOpenAiJsonObject(
     Map<String, dynamic> obj,
   ) {
@@ -679,6 +730,9 @@ class AIService {
       structuralIssues: structuralIssues,
       stressSymptoms: stressSymptoms,
       phenologicalStage: stage,
+      flowerAbundance: _normalizeFlowerAbundance(obj['flower_abundance']),
+      leafCondition: _normalizeLeafCondition(obj['leaf_condition']),
+      damageExtent: _normalizeDamageExtent(obj['damage_extent']),
       notes: notes is String ? notes : null,
     );
   }

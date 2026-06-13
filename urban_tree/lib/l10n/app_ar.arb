@@ -252,6 +252,19 @@
   "journalObservations": "ملاحظاتي",
   "journalResearchSection": "أدوات البحث",
   "journalReadMore": "اقرأ المزيد",
+  "journalNavigateInstead": "التنقل إلى الشجرة",
+  "treeActionSheetTitle": "إجراءات الشجرة",
+  "treeActionShowOnMap": "عرض على الخريطة",
+  "treeActionNavigate": "التنقل إلى الموقع",
+  "treeActionShareLocation": "مشاركة الموقع",
+  "treeActionShareText": "{species} — {mapsUrl}",
+  "@treeActionShareText": {
+    "placeholders": {
+      "species": {"type": "String"},
+      "mapsUrl": {"type": "String"}
+    }
+  },
+  "treeActionViewReport": "عرض التقرير الكامل",
   "journalWeeklySummary": "ملخص النشاط الأسبوعي",
   "journalWeeklyBody": "لقد وثّقت أنواعًا جديدة هذا الأسبوع. واصل دفع البحث النباتي في إسرائيل.",
   "helpCenterTitle": "مركز المساعدة",

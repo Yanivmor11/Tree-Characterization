@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -11,15 +12,17 @@ import 'core/app_locale_controller.dart';
 import 'core/app_log.dart';
 import 'core/env.dart';
 import 'l10n/app_localizations.dart';
-import 'presentation/auth/auth_gate_screen.dart';
+import 'presentation/splash_screen.dart';
 import 'presentation/theme/app_theme.dart';
 import 'state/auth_controller.dart';
+import 'state/map_focus_controller.dart';
 import 'state/report_feed_controller.dart';
 
 import 'core/constants.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   if (kIsWeb && (kDebugMode || kE2eSemantics)) {
     SemanticsBinding.instance.ensureSemantics();
   }
@@ -108,6 +111,7 @@ class UrbanTreeApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthController()),
         ChangeNotifierProvider(create: (_) => ReportFeedController()..loadInitial()),
+        ChangeNotifierProvider(create: (_) => MapFocusController()),
       ],
       child: ListenableBuilder(
         listenable: localeController,
@@ -136,7 +140,7 @@ class UrbanTreeApp extends StatelessWidget {
             // was designed light-only; following the OS dark mode produced
             // unreadable light-on-light text on hardcoded light card surfaces.
             themeMode: ThemeMode.light,
-            home: AuthGateScreen(localeController: localeController),
+            home: SplashScreen(localeController: localeController),
           );
         },
       ),

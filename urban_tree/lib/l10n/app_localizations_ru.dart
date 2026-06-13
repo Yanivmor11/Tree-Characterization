@@ -901,6 +901,29 @@ class AppLocalizationsRu extends AppLocalizations {
   String get journalReadMore => 'Подробнее';
 
   @override
+  String get journalNavigateInstead => 'Маршрут к дереву';
+
+  @override
+  String get treeActionSheetTitle => 'Действия с деревом';
+
+  @override
+  String get treeActionShowOnMap => 'Показать на карте';
+
+  @override
+  String get treeActionNavigate => 'Маршрут к месту';
+
+  @override
+  String get treeActionShareLocation => 'Поделиться местом';
+
+  @override
+  String treeActionShareText(String species, String mapsUrl) {
+    return '$species — $mapsUrl';
+  }
+
+  @override
+  String get treeActionViewReport => 'Полный отчёт';
+
+  @override
   String get journalWeeklySummary => 'Сводка активности за неделю';
 
   @override

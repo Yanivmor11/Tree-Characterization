@@ -897,6 +897,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journalReadMore => 'Read more';
 
   @override
+  String get journalNavigateInstead => 'Navigate to tree';
+
+  @override
+  String get treeActionSheetTitle => 'Tree actions';
+
+  @override
+  String get treeActionShowOnMap => 'Show on map';
+
+  @override
+  String get treeActionNavigate => 'Navigate to location';
+
+  @override
+  String get treeActionShareLocation => 'Share location';
+
+  @override
+  String treeActionShareText(String species, String mapsUrl) {
+    return '$species — $mapsUrl';
+  }
+
+  @override
+  String get treeActionViewReport => 'View full report';
+
+  @override
   String get journalWeeklySummary => 'Weekly activity summary';
 
   @override

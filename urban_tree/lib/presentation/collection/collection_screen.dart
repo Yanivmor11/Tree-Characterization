@@ -7,6 +7,7 @@ import '../../models/species_monograph.dart';
 import '../../models/tree_report_row.dart';
 import '../../state/report_feed_controller.dart';
 import '../species/species_detail_screen.dart';
+import '../widgets/tree_report_actions.dart';
 import '../theme/app_theme.dart';
 import '../widgets/botanical_widgets.dart';
 
@@ -60,7 +61,11 @@ class _CollectionScreenState extends State<CollectionScreen> {
       scientific: row.speciesScientific,
       common: row.species,
     );
-    if (!mounted || species == null) return;
+    if (!mounted) return;
+    if (species == null) {
+      await TreeReportActions.showUnlinkedTreeSheet(context, row: row);
+      return;
+    }
     Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
         builder: (_) => SpeciesDetailScreen(speciesId: species.id),
@@ -246,62 +251,52 @@ class _ReportCollectionCard extends StatelessWidget {
     final thumb = row.wholeTreeImageUrls.isNotEmpty ? row.wholeTreeImageUrls.first : null;
     final title = row.species ?? row.speciesScientific ?? '—';
 
-    return FutureBuilder<SpeciesMonograph?>(
-      future: SpeciesMonographRepository.instance.resolveForReport(
-        scientific: row.speciesScientific,
-        common: row.species,
-      ),
-      builder: (context, snapshot) {
-        final canOpen = snapshot.data != null;
-
-        return BentoCard(
-          leafCorner: true,
-          padding: EdgeInsets.zero,
-          onTap: canOpen ? onTap : null,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: BotanicalNetworkImage(
-                  url: thumb,
-                  fit: BoxFit.cover,
-                  fallbackIcon: Icons.park_rounded,
-                  semanticLabel: thumb != null
-                      ? AppLocalizations.of(context).imageOf(title)
-                      : null,
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(16)),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      row.species ?? row.speciesScientific ?? '—',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
-                    ),
-                    Text(
-                      row.speciesScientific ?? landLabel,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: cs.onSurfaceVariant,
-                            fontStyle: FontStyle.italic,
-                          ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+    return BentoCard(
+      leafCorner: true,
+      padding: EdgeInsets.zero,
+      onTap: onTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: BotanicalNetworkImage(
+              url: thumb,
+              fit: BoxFit.cover,
+              fallbackIcon: Icons.park_rounded,
+              semanticLabel: thumb != null
+                  ? AppLocalizations.of(context).imageOf(title)
+                  : null,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(16)),
+            ),
           ),
-        );
-      },
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  row.species ?? row.speciesScientific ?? '—',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+                Text(
+                  row.speciesScientific ?? landLabel,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: cs.onSurfaceVariant,
+                        fontStyle: FontStyle.italic,
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

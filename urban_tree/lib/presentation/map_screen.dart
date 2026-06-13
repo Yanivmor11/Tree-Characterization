@@ -18,6 +18,7 @@ import '../l10n/l10n_extensions.dart';
 import '../models/land_use.dart';
 import '../models/tree_report_row.dart';
 import '../state/report_feed_controller.dart';
+import '../state/map_focus_controller.dart';
 import '../services/land_use_service.dart';
 import '../services/location_service.dart';
 import '../services/pest_hotspot_service.dart';
@@ -74,6 +75,7 @@ class _MapScreenState extends State<MapScreen> {
   RealtimeChannel? _reportsChannel;
   String? _lastAlertHotspotId;
   DateTime? _lastAlertAt;
+  MapFocusController? _mapFocus;
 
   @override
   void initState() {
@@ -82,6 +84,12 @@ class _MapScreenState extends State<MapScreen> {
     _loadMapContext();
     _subscribeReports();
     unawaited(_loadBookmarks());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _mapFocus = context.read<MapFocusController>();
+      _mapFocus!.addListener(_onMapFocusRequested);
+      _onMapFocusRequested();
+    });
   }
 
   Future<void> _loadBookmarks() async {
@@ -106,6 +114,7 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   void dispose() {
+    _mapFocus?.removeListener(_onMapFocusRequested);
     _reportsChannel?.unsubscribe();
     _mapController.dispose();
     _mapSearchController.dispose();
@@ -324,6 +333,17 @@ class _MapScreenState extends State<MapScreen> {
       latitude: report.latitude,
       longitude: report.longitude,
     );
+  }
+
+  void _onMapFocusRequested() {
+    final row = _mapFocus?.pending;
+    if (row == null || !mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _mapController.move(LatLng(row.latitude, row.longitude), 17);
+      setState(() => _selectedReport = row);
+      _mapFocus?.clear();
+    });
   }
 
   @override

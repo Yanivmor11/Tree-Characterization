@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../core/app_locale_controller.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/auth_controller.dart';
+import '../../state/map_focus_controller.dart';
 import '../collection/collection_screen.dart';
 import '../home/home_screen.dart';
 import '../identify/identify_hub_screen.dart';
@@ -29,6 +30,29 @@ class _AppShellState extends State<AppShell> {
   AppTab _tab = AppTab.home;
   int _statsRefreshTick = 0;
   bool _drawerOpen = false;
+  MapFocusController? _mapFocus;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _mapFocus = context.read<MapFocusController>();
+      _mapFocus!.addListener(_onMapFocusRequested);
+    });
+  }
+
+  @override
+  void dispose() {
+    _mapFocus?.removeListener(_onMapFocusRequested);
+    super.dispose();
+  }
+
+  void _onMapFocusRequested() {
+    if (_mapFocus?.pending != null && _tab != AppTab.map) {
+      setState(() => _tab = AppTab.map);
+    }
+  }
 
   void _onReportComplete() {
     setState(() => _statsRefreshTick++);

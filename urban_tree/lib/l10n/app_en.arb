@@ -429,6 +429,19 @@
   "journalObservations": "My observations",
   "journalResearchSection": "Research tools",
   "journalReadMore": "Read more",
+  "journalNavigateInstead": "Navigate to tree",
+  "treeActionSheetTitle": "Tree actions",
+  "treeActionShowOnMap": "Show on map",
+  "treeActionNavigate": "Navigate to location",
+  "treeActionShareLocation": "Share location",
+  "treeActionShareText": "{species} — {mapsUrl}",
+  "@treeActionShareText": {
+    "placeholders": {
+      "species": {"type": "String"},
+      "mapsUrl": {"type": "String"}
+    }
+  },
+  "treeActionViewReport": "View full report",
   "journalWeeklySummary": "Weekly activity summary",
   "journalWeeklyBody": "You documented new species this week. Keep advancing botanical research in Israel.",
 

@@ -72,10 +72,13 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
   CharacterizationSuggestion? _visionSuggestion;
   bool _aiLoadingWhole = false;
   bool _aiLoadingFlower = false;
+  bool _leavesLoading = false;
   bool _visionLoading = false;
   bool _authReady = false;
   bool _authChecking = true;
   Timer? _visionDebounce;
+  Timer? _flowerDebounce;
+  Timer? _leavesDebounce;
   PhenologyWarning? _phenologyBanner;
   bool _applyingAi = false;
   bool _landTypeManuallyEdited = false;
@@ -157,6 +160,8 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
   @override
   void dispose() {
     _visionDebounce?.cancel();
+    _flowerDebounce?.cancel();
+    _leavesDebounce?.cancel();
     _speciesController.removeListener(_onSpeciesEdited);
     _assistantNotesWhole.removeListener(_onAssistantNotesWholeChanged);
     _assistantNotesFlower.removeListener(_onAssistantNotesFlowerChanged);
@@ -173,6 +178,22 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     _visionDebounce?.cancel();
     _visionDebounce = Timer(const Duration(milliseconds: 700), () {
       unawaited(_runVisionOnFirstPhoto());
+    });
+  }
+
+  void _scheduleFlowerAnalysis() {
+    if (_d.flowerImages.isEmpty || !_authReady) return;
+    _flowerDebounce?.cancel();
+    _flowerDebounce = Timer(const Duration(milliseconds: 700), () {
+      unawaited(_runAssistantFlower());
+    });
+  }
+
+  void _scheduleLeavesAnalysis() {
+    if (_d.leavesImages.isEmpty || !_authReady) return;
+    _leavesDebounce?.cancel();
+    _leavesDebounce = Timer(const Duration(milliseconds: 700), () {
+      unawaited(_runLeavesVisionOnFirstPhoto());
     });
   }
 
@@ -307,6 +328,10 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     });
     if (target == _d.wholeTreeImages) {
       _scheduleVisionAnalysis();
+    } else if (target == _d.flowerImages) {
+      _scheduleFlowerAnalysis();
+    } else if (target == _d.leavesImages) {
+      _scheduleLeavesAnalysis();
     }
   }
 
@@ -322,6 +347,10 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     setState(() => target.add(file));
     if (target == _d.wholeTreeImages) {
       _scheduleVisionAnalysis();
+    } else if (target == _d.flowerImages) {
+      _scheduleFlowerAnalysis();
+    } else if (target == _d.leavesImages) {
+      _scheduleLeavesAnalysis();
     }
   }
 
@@ -411,6 +440,34 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
       );
     } finally {
       if (mounted) setState(() => _aiLoadingFlower = false);
+    }
+  }
+
+  Future<void> _runLeavesVisionOnFirstPhoto() async {
+    if (!mounted || _d.leavesImages.isEmpty || !_authReady) return;
+    final l10n = AppLocalizations.of(context);
+    setState(() => _leavesLoading = true);
+    try {
+      final file = _d.leavesImages.first;
+      final bytes = await file.readAsBytes();
+      final s = await _ai.suggestFromResidentText(
+        '',
+        step: 'leaves',
+        imageBytes: bytes,
+        mimeType: file.mimeType ?? 'image/jpeg',
+        locale: _uiLanguageCode,
+      );
+      if (!mounted) return;
+      if (s.hasStructuredFields(flowerStepOnly: false, leavesStepOnly: true)) {
+        _autoApplyLeavesSuggestion(s);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.assistantError(e.toString()))),
+      );
+    } finally {
+      if (mounted) setState(() => _leavesLoading = false);
     }
   }
 
@@ -815,6 +872,25 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     };
   }
 
+  static FlowerAbundance? _flowerAbundanceFromSuggestion(String? value) {
+    return switch (value) {
+      'low' => FlowerAbundance.low,
+      'medium' => FlowerAbundance.medium,
+      'high' => FlowerAbundance.high,
+      _ => null,
+    };
+  }
+
+  static DamageExtent? _damageExtentFromSuggestion(String? value) {
+    return switch (value) {
+      'minimal' => DamageExtent.minimal,
+      'low' => DamageExtent.low,
+      'moderate' => DamageExtent.moderate,
+      'high' => DamageExtent.high,
+      _ => null,
+    };
+  }
+
   static StructuralIssue? _structuralIssueFromStorage(String value) {
     return switch (value) {
       'dead_branches' => StructuralIssue.deadBranches,
@@ -830,10 +906,29 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
   void _markAiFieldsFromSuggestion(
     CharacterizationSuggestion s, {
     required bool flowerOnly,
+    bool leavesOnly = false,
   }) {
+    if (leavesOnly) {
+      if (s.leafCondition != null) {
+        _aiFilledFields.add(_AiFilledField.leafCondition);
+      }
+      if (s.stressSymptoms != null && s.stressSymptoms!.isNotEmpty) {
+        _aiFilledFields.add(_AiFilledField.stressSymptoms);
+      }
+      if (s.damageExtent != null) {
+        _aiFilledFields.add(_AiFilledField.damageExtent);
+      }
+      return;
+    }
     if (flowerOnly) {
       if (s.notes != null && s.notes!.trim().isNotEmpty) {
         _aiFilledFields.add(_AiFilledField.description);
+      }
+      if (s.phenologicalStage != null) {
+        _aiFilledFields.add(_AiFilledField.phenologicalStage);
+      }
+      if (s.flowerAbundance != null) {
+        _aiFilledFields.add(_AiFilledField.flowerAbundance);
       }
       return;
     }
@@ -908,11 +1003,38 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     CharacterizationSuggestion s, {
     required bool includePhenology,
     bool flowerOnly = false,
+    bool leavesOnly = false,
   }) {
     final stageEnum = _phenologicalStageFromSuggestion(s);
     _applyingAi = true;
     setState(() {
-      if (!flowerOnly) {
+      if (leavesOnly) {
+        if (s.leafCondition == 'healthy') {
+          _d.leafCondition = LeafCondition.healthy;
+          _d.stressSymptoms.clear();
+        } else if (s.leafCondition == 'stressed' ||
+            (s.stressSymptoms != null && s.stressSymptoms!.isNotEmpty)) {
+          _d.leafCondition = LeafCondition.stressed;
+        }
+        if (s.stressSymptoms != null && s.stressSymptoms!.isNotEmpty) {
+          _d.stressSymptoms
+            ..clear()
+            ..addAll(
+              s.stressSymptoms!
+                  .map(_stressSymptomFromStorage)
+                  .whereType<StressSymptom>()
+                  .where((symptom) => symptom != StressSymptom.none),
+            );
+          if (_d.stressSymptoms.isNotEmpty) {
+            _d.leafCondition = LeafCondition.stressed;
+          }
+        }
+        final damage = _damageExtentFromSuggestion(s.damageExtent);
+        if (damage != null) {
+          _d.damageExtent = damage;
+        }
+        _markAiFieldsFromSuggestion(s, flowerOnly: false, leavesOnly: true);
+      } else if (!flowerOnly) {
         if (s.speciesCommon != null && s.speciesCommon!.isNotEmpty) {
           _d.speciesCommon = s.speciesCommon;
         }
@@ -968,13 +1090,23 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
       } else if (flowerOnly && stageEnum != null) {
         _d.phenologicalStage = stageEnum;
       }
+      if (flowerOnly) {
+        final abundance = _flowerAbundanceFromSuggestion(s.flowerAbundance);
+        if (abundance != null) {
+          _d.flowerAbundance = abundance;
+        }
+      }
       if (s.notes != null && s.notes!.trim().isNotEmpty) {
         if (flowerOnly) {
           _assistantNotesFlower.text = s.notes!.trim();
           _markAiFieldsFromSuggestion(s, flowerOnly: true);
         }
+      } else if (flowerOnly) {
+        _markAiFieldsFromSuggestion(s, flowerOnly: true);
       }
-      _d.aiSuggestionAudit = s.toAuditJson();
+      if (!flowerOnly && !leavesOnly) {
+        _d.aiSuggestionAudit = s.toAuditJson();
+      }
     });
     _applyingAi = false;
   }
@@ -1025,6 +1157,36 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     _applySuggestionToDraft(s, includePhenology: false, flowerOnly: true);
     _showAppliedSnackBar(snapshot);
     unawaited(_refreshPhenologyBanner());
+  }
+
+  void _autoApplyLeavesSuggestion(CharacterizationSuggestion s) {
+    final snapshot = _DraftAiSnapshot.capture(
+      _d,
+      _speciesController,
+      _assistantNotesWhole,
+      _aiFilledFields,
+    );
+    _applySuggestionToDraft(s, includePhenology: false, leavesOnly: true);
+    _showAppliedSnackBar(snapshot);
+  }
+
+  Widget _analyzingPhotoCard(AppLocalizations l10n) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            const SizedBox(
+              width: 22,
+              height: 22,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+            const SizedBox(width: 12),
+            Expanded(child: Text(l10n.visionAnalyzingPhoto)),
+          ],
+        ),
+      ),
+    );
   }
 
   void _applyVisionValidation() {
@@ -1648,8 +1810,17 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
         ),
         const SizedBox(height: 12),
         _thumbStrip(_d.flowerImages, (i) => _removeAt(_d.flowerImages, i)),
+        if (_aiLoadingFlower) ...[
+          const SizedBox(height: 12),
+          _analyzingPhotoCard(l10n),
+        ],
         const SizedBox(height: 16),
-        Text(l10n.phenologicalStage, style: theme.textTheme.titleMedium),
+        _fieldLabelWithAiBadge(
+          label: l10n.phenologicalStage,
+          style: theme.textTheme.titleMedium,
+          aiFilled: _aiFilledFields.contains(_AiFilledField.phenologicalStage),
+          l10n: l10n,
+        ),
         const SizedBox(height: 8),
         SegmentedButton<PhenologicalStage>(
           segments: [
@@ -1664,12 +1835,18 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
           onSelectionChanged: (s) {
             setState(() {
               _d.phenologicalStage = s.isEmpty ? null : s.first;
+              _clearAiField(_AiFilledField.phenologicalStage);
             });
             unawaited(_refreshPhenologyBanner());
           },
         ),
         const SizedBox(height: 16),
-        Text(l10n.abundance, style: theme.textTheme.titleMedium),
+        _fieldLabelWithAiBadge(
+          label: l10n.abundance,
+          style: theme.textTheme.titleMedium,
+          aiFilled: _aiFilledFields.contains(_AiFilledField.flowerAbundance),
+          l10n: l10n,
+        ),
         const SizedBox(height: 8),
         SegmentedButton<FlowerAbundance>(
           segments: [
@@ -1685,6 +1862,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
               _d.flowerAbundance == null ? {} : {_d.flowerAbundance!},
           onSelectionChanged: (s) => setState(() {
             _d.flowerAbundance = s.isEmpty ? null : s.first;
+            _clearAiField(_AiFilledField.flowerAbundance);
           }),
         ),
       ],
@@ -1721,8 +1899,17 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
         ),
         const SizedBox(height: 12),
         _thumbStrip(_d.leavesImages, (i) => _removeAt(_d.leavesImages, i)),
+        if (_leavesLoading) ...[
+          const SizedBox(height: 12),
+          _analyzingPhotoCard(l10n),
+        ],
         const SizedBox(height: 20),
-        Text(l10n.generalCondition, style: theme.textTheme.titleMedium),
+        _fieldLabelWithAiBadge(
+          label: l10n.generalCondition,
+          style: theme.textTheme.titleMedium,
+          aiFilled: _aiFilledFields.contains(_AiFilledField.leafCondition),
+          l10n: l10n,
+        ),
         const SizedBox(height: 8),
         SegmentedButton<LeafCondition>(
           segments: [
@@ -1737,11 +1924,19 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
           ],
           selected: {_d.leafCondition},
           onSelectionChanged: (s) =>
-              setState(() => _d.leafCondition = s.first),
+              setState(() {
+                _d.leafCondition = s.first;
+                _clearAiField(_AiFilledField.leafCondition);
+              }),
         ),
         if (_d.leafCondition == LeafCondition.stressed) ...[
           const SizedBox(height: 16),
-          Text(l10n.stressSymptoms, style: theme.textTheme.titleMedium),
+          _fieldLabelWithAiBadge(
+            label: l10n.stressSymptoms,
+            style: theme.textTheme.titleMedium,
+            aiFilled: _aiFilledFields.contains(_AiFilledField.stressSymptoms),
+            l10n: l10n,
+          ),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
@@ -1762,6 +1957,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
                     } else {
                       _d.stressSymptoms.remove(symptom);
                     }
+                    _clearAiField(_AiFilledField.stressSymptoms);
                   });
                 },
               );
@@ -1769,7 +1965,12 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
           ),
         ],
         const SizedBox(height: 16),
-        Text(l10n.damageExtent, style: theme.textTheme.titleMedium),
+        _fieldLabelWithAiBadge(
+          label: l10n.damageExtent,
+          style: theme.textTheme.titleMedium,
+          aiFilled: _aiFilledFields.contains(_AiFilledField.damageExtent),
+          l10n: l10n,
+        ),
         const SizedBox(height: 8),
         SegmentedButton<DamageExtent>(
           segments: DamageExtent.values
@@ -1785,7 +1986,10 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
               .toList(),
           selected: {_d.damageExtent},
           onSelectionChanged: (s) =>
-              setState(() => _d.damageExtent = s.first),
+              setState(() {
+                _d.damageExtent = s.first;
+                _clearAiField(_AiFilledField.damageExtent);
+              }),
         ),
       ],
     );
@@ -1890,6 +2094,11 @@ enum _AiFilledField {
   canopyDensity,
   structuralIssues,
   landType,
+  phenologicalStage,
+  flowerAbundance,
+  leafCondition,
+  stressSymptoms,
+  damageExtent,
 }
 
 class _XFileThumbnail extends StatefulWidget {

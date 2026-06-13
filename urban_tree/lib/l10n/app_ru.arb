@@ -252,6 +252,19 @@
   "journalObservations": "Мои наблюдения",
   "journalResearchSection": "Инструменты исследователя",
   "journalReadMore": "Подробнее",
+  "journalNavigateInstead": "Маршрут к дереву",
+  "treeActionSheetTitle": "Действия с деревом",
+  "treeActionShowOnMap": "Показать на карте",
+  "treeActionNavigate": "Маршрут к месту",
+  "treeActionShareLocation": "Поделиться местом",
+  "treeActionShareText": "{species} — {mapsUrl}",
+  "@treeActionShareText": {
+    "placeholders": {
+      "species": {"type": "String"},
+      "mapsUrl": {"type": "String"}
+    }
+  },
+  "treeActionViewReport": "Полный отчёт",
   "journalWeeklySummary": "Сводка активности за неделю",
   "journalWeeklyBody": "На этой неделе вы задокументировали новые виды. Продолжайте развивать ботанические исследования в Израиле.",
   "helpCenterTitle": "Центр помощи",

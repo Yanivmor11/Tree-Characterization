@@ -889,6 +889,29 @@ class AppLocalizationsHe extends AppLocalizations {
   String get journalReadMore => 'קרא עוד';
 
   @override
+  String get journalNavigateInstead => 'ניווט לעץ';
+
+  @override
+  String get treeActionSheetTitle => 'פעולות על העץ';
+
+  @override
+  String get treeActionShowOnMap => 'הצג במפה';
+
+  @override
+  String get treeActionNavigate => 'ניווט למיקום';
+
+  @override
+  String get treeActionShareLocation => 'שתף מיקום';
+
+  @override
+  String treeActionShareText(String species, String mapsUrl) {
+    return '$species — $mapsUrl';
+  }
+
+  @override
+  String get treeActionViewReport => 'צפייה בדיווח המלא';
+
+  @override
   String get journalWeeklySummary => 'סיכום פעילות שבועית';
 
   @override

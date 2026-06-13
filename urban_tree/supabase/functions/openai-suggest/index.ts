@@ -80,6 +80,9 @@ function buildSystemPrompt(options: {
     'structural_issues (array with any of: "dead_branches","leaning","cracks","exposed_roots","cavity","other", or empty array if none visible), ' +
     'stress_symptoms (array with any of: "chlorosis","necrosis","wilting","leaf_spot","defoliation","gummosis","pest_damage","none","other", or null), ' +
     'phenological_stage (exactly one of: "bud", "open", "fruit", or null), ' +
+    'flower_abundance (exactly one of: "low", "medium", "high", or null — estimate from visible flower/fruit density), ' +
+    'leaf_condition (exactly one of: "healthy", "stressed", or null), ' +
+    'damage_extent (exactly one of: "minimal", "low", "moderate", "high", or null — foliar damage area), ' +
     `notes (10-20 words in ${langName} describing the tree: species cues, crown, leaf condition, and visible health — required when the image or text is usable). ` +
     `Write translated_display_name and notes ONLY in ${langName}. ` +
     "Keep species_common_en and species_scientific_latin in English/Latin. " +
@@ -99,7 +102,13 @@ function buildSystemPrompt(options: {
 
   if (options.step === "flower_fruit") {
     prompt +=
-      " The reporter is on the flower/fruit step — prioritize phenological_stage and notes.";
+      " The reporter is on the flower/fruit step — prioritize phenological_stage, flower_abundance, and notes.";
+  }
+
+  if (options.step === "leaves") {
+    prompt +=
+      " The reporter is on the leaves step — prioritize leaf_condition, stress_symptoms, and damage_extent; " +
+      'set leaf_condition to "stressed" when any stress symptom is visible.';
   }
   return prompt;
 }

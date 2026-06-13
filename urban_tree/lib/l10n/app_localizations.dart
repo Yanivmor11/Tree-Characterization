@@ -1722,6 +1722,48 @@ abstract class AppLocalizations {
   /// **'Read more'**
   String get journalReadMore;
 
+  /// No description provided for @journalNavigateInstead.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigate to tree'**
+  String get journalNavigateInstead;
+
+  /// No description provided for @treeActionSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tree actions'**
+  String get treeActionSheetTitle;
+
+  /// No description provided for @treeActionShowOnMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Show on map'**
+  String get treeActionShowOnMap;
+
+  /// No description provided for @treeActionNavigate.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigate to location'**
+  String get treeActionNavigate;
+
+  /// No description provided for @treeActionShareLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Share location'**
+  String get treeActionShareLocation;
+
+  /// No description provided for @treeActionShareText.
+  ///
+  /// In en, this message translates to:
+  /// **'{species} — {mapsUrl}'**
+  String treeActionShareText(String species, String mapsUrl);
+
+  /// No description provided for @treeActionViewReport.
+  ///
+  /// In en, this message translates to:
+  /// **'View full report'**
+  String get treeActionViewReport;
+
   /// No description provided for @journalWeeklySummary.
   ///
   /// In en, this message translates to:

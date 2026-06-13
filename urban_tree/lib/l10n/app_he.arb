@@ -429,6 +429,19 @@
   "journalObservations": "התצפיות שלי",
   "journalResearchSection": "כלי מחקר",
   "journalReadMore": "קרא עוד",
+  "journalNavigateInstead": "ניווט לעץ",
+  "treeActionSheetTitle": "פעולות על העץ",
+  "treeActionShowOnMap": "הצג במפה",
+  "treeActionNavigate": "ניווט למיקום",
+  "treeActionShareLocation": "שתף מיקום",
+  "treeActionShareText": "{species} — {mapsUrl}",
+  "@treeActionShareText": {
+    "placeholders": {
+      "species": {"type": "String"},
+      "mapsUrl": {"type": "String"}
+    }
+  },
+  "treeActionViewReport": "צפייה בדיווח המלא",
   "journalWeeklySummary": "סיכום פעילות שבועית",
   "journalWeeklyBody": "תיעדת מינים חדשים השבוע. המשיכו כך לקידום מחקר הצמחייה בישראל.",
 
