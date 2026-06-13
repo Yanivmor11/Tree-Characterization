@@ -33,6 +33,7 @@ flutter build web --release \
   --dart-define=SUPABASE_URL="$SUPABASE_URL" \
   --dart-define=SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
   --dart-define=APP_ENV="$APP_ENV_VALUE" \
-  --dart-define=OPENAI_API_KEY="$OPENAI_VALUE"
+  --dart-define=OPENAI_API_KEY="$OPENAI_VALUE" \
+  --dart-define=BLOCK_SUBMIT_IF_LOW_ACCURACY=false
 
 echo "Web build complete: $ROOT/build/web"

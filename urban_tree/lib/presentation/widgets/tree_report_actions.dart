@@ -4,21 +4,50 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../core/map_navigation.dart';
 import '../../l10n/app_localizations.dart';
+import '../../models/species_monograph.dart';
 import '../../models/tree_report_row.dart';
 import '../../state/map_focus_controller.dart';
 import '../report/report_detail_screen.dart';
+import '../species/species_detail_screen.dart';
 
-/// Actions for identified trees that lack a species monograph entry.
+/// Opens a tree from collection/journal/home — species page or fallback actions.
 abstract final class TreeReportActions {
+  static Future<void> openTree(
+    BuildContext context, {
+    required TreeReportRow row,
+  }) async {
+    try {
+      final species = await SpeciesMonographRepository.instance.resolveForReport(
+        scientific: row.speciesScientific,
+        common: row.species,
+      );
+      if (!context.mounted) return;
+      if (species != null) {
+        await Navigator.of(context).push<void>(
+          MaterialPageRoute<void>(
+            builder: (_) => SpeciesDetailScreen(speciesId: species.id),
+          ),
+        );
+        return;
+      }
+      await showUnlinkedTreeSheet(context, row: row);
+    } catch (_) {
+      if (!context.mounted) return;
+      await showUnlinkedTreeSheet(context, row: row);
+    }
+  }
+
   static Future<void> showUnlinkedTreeSheet(
     BuildContext context, {
     required TreeReportRow row,
   }) {
     final l10n = AppLocalizations.of(context);
     final title = row.species ?? row.speciesScientific ?? '—';
+    final rootContext = context;
     return showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
+      isScrollControlled: true,
       builder: (ctx) {
         return SafeArea(
           child: Padding(
@@ -39,7 +68,7 @@ abstract final class TreeReportActions {
                   title: Text(l10n.treeActionShowOnMap),
                   onTap: () {
                     Navigator.pop(ctx);
-                    context.read<MapFocusController>().focusOn(row);
+                    rootContext.read<MapFocusController>().focusOn(row);
                   },
                 ),
                 ListTile(
@@ -48,7 +77,7 @@ abstract final class TreeReportActions {
                   onTap: () async {
                     Navigator.pop(ctx);
                     await MapNavigation.showChooser(
-                      context,
+                      rootContext,
                       latitude: row.latitude,
                       longitude: row.longitude,
                     );
@@ -73,7 +102,7 @@ abstract final class TreeReportActions {
                   title: Text(l10n.treeActionViewReport),
                   onTap: () {
                     Navigator.pop(ctx);
-                    Navigator.of(context).push<void>(
+                    Navigator.of(rootContext).push<void>(
                       MaterialPageRoute<void>(
                         builder: (_) => ReportDetailScreen(reportId: row.id),
                       ),

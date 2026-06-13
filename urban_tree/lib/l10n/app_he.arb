@@ -140,7 +140,8 @@
   "structuralOther": "אחר",
 
   "step2FlowerFruit": "שלב 2 — פרח / פרי",
-  "step2FlowerFruitDescription": "אופציונלי. אם יש ערבוב של ניצן, פרח פתוח ופרי — צלמו בנפרד.",
+  "step2FlowerFruitOptional": "שלב 2 — פרח / פרי (אופציונלי)",
+  "step2FlowerFruitDescription": "אופציונלי. אפשר לדלג אם אין פרחים או פירות. אם יש ערבוב של ניצן, פרח פתוח ופרי — צלמו בנפרד.",
   "phenologicalStage": "שלב פנולוגי",
   "stageBud": "ניצן",
   "stageOpen": "פרח פתוח",
@@ -151,7 +152,8 @@
   "abundanceHigh": "גבוה",
 
   "step3Leaves": "שלב 3 — עלים",
-  "step3LeavesDescription": "1–3 תמונות של עלים וחיבור לענף (נדרשת לפחות אחת לשליחה). ציינו צהימה, כתמים, חורים או עקמומיות במצב למטה.",
+  "step3LeavesOptional": "שלב 3 — עלים (אופציונלי)",
+  "step3LeavesDescription": "אופציונלי. הוסיפו 1–3 תמונות של עלים אם תרצו לתעד מצוקה. ציינו צהיבה, כתמים, חורים או עקמומיות במצב למטה.",
   "generalCondition": "מצב כללי",
   "conditionHealthy": "בריא",
   "conditionStressed": "במצוקה",
@@ -300,6 +302,8 @@
 
   "identifyHubTitle": "זיהוי בוטני מבוסס AI",
   "identifyHubBody": "צלמו תמונה של עלה, קליפה או פרי כדי לזהות באופן מיידי את מין העץ.",
+  "identifyHubTipsTitle": "טיפים לצילום",
+  "identifyHubTipsBody": "השתמשו באור טבעי, מלאו את המסגרת במה שמזהים, והימנעו מתמונות מטושטשות.",
   "identifyStartCamera": "התחל זיהוי חדש",
   "identifyFromGallery": "בחירה מהגלריה",
   "identifyPhotoGuide": "מדריך צילום",

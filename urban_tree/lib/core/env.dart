@@ -23,7 +23,7 @@ abstract final class AppEnv {
   /// `false` for easier local testing.
   static const bool blockSubmitIfLowAccuracy = bool.fromEnvironment(
     'BLOCK_SUBMIT_IF_LOW_ACCURACY',
-    defaultValue: true,
+    defaultValue: false,
   );
 
   static bool get isProd => appEnv == 'prod';

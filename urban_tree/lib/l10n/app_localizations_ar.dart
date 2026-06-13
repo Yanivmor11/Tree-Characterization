@@ -276,6 +276,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get step2FlowerFruit => 'الخطوة 2 — زهرة / ثمرة';
 
   @override
+  String get step2FlowerFruitOptional => 'Step 2 — Flower / fruit (optional)';
+
+  @override
   String get step2FlowerFruitDescription =>
       'اختياري. إن اختلطت البرعم والزهرة المفتوحة والثمرة، صوّر كلًا على حدة.';
 
@@ -305,6 +308,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get step3Leaves => 'الخطوة 3 — الأوراق';
+
+  @override
+  String get step3LeavesOptional => 'Step 3 — Leaves (optional)';
 
   @override
   String get step3LeavesDescription =>
@@ -584,6 +590,13 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get identifyHubBody =>
       'صوّر ورقة أو لحاءً أو ثمرة للتعرّف الفوري على نوع الشجرة.';
+
+  @override
+  String get identifyHubTipsTitle => 'Photography tips';
+
+  @override
+  String get identifyHubTipsBody =>
+      'Use natural light, fill the frame with the feature you are identifying, and avoid blurry shots.';
 
   @override
   String get identifyStartCamera => 'ابدأ تعرّفًا جديدًا';

@@ -277,6 +277,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get step2FlowerFruit => 'Шаг 2 — Цветок / плод';
 
   @override
+  String get step2FlowerFruitOptional => 'Step 2 — Flower / fruit (optional)';
+
+  @override
   String get step2FlowerFruitDescription =>
       'По желанию. Если смешаны бутон, открытый цветок и плод — снимайте отдельно.';
 
@@ -306,6 +309,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get step3Leaves => 'Шаг 3 — Листья';
+
+  @override
+  String get step3LeavesOptional => 'Step 3 — Leaves (optional)';
 
   @override
   String get step3LeavesDescription =>
@@ -589,6 +595,13 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get identifyHubBody =>
       'Сфотографируйте лист, кору или плод для мгновенного определения вида дерева.';
+
+  @override
+  String get identifyHubTipsTitle => 'Photography tips';
+
+  @override
+  String get identifyHubTipsBody =>
+      'Use natural light, fill the frame with the feature you are identifying, and avoid blurry shots.';
 
   @override
   String get identifyStartCamera => 'Начать новое определение';

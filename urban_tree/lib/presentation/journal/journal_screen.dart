@@ -6,7 +6,6 @@ import '../../models/species_monograph.dart';
 import '../../models/tree_report_row.dart';
 import '../../state/report_feed_controller.dart';
 import '../research_dashboard_screen.dart';
-import '../species/species_detail_screen.dart';
 import '../widgets/tree_report_actions.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
@@ -25,20 +24,7 @@ class JournalScreen extends StatelessWidget {
   final bool embedded;
 
   Future<void> _openEntry(BuildContext context, TreeReportRow row) async {
-    final species = await SpeciesMonographRepository.instance.resolveForReport(
-      scientific: row.speciesScientific,
-      common: row.species,
-    );
-    if (!context.mounted) return;
-    if (species == null) {
-      await TreeReportActions.showUnlinkedTreeSheet(context, row: row);
-      return;
-    }
-    Navigator.of(context).push<void>(
-      MaterialPageRoute<void>(
-        builder: (_) => SpeciesDetailScreen(speciesId: species.id),
-      ),
-    );
+    await TreeReportActions.openTree(context, row: row);
   }
 
   @override

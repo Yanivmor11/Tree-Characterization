@@ -291,23 +291,16 @@ class BentoCard extends StatelessWidget {
       borderRadius: radius,
       elevation: 0,
       shadowColor: AppColors.primary.withValues(alpha: 0.04),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: radius,
-        child: Ink(
-          decoration: BoxDecoration(
-            borderRadius: radius,
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.04),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
+      child: onTap == null
+          ? Padding(padding: padding, child: child)
+          : MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: onTap,
+                child: Padding(padding: padding, child: child),
               ),
-            ],
-          ),
-          child: Padding(padding: padding, child: child),
-        ),
-      ),
+            ),
     );
   }
 }

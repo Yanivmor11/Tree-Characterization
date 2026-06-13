@@ -582,10 +582,16 @@ abstract class AppLocalizations {
   /// **'Step 2 — Flower / fruit'**
   String get step2FlowerFruit;
 
+  /// No description provided for @step2FlowerFruitOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 2 — Flower / fruit (optional)'**
+  String get step2FlowerFruitOptional;
+
   /// No description provided for @step2FlowerFruitDescription.
   ///
   /// In en, this message translates to:
-  /// **'Optional. If bud, open flower, and fruit are mixed, photograph each separately.'**
+  /// **'Optional. Skip this step if there are no flowers or fruit. If bud, open flower, and fruit are mixed, photograph each separately.'**
   String get step2FlowerFruitDescription;
 
   /// No description provided for @phenologicalStage.
@@ -642,10 +648,16 @@ abstract class AppLocalizations {
   /// **'Step 3 — Leaves'**
   String get step3Leaves;
 
+  /// No description provided for @step3LeavesOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 3 — Leaves (optional)'**
+  String get step3LeavesOptional;
+
   /// No description provided for @step3LeavesDescription.
   ///
   /// In en, this message translates to:
-  /// **'1–3 photos of leaves and attachment (at least one required to submit). Note yellowing, spots, holes, or curling in the condition below.'**
+  /// **'Optional. Add 1–3 photos of leaves if you want to document stress. Note yellowing, spots, holes, or curling in the condition below.'**
   String get step3LeavesDescription;
 
   /// No description provided for @generalCondition.
@@ -1139,6 +1151,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Photograph a leaf, bark, or fruit to instantly identify the tree species.'**
   String get identifyHubBody;
+
+  /// No description provided for @identifyHubTipsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Photography tips'**
+  String get identifyHubTipsTitle;
+
+  /// No description provided for @identifyHubTipsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use natural light, fill the frame with the feature you are identifying, and avoid blurry shots.'**
+  String get identifyHubTipsBody;
 
   /// No description provided for @identifyStartCamera.
   ///

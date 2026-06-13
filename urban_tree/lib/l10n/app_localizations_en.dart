@@ -277,8 +277,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get step2FlowerFruit => 'Step 2 — Flower / fruit';
 
   @override
+  String get step2FlowerFruitOptional => 'Step 2 — Flower / fruit (optional)';
+
+  @override
   String get step2FlowerFruitDescription =>
-      'Optional. If bud, open flower, and fruit are mixed, photograph each separately.';
+      'Optional. Skip this step if there are no flowers or fruit. If bud, open flower, and fruit are mixed, photograph each separately.';
 
   @override
   String get phenologicalStage => 'Phenological stage';
@@ -308,8 +311,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get step3Leaves => 'Step 3 — Leaves';
 
   @override
+  String get step3LeavesOptional => 'Step 3 — Leaves (optional)';
+
+  @override
   String get step3LeavesDescription =>
-      '1–3 photos of leaves and attachment (at least one required to submit). Note yellowing, spots, holes, or curling in the condition below.';
+      'Optional. Add 1–3 photos of leaves if you want to document stress. Note yellowing, spots, holes, or curling in the condition below.';
 
   @override
   String get generalCondition => 'General condition';
@@ -587,6 +593,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get identifyHubBody =>
       'Photograph a leaf, bark, or fruit to instantly identify the tree species.';
+
+  @override
+  String get identifyHubTipsTitle => 'Photography tips';
+
+  @override
+  String get identifyHubTipsBody =>
+      'Use natural light, fill the frame with the feature you are identifying, and avoid blurry shots.';
 
   @override
   String get identifyStartCamera => 'Start new identification';

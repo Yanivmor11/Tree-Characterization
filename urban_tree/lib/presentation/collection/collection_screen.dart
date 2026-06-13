@@ -3,10 +3,8 @@ import 'package:provider/provider.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../models/land_use.dart';
-import '../../models/species_monograph.dart';
 import '../../models/tree_report_row.dart';
 import '../../state/report_feed_controller.dart';
-import '../species/species_detail_screen.dart';
 import '../widgets/tree_report_actions.dart';
 import '../theme/app_theme.dart';
 import '../widgets/botanical_widgets.dart';
@@ -57,20 +55,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
   }
 
   Future<void> _openSpecies(TreeReportRow row) async {
-    final species = await SpeciesMonographRepository.instance.resolveForReport(
-      scientific: row.speciesScientific,
-      common: row.species,
-    );
-    if (!mounted) return;
-    if (species == null) {
-      await TreeReportActions.showUnlinkedTreeSheet(context, row: row);
-      return;
-    }
-    Navigator.of(context).push<void>(
-      MaterialPageRoute<void>(
-        builder: (_) => SpeciesDetailScreen(speciesId: species.id),
-      ),
-    );
+    await TreeReportActions.openTree(context, row: row);
   }
 
   @override

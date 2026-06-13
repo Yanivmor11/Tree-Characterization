@@ -140,7 +140,8 @@
   "structuralOther": "Other",
 
   "step2FlowerFruit": "Step 2 — Flower / fruit",
-  "step2FlowerFruitDescription": "Optional. If bud, open flower, and fruit are mixed, photograph each separately.",
+  "step2FlowerFruitOptional": "Step 2 — Flower / fruit (optional)",
+  "step2FlowerFruitDescription": "Optional. Skip this step if there are no flowers or fruit. If bud, open flower, and fruit are mixed, photograph each separately.",
   "phenologicalStage": "Phenological stage",
   "stageBud": "Bud",
   "stageOpen": "Open flower",
@@ -151,7 +152,8 @@
   "abundanceHigh": "High",
 
   "step3Leaves": "Step 3 — Leaves",
-  "step3LeavesDescription": "1–3 photos of leaves and attachment (at least one required to submit). Note yellowing, spots, holes, or curling in the condition below.",
+  "step3LeavesOptional": "Step 3 — Leaves (optional)",
+  "step3LeavesDescription": "Optional. Add 1–3 photos of leaves if you want to document stress. Note yellowing, spots, holes, or curling in the condition below.",
   "generalCondition": "General condition",
   "conditionHealthy": "Healthy",
   "conditionStressed": "Stressed",
@@ -300,6 +302,8 @@
 
   "identifyHubTitle": "AI botanical identification",
   "identifyHubBody": "Photograph a leaf, bark, or fruit to instantly identify the tree species.",
+  "identifyHubTipsTitle": "Photography tips",
+  "identifyHubTipsBody": "Use natural light, fill the frame with the feature you are identifying, and avoid blurry shots.",
   "identifyStartCamera": "Start new identification",
   "identifyFromGallery": "Choose from gallery",
   "identifyPhotoGuide": "Photo guide",

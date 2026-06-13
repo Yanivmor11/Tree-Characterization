@@ -65,7 +65,6 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
   final _landUseService = LandUseService();
   int _step = 0;
   bool _submitting = false;
-  bool _accuracyTipVisible = true;
 
   CharacterizationSuggestion? _suggestionWhole;
   CharacterizationSuggestion? _suggestionFlower;
@@ -527,15 +526,8 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
       final message = switch (block) {
         ReportSubmitBlockReason.needsWholeTreePhoto =>
           l10n.reportValidationWholeTreePhotos,
-        ReportSubmitBlockReason.needsLeavesPhoto =>
-          l10n.reportValidationLeavesPhotos,
         ReportSubmitBlockReason.needsFlowerMeta =>
           l10n.reportValidationFlowerIncomplete,
-        ReportSubmitBlockReason.gpsAccuracyTooLow =>
-          l10n.reportValidationGpsAccuracyBlocked(
-            _d.accuracyMeters!.toStringAsFixed(1),
-            kTargetLocationAccuracyMeters.toStringAsFixed(0),
-          ),
       };
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message)),
@@ -557,15 +549,8 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
       final message = switch (blockAfterAnchor) {
         ReportSubmitBlockReason.needsWholeTreePhoto =>
           l10n.reportValidationWholeTreePhotos,
-        ReportSubmitBlockReason.needsLeavesPhoto =>
-          l10n.reportValidationLeavesPhotos,
         ReportSubmitBlockReason.needsFlowerMeta =>
           l10n.reportValidationFlowerIncomplete,
-        ReportSubmitBlockReason.gpsAccuracyTooLow =>
-          l10n.reportValidationGpsAccuracyBlocked(
-            _d.accuracyMeters!.toStringAsFixed(1),
-            kTargetLocationAccuracyMeters.toStringAsFixed(0),
-          ),
       };
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -709,28 +694,6 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
                   ),
                   icon: Icon(Icons.close, color: theme.colorScheme.onTertiaryContainer),
                   onPressed: () => setState(() => _phenologyBanner = null),
-                ),
-              ),
-            ),
-          if (_d.hasLowAccuracyWarning && _accuracyTipVisible)
-            Card(
-              color: theme.colorScheme.errorContainer,
-              child: ListTile(
-                title: Text(
-                  l10n.gpsAccuracyWarning(
-                    _d.accuracyMeters!.toStringAsFixed(1),
-                    kTargetLocationAccuracyMeters.toStringAsFixed(0),
-                  ),
-                  style: TextStyle(color: theme.colorScheme.onErrorContainer),
-                ),
-                trailing: IconButton(
-                  tooltip: l10n.a11yClose,
-                  constraints: const BoxConstraints(
-                    minWidth: _minTouchTarget,
-                    minHeight: _minTouchTarget,
-                  ),
-                  icon: Icon(Icons.close, color: theme.colorScheme.onErrorContainer),
-                  onPressed: () => setState(() => _accuracyTipVisible = false),
                 ),
               ),
             ),
@@ -1783,7 +1746,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(l10n.step2FlowerFruit, style: theme.textTheme.titleLarge),
+        Text(l10n.step2FlowerFruitOptional, style: theme.textTheme.titleLarge),
         const SizedBox(height: 8),
         Text(
           l10n.step2FlowerFruitDescription,
@@ -1874,7 +1837,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(l10n.step3Leaves, style: theme.textTheme.titleLarge),
+        Text(l10n.step3LeavesOptional, style: theme.textTheme.titleLarge),
         const SizedBox(height: 8),
         Text(
           l10n.step3LeavesDescription,

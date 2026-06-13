@@ -33,10 +33,7 @@ class IdentifyHubScreen extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  flex: 8,
-                  child: _HeroPanel(l10n: l10n),
-                ),
+                Expanded(child: _HeroPanel(l10n: l10n)),
                 const SizedBox(width: 24),
                 Expanded(
                   flex: 4,
@@ -133,7 +130,7 @@ class _GuidePanel extends StatelessWidget {
           Icon(Icons.camera_enhance, size: 48, color: cs.primary.withValues(alpha: 0.8)),
           const SizedBox(height: 12),
           Text(
-            l10n.identifyPhotoGuide,
+            l10n.identifyHubTipsTitle,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w700,
                   color: cs.primary,
@@ -141,20 +138,10 @@ class _GuidePanel extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            l10n.identifyHubBody,
+            l10n.identifyHubTipsBody,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: cs.onSurfaceVariant,
                 ),
-          ),
-          const SizedBox(height: 20),
-          OutlinedButton.icon(
-            onPressed: () => Navigator.of(context).push<void>(
-              MaterialPageRoute<void>(
-                builder: (_) => const PhotoGuideScreen(),
-              ),
-            ),
-            icon: const Icon(Icons.menu_book_outlined),
-            label: Text(l10n.identifyPhotoGuide),
           ),
         ],
       ),

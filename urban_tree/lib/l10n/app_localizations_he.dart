@@ -275,8 +275,11 @@ class AppLocalizationsHe extends AppLocalizations {
   String get step2FlowerFruit => 'שלב 2 — פרח / פרי';
 
   @override
+  String get step2FlowerFruitOptional => 'שלב 2 — פרח / פרי (אופציונלי)';
+
+  @override
   String get step2FlowerFruitDescription =>
-      'אופציונלי. אם יש ערבוב של ניצן, פרח פתוח ופרי — צלמו בנפרד.';
+      'אופציונלי. אפשר לדלג אם אין פרחים או פירות. אם יש ערבוב של ניצן, פרח פתוח ופרי — צלמו בנפרד.';
 
   @override
   String get phenologicalStage => 'שלב פנולוגי';
@@ -306,8 +309,11 @@ class AppLocalizationsHe extends AppLocalizations {
   String get step3Leaves => 'שלב 3 — עלים';
 
   @override
+  String get step3LeavesOptional => 'שלב 3 — עלים (אופציונלי)';
+
+  @override
   String get step3LeavesDescription =>
-      '1–3 תמונות של עלים וחיבור לענף (נדרשת לפחות אחת לשליחה). ציינו צהימה, כתמים, חורים או עקמומיות במצב למטה.';
+      'אופציונלי. הוסיפו 1–3 תמונות של עלים אם תרצו לתעד מצוקה. ציינו צהיבה, כתמים, חורים או עקמומיות במצב למטה.';
 
   @override
   String get generalCondition => 'מצב כללי';
@@ -581,6 +587,13 @@ class AppLocalizationsHe extends AppLocalizations {
   @override
   String get identifyHubBody =>
       'צלמו תמונה של עלה, קליפה או פרי כדי לזהות באופן מיידי את מין העץ.';
+
+  @override
+  String get identifyHubTipsTitle => 'טיפים לצילום';
+
+  @override
+  String get identifyHubTipsBody =>
+      'השתמשו באור טבעי, מלאו את המסגרת במה שמזהים, והימנעו מתמונות מטושטשות.';
 
   @override
   String get identifyStartCamera => 'התחל זיהוי חדש';

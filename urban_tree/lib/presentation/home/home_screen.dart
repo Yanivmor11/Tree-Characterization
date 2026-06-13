@@ -7,6 +7,7 @@ import '../../state/auth_controller.dart';
 import '../../state/report_feed_controller.dart';
 import '../routes/app_routes.dart';
 import '../species/species_detail_screen.dart';
+import '../widgets/tree_report_actions.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import '../widgets/botanical_widgets.dart';
@@ -103,13 +104,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> _openSpeciesByName(String? scientific) async {
-    final species =
-        await SpeciesMonographRepository.instance.byScientificName(scientific);
-    if (!mounted || species == null) return;
-    _openSpeciesById(species.id);
-  }
-
   void _openSpeciesById(String id) {
     Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
@@ -198,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ? row.wholeTreeImageUrls.first
                           : null,
                       healthScore: row.healthScore,
-                      onTap: () => _openSpeciesByName(row.speciesScientific),
+                      onTap: () => TreeReportActions.openTree(context, row: row),
                     );
                   },
                 ),
