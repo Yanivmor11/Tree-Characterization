@@ -24,6 +24,7 @@ import '../../services/report_scoring_service.dart';
 import '../../services/tree_report_repository.dart';
 import '../../services/tree_report_validator.dart';
 import '../../services/auth_bootstrap.dart';
+import '../theme/app_colors.dart';
 
 /// Three-step physiological reporting wizard per [MAPPING_PROTOCOL.md].
 ///
@@ -76,6 +77,8 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
   bool _authChecking = true;
   Timer? _visionDebounce;
   PhenologyWarning? _phenologyBanner;
+  bool _applyingAi = false;
+  final Set<_AiFilledField> _aiFilledFields = {};
 
   TreeReportDraft get _d => widget.draft;
 
@@ -106,13 +109,9 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     } else if (_d.speciesCommon != null) {
       _speciesController.text = _d.speciesCommon!;
     }
-    _speciesController.addListener(() {
-      _d.speciesDisplayName = _speciesController.text.trim().isEmpty
-          ? null
-          : _speciesController.text.trim();
-    });
-    _assistantNotesWhole.addListener(_onAssistantNotesChanged);
-    _assistantNotesFlower.addListener(_onAssistantNotesChanged);
+    _speciesController.addListener(_onSpeciesEdited);
+    _assistantNotesWhole.addListener(_onAssistantNotesWholeChanged);
+    _assistantNotesFlower.addListener(_onAssistantNotesFlowerChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_d.wholeTreeImages.isNotEmpty) {
         _scheduleVisionAnalysis();
@@ -120,15 +119,42 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     });
   }
 
-  void _onAssistantNotesChanged() {
+  void _onSpeciesEdited() {
+    if (_applyingAi) return;
+    _d.speciesDisplayName = _speciesController.text.trim().isEmpty
+        ? null
+        : _speciesController.text.trim();
+    if (_aiFilledFields.remove(_AiFilledField.species)) {
+      setState(() {});
+    }
+  }
+
+  void _onAssistantNotesWholeChanged() {
+    if (_applyingAi) return;
+    if (_aiFilledFields.remove(_AiFilledField.description)) {
+      setState(() {});
+      return;
+    }
     if (mounted) setState(() {});
+  }
+
+  void _onAssistantNotesFlowerChanged() {
+    if (_applyingAi) return;
+    if (mounted) setState(() {});
+  }
+
+  void _clearAiField(_AiFilledField field) {
+    if (_aiFilledFields.remove(field)) {
+      setState(() {});
+    }
   }
 
   @override
   void dispose() {
     _visionDebounce?.cancel();
-    _assistantNotesWhole.removeListener(_onAssistantNotesChanged);
-    _assistantNotesFlower.removeListener(_onAssistantNotesChanged);
+    _speciesController.removeListener(_onSpeciesEdited);
+    _assistantNotesWhole.removeListener(_onAssistantNotesWholeChanged);
+    _assistantNotesFlower.removeListener(_onAssistantNotesFlowerChanged);
     _assistantNotesWhole.dispose();
     _assistantNotesFlower.dispose();
     _speciesController.dispose();
@@ -154,6 +180,9 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
         _authReady = hasSession;
         _authChecking = false;
       });
+      if (hasSession) {
+        _scheduleVisionAnalysis();
+      }
     } catch (_) {
       if (!mounted) return;
       setState(() {
@@ -734,6 +763,104 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     );
   }
 
+  static HazardAssessment? _hazardFromSuggestion(String? value) {
+    return switch (value) {
+      'low' => HazardAssessment.low,
+      'medium' => HazardAssessment.medium,
+      'high' => HazardAssessment.high,
+      _ => null,
+    };
+  }
+
+  static CanopyDensity? _canopyFromSuggestion(String? value) {
+    return switch (value) {
+      'sparse' => CanopyDensity.sparse,
+      'moderate' => CanopyDensity.moderate,
+      'dense' => CanopyDensity.dense,
+      _ => null,
+    };
+  }
+
+  static StructuralIssue? _structuralIssueFromStorage(String value) {
+    return switch (value) {
+      'dead_branches' => StructuralIssue.deadBranches,
+      'leaning' => StructuralIssue.leaning,
+      'cracks' => StructuralIssue.cracks,
+      'exposed_roots' => StructuralIssue.exposedRoots,
+      'cavity' => StructuralIssue.cavity,
+      'other' => StructuralIssue.other,
+      _ => null,
+    };
+  }
+
+  void _markAiFieldsFromSuggestion(
+    CharacterizationSuggestion s, {
+    required bool flowerOnly,
+  }) {
+    if (flowerOnly) {
+      if (s.notes != null && s.notes!.trim().isNotEmpty) {
+        _aiFilledFields.add(_AiFilledField.description);
+      }
+      return;
+    }
+    if (s.translatedDisplayName != null ||
+        s.speciesCommon != null ||
+        s.speciesScientific != null) {
+      _aiFilledFields.add(_AiFilledField.species);
+    }
+    if (s.notes != null && s.notes!.trim().isNotEmpty) {
+      _aiFilledFields.add(_AiFilledField.description);
+    }
+    if (s.healthScore != null) {
+      _aiFilledFields.add(_AiFilledField.healthScore);
+    }
+    if (s.hazardAssessment != null) {
+      _aiFilledFields.add(_AiFilledField.hazardAssessment);
+    }
+    if (s.canopyDensity != null) {
+      _aiFilledFields.add(_AiFilledField.canopyDensity);
+    }
+    if (s.structuralIssues != null && s.structuralIssues!.isNotEmpty) {
+      _aiFilledFields.add(_AiFilledField.structuralIssues);
+    }
+  }
+
+  Widget _aiFilledBadge(AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.35)),
+      ),
+      child: Text(
+        l10n.aiFilledByLabel,
+        style: const TextStyle(
+          color: AppColors.primary,
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+
+  Widget _fieldLabelWithAiBadge({
+    required String label,
+    required TextStyle? style,
+    required bool aiFilled,
+    required AppLocalizations l10n,
+  }) {
+    return Row(
+      children: [
+        Flexible(child: Text(label, style: style)),
+        if (aiFilled) ...[
+          const SizedBox(width: 8),
+          _aiFilledBadge(l10n),
+        ],
+      ],
+    );
+  }
+
   PhenologicalStage? _phenologicalStageFromSuggestion(CharacterizationSuggestion s) {
     return switch (s.phenologicalStage) {
       'bud' => PhenologicalStage.bud,
@@ -749,6 +876,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     bool flowerOnly = false,
   }) {
     final stageEnum = _phenologicalStageFromSuggestion(s);
+    _applyingAi = true;
     setState(() {
       if (!flowerOnly) {
         if (s.speciesCommon != null && s.speciesCommon!.isNotEmpty) {
@@ -766,6 +894,23 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
         if (s.healthScore != null) {
           _d.healthScore = s.healthScore!;
         }
+        final hazard = _hazardFromSuggestion(s.hazardAssessment);
+        if (hazard != null) {
+          _d.hazardAssessment = hazard;
+        }
+        final canopy = _canopyFromSuggestion(s.canopyDensity);
+        if (canopy != null) {
+          _d.canopyDensity = canopy;
+        }
+        if (s.structuralIssues != null && s.structuralIssues!.isNotEmpty) {
+          _d.structuralIssues
+            ..clear()
+            ..addAll(
+              s.structuralIssues!
+                  .map(_structuralIssueFromStorage)
+                  .whereType<StructuralIssue>(),
+            );
+        }
         if (s.stressSymptoms != null && s.stressSymptoms!.isNotEmpty) {
           _d.stressSymptoms
             ..clear()
@@ -782,6 +927,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
         if (s.notes != null && s.notes!.trim().isNotEmpty) {
           _assistantNotesWhole.text = s.notes!.trim();
         }
+        _markAiFieldsFromSuggestion(s, flowerOnly: false);
       }
       if (includePhenology && stageEnum != null) {
         _d.phenologicalStage = stageEnum;
@@ -791,9 +937,12 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
       if (s.notes != null && s.notes!.trim().isNotEmpty) {
         if (flowerOnly) {
           _assistantNotesFlower.text = s.notes!.trim();
+          _markAiFieldsFromSuggestion(s, flowerOnly: true);
         }
       }
+      _d.aiSuggestionAudit = s.toAuditJson();
     });
+    _applyingAi = false;
   }
 
   void _showAppliedSnackBar(_DraftAiSnapshot snapshot) {
@@ -805,7 +954,12 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
           label: l10n.assistantUndo,
           onPressed: () {
             if (!mounted) return;
-            setState(() => snapshot.restore(_d, _speciesController));
+            setState(() {
+              snapshot.restore(_d, _speciesController, _assistantNotesWhole);
+              _aiFilledFields
+                ..clear()
+                ..addAll(snapshot.aiFilledFields);
+            });
             unawaited(_refreshPhenologyBanner());
           },
         ),
@@ -814,14 +968,24 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
   }
 
   void _autoApplySuggestion(CharacterizationSuggestion s, {required bool includePhenology}) {
-    final snapshot = _DraftAiSnapshot.capture(_d, _speciesController);
+    final snapshot = _DraftAiSnapshot.capture(
+      _d,
+      _speciesController,
+      _assistantNotesWhole,
+      _aiFilledFields,
+    );
     _applySuggestionToDraft(s, includePhenology: includePhenology);
     _showAppliedSnackBar(snapshot);
     unawaited(_refreshPhenologyBanner());
   }
 
   void _autoApplyFlowerSuggestion(CharacterizationSuggestion s) {
-    final snapshot = _DraftAiSnapshot.capture(_d, _speciesController);
+    final snapshot = _DraftAiSnapshot.capture(
+      _d,
+      _speciesController,
+      _assistantNotesWhole,
+      _aiFilledFields,
+    );
     _applySuggestionToDraft(s, includePhenology: false, flowerOnly: true);
     _showAppliedSnackBar(snapshot);
     unawaited(_refreshPhenologyBanner());
@@ -847,7 +1011,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
                 child: CircularProgressIndicator(strokeWidth: 2),
               ),
               const SizedBox(width: 12),
-              Expanded(child: Text(l10n.assistantWorking)),
+              Expanded(child: Text(l10n.visionAnalyzingPhoto)),
             ],
           ),
         ),
@@ -920,7 +1084,12 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
               controller: _assistantNotesWhole,
               maxLines: 3,
               decoration: InputDecoration(
-                labelText: l10n.assistantNotesLabel,
+                label: _fieldLabelWithAiBadge(
+                  label: l10n.assistantNotesLabel,
+                  style: theme.textTheme.bodySmall,
+                  aiFilled: _aiFilledFields.contains(_AiFilledField.description),
+                  l10n: l10n,
+                ),
                 hintText: l10n.assistantNotesHint,
               ),
             ),
@@ -1238,21 +1407,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
           l10n.step1WholeTreeDescription,
           style: theme.textTheme.bodyMedium,
         ),
-        const SizedBox(height: 12),
-        TextField(
-          controller: _speciesController,
-          textCapitalization: TextCapitalization.words,
-          decoration: InputDecoration(
-            labelText: l10n.speciesLabel,
-            hintText: l10n.speciesHint,
-            border: const OutlineInputBorder(),
-          ),
-        ),
-        const SizedBox(height: 12),
-        _assistantCardWhole(theme, l10n),
-        const SizedBox(height: 12),
-        _visionSuggestionCard(theme, l10n),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -1273,7 +1428,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
-              'Connecting assistant...',
+              l10n.assistantConnecting,
               style: theme.textTheme.bodySmall,
             ),
           )
@@ -1281,7 +1436,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
-              'Assistant temporarily unavailable: no Supabase session.',
+              l10n.assistantUnavailable,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.error,
               ),
@@ -1289,10 +1444,36 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
           ),
         const SizedBox(height: 12),
         _thumbStrip(_d.wholeTreeImages, (i) => _removeAt(_d.wholeTreeImages, i)),
+        if (_visionLoading) ...[
+          const SizedBox(height: 12),
+          _visionSuggestionCard(theme, l10n),
+        ] else if (_visionSuggestion != null) ...[
+          const SizedBox(height: 12),
+          _visionSuggestionCard(theme, l10n),
+        ],
+        const SizedBox(height: 16),
+        TextField(
+          controller: _speciesController,
+          textCapitalization: TextCapitalization.words,
+          decoration: InputDecoration(
+            label: _fieldLabelWithAiBadge(
+              label: l10n.speciesLabel,
+              style: theme.textTheme.bodySmall,
+              aiFilled: _aiFilledFields.contains(_AiFilledField.species),
+              l10n: l10n,
+            ),
+            hintText: l10n.speciesHint,
+            border: const OutlineInputBorder(),
+          ),
+        ),
+        const SizedBox(height: 12),
+        _assistantCardWhole(theme, l10n),
         const SizedBox(height: 20),
-        Text(
-          l10n.healthScoreLabel(_d.healthScore),
+        _fieldLabelWithAiBadge(
+          label: l10n.healthScoreLabel(_d.healthScore),
           style: theme.textTheme.titleMedium,
+          aiFilled: _aiFilledFields.contains(_AiFilledField.healthScore),
+          l10n: l10n,
         ),
         Slider(
           value: _d.healthScore.toDouble(),
@@ -1300,10 +1481,18 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
           max: 5,
           divisions: 4,
           label: '${_d.healthScore}',
-          onChanged: (v) => setState(() => _d.healthScore = v.round()),
+          onChanged: (v) {
+            _clearAiField(_AiFilledField.healthScore);
+            setState(() => _d.healthScore = v.round());
+          },
         ),
         const SizedBox(height: 16),
-        Text(l10n.reportRiskAssessment, style: theme.textTheme.titleMedium),
+        _fieldLabelWithAiBadge(
+          label: l10n.reportRiskAssessment,
+          style: theme.textTheme.titleMedium,
+          aiFilled: _aiFilledFields.contains(_AiFilledField.hazardAssessment),
+          l10n: l10n,
+        ),
         const SizedBox(height: 8),
         DropdownButtonFormField<HazardAssessment>(
           initialValue: _d.hazardAssessment,
@@ -1324,11 +1513,17 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
           ],
           onChanged: (v) {
             if (v == null) return;
+            _clearAiField(_AiFilledField.hazardAssessment);
             setState(() => _d.hazardAssessment = v);
           },
         ),
         const SizedBox(height: 8),
-        Text(l10n.canopyDensity, style: theme.textTheme.titleMedium),
+        _fieldLabelWithAiBadge(
+          label: l10n.canopyDensity,
+          style: theme.textTheme.titleMedium,
+          aiFilled: _aiFilledFields.contains(_AiFilledField.canopyDensity),
+          l10n: l10n,
+        ),
         const SizedBox(height: 8),
         SegmentedButton<CanopyDensity>(
           segments: [
@@ -1346,11 +1541,18 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
             ),
           ],
           selected: {_d.canopyDensity},
-          onSelectionChanged: (s) =>
-              setState(() => _d.canopyDensity = s.first),
+          onSelectionChanged: (s) {
+            _clearAiField(_AiFilledField.canopyDensity);
+            setState(() => _d.canopyDensity = s.first);
+          },
         ),
         const SizedBox(height: 16),
-        Text(l10n.structuralIssues, style: theme.textTheme.titleMedium),
+        _fieldLabelWithAiBadge(
+          label: l10n.structuralIssues,
+          style: theme.textTheme.titleMedium,
+          aiFilled: _aiFilledFields.contains(_AiFilledField.structuralIssues),
+          l10n: l10n,
+        ),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,
@@ -1362,6 +1564,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
               label: l10n.structuralIssueLabel(issue),
               selected: selected,
               onSelected: (on) {
+                _clearAiField(_AiFilledField.structuralIssues);
                 setState(() {
                   if (on) {
                     _d.structuralIssues.add(issue);
@@ -1556,56 +1759,92 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
 class _DraftAiSnapshot {
   _DraftAiSnapshot({
     required this.speciesControllerText,
+    required this.assistantNotesWholeText,
     required this.speciesDisplayName,
     required this.speciesCommon,
     required this.speciesScientific,
     required this.speciesConfidence,
     required this.healthScore,
+    required this.hazardAssessment,
+    required this.canopyDensity,
+    required this.structuralIssues,
     required this.stressSymptoms,
     required this.leafCondition,
     required this.phenologicalStage,
+    required this.aiFilledFields,
   });
 
   final String speciesControllerText;
+  final String assistantNotesWholeText;
   final String? speciesDisplayName;
   final String? speciesCommon;
   final String? speciesScientific;
   final double? speciesConfidence;
   final int healthScore;
+  final HazardAssessment hazardAssessment;
+  final CanopyDensity canopyDensity;
+  final Set<StructuralIssue> structuralIssues;
   final Set<StressSymptom> stressSymptoms;
   final LeafCondition leafCondition;
   final PhenologicalStage? phenologicalStage;
+  final Set<_AiFilledField> aiFilledFields;
 
   factory _DraftAiSnapshot.capture(
     TreeReportDraft draft,
     TextEditingController speciesController,
+    TextEditingController assistantNotesWhole,
+    Set<_AiFilledField> aiFilledFields,
   ) {
     return _DraftAiSnapshot(
       speciesControllerText: speciesController.text,
+      assistantNotesWholeText: assistantNotesWhole.text,
       speciesDisplayName: draft.speciesDisplayName,
       speciesCommon: draft.speciesCommon,
       speciesScientific: draft.speciesScientific,
       speciesConfidence: draft.speciesConfidence,
       healthScore: draft.healthScore,
+      hazardAssessment: draft.hazardAssessment,
+      canopyDensity: draft.canopyDensity,
+      structuralIssues: Set<StructuralIssue>.from(draft.structuralIssues),
       stressSymptoms: Set<StressSymptom>.from(draft.stressSymptoms),
       leafCondition: draft.leafCondition,
       phenologicalStage: draft.phenologicalStage,
+      aiFilledFields: Set<_AiFilledField>.from(aiFilledFields),
     );
   }
 
-  void restore(TreeReportDraft draft, TextEditingController speciesController) {
+  void restore(
+    TreeReportDraft draft,
+    TextEditingController speciesController,
+    TextEditingController assistantNotesWhole,
+  ) {
     speciesController.text = speciesControllerText;
+    assistantNotesWhole.text = assistantNotesWholeText;
     draft.speciesDisplayName = speciesDisplayName;
     draft.speciesCommon = speciesCommon;
     draft.speciesScientific = speciesScientific;
     draft.speciesConfidence = speciesConfidence;
     draft.healthScore = healthScore;
+    draft.hazardAssessment = hazardAssessment;
+    draft.canopyDensity = canopyDensity;
+    draft.structuralIssues
+      ..clear()
+      ..addAll(structuralIssues);
     draft.stressSymptoms
       ..clear()
       ..addAll(stressSymptoms);
     draft.leafCondition = leafCondition;
     draft.phenologicalStage = phenologicalStage;
   }
+}
+
+enum _AiFilledField {
+  species,
+  description,
+  healthScore,
+  hazardAssessment,
+  canopyDensity,
+  structuralIssues,
 }
 
 class _XFileThumbnail extends StatefulWidget {

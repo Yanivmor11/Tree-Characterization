@@ -732,6 +732,30 @@ abstract class AppLocalizations {
   /// **'Working…'**
   String get assistantWorking;
 
+  /// No description provided for @visionAnalyzingPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzing photo with AI…'**
+  String get visionAnalyzingPhoto;
+
+  /// No description provided for @aiFilledByLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'By AI'**
+  String get aiFilledByLabel;
+
+  /// No description provided for @assistantConnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting assistant…'**
+  String get assistantConnecting;
+
+  /// No description provided for @assistantUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Assistant temporarily unavailable: no Supabase session.'**
+  String get assistantUnavailable;
+
   /// No description provided for @assistantError.
   ///
   /// In en, this message translates to:

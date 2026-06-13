@@ -353,6 +353,19 @@ class AppLocalizationsHe extends AppLocalizations {
   String get assistantWorking => 'מעבד…';
 
   @override
+  String get visionAnalyzingPhoto => 'מנתח תמונה עם AI…';
+
+  @override
+  String get aiFilledByLabel => 'ע\"י AI';
+
+  @override
+  String get assistantConnecting => 'מתחבר לעוזר…';
+
+  @override
+  String get assistantUnavailable =>
+      'העוזר אינו זמין כרגע: אין חיבור ל-Supabase.';
+
+  @override
   String assistantError(String message) {
     return 'שגיאה: $message';
   }

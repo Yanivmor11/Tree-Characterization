@@ -22,6 +22,9 @@ class CharacterizationSuggestion {
     this.sourceLanguage,
     this.speciesConfidence,
     this.healthScore,
+    this.hazardAssessment,
+    this.canopyDensity,
+    this.structuralIssues,
     this.stressSymptoms,
     this.phenologicalStage,
     this.notes,
@@ -33,6 +36,12 @@ class CharacterizationSuggestion {
   final String? sourceLanguage;
   final double? speciesConfidence;
   final int? healthScore;
+  /// One of: `low`, `medium`, `high`.
+  final String? hazardAssessment;
+  /// One of: `sparse`, `moderate`, `dense`.
+  final String? canopyDensity;
+  /// Storage values: `dead_branches`, `leaning`, `cracks`, `exposed_roots`, `cavity`, `other`.
+  final List<String>? structuralIssues;
   final List<String>? stressSymptoms;
   final String? phenologicalStage;
   final String? notes;
@@ -44,6 +53,9 @@ class CharacterizationSuggestion {
           (notes != null && notes!.trim().isNotEmpty);
     }
     return healthScore != null ||
+        hazardAssessment != null ||
+        canopyDensity != null ||
+        (structuralIssues != null && structuralIssues!.isNotEmpty) ||
         speciesCommon != null ||
         speciesScientific != null ||
         (translatedDisplayName != null && translatedDisplayName!.isNotEmpty) ||
@@ -63,6 +75,9 @@ class CharacterizationSuggestion {
       if (sourceLanguage != null) 'source_language': sourceLanguage,
       if (speciesConfidence != null) 'species_confidence': speciesConfidence,
       if (healthScore != null) 'health_score': healthScore,
+      if (hazardAssessment != null) 'hazard_assessment': hazardAssessment,
+      if (canopyDensity != null) 'canopy_density': canopyDensity,
+      if (structuralIssues != null) 'structural_issues': structuralIssues,
       if (stressSymptoms != null) 'stress_symptoms': stressSymptoms,
       if (phenologicalStage != null) 'phenological_stage': phenologicalStage,
       if (notes != null) 'notes': notes,
@@ -292,9 +307,12 @@ class AIService {
         'source_language (BCP-47 code "$languageCode"), '
         'species_confidence (number 0-1 or null), '
         'health_score (integer 1-5 — provide your best estimate when the tree is visible; typical healthy urban trees are 3-5), '
+        'hazard_assessment (exactly one of: "low", "medium", "high" — structural/public safety risk from visible defects), '
+        'canopy_density (exactly one of: "sparse", "moderate", "dense"), '
+        'structural_issues (array with any of: "dead_branches","leaning","cracks","exposed_roots","cavity","other", or empty array if none visible), '
         'stress_symptoms (array with any of: "chlorosis","necrosis","wilting","leaf_spot","defoliation","gummosis","pest_damage","none","other", or null), '
         'phenological_stage (exactly one of: "bud", "open", "fruit", or null), '
-        'notes (40-80 words in $langName describing the tree: species cues, crown shape, leaf condition, bark, setting, and visible health — required when the image or text is usable). '
+        'notes (10-20 words in $langName describing the tree: species cues, crown, leaf condition, and visible health — required when the image or text is usable). '
         'Write translated_display_name and notes ONLY in $langName. '
         'Keep species_common_en and species_scientific_latin in English/Latin. '
         'Fill every field you can infer; use null only when truly uncertain or not visible. '
@@ -304,7 +322,9 @@ class AIService {
     if (vision) {
       prompt +=
           ' Analyze the tree photo carefully: identify species from leaves, bark, crown, and fruit if visible; '
-          'assess overall health (1=very poor, 5=excellent); note stress symptoms; infer phenological stage when clear.';
+          'assess overall health (1=very poor, 5=excellent), hazard_assessment, canopy_density, and visible structural_issues; '
+          'note stress symptoms; infer phenological stage when clear. '
+          'Always fill species, notes, health_score, hazard_assessment, and canopy_density when the tree is visible.';
     }
 
     if (step == 'flower_fruit') {
@@ -551,11 +571,46 @@ class AIService {
     return null;
   }
 
+  static String? _normalizeHazardAssessment(dynamic raw) {
+    if (raw == null) return null;
+    final normalized = raw.toString().trim().toLowerCase();
+    const allowed = {'low', 'medium', 'high'};
+    return allowed.contains(normalized) ? normalized : null;
+  }
+
+  static String? _normalizeCanopyDensity(dynamic raw) {
+    if (raw == null) return null;
+    final normalized = raw.toString().trim().toLowerCase();
+    const allowed = {'sparse', 'moderate', 'dense'};
+    return allowed.contains(normalized) ? normalized : null;
+  }
+
+  static List<String>? _parseStructuralIssues(dynamic raw) {
+    if (raw is! List) return null;
+    const allowed = {
+      'dead_branches',
+      'leaning',
+      'cracks',
+      'exposed_roots',
+      'cavity',
+      'other',
+    };
+    final normalized = raw
+        .map((e) => e.toString().trim().toLowerCase().replaceAll(' ', '_'))
+        .where(allowed.contains)
+        .toSet()
+        .toList();
+    return normalized.isEmpty ? null : normalized;
+  }
+
   static CharacterizationSuggestion _parseOpenAiJsonObject(
     Map<String, dynamic> obj,
   ) {
     final health = _parseHealthScore(obj['health_score']);
     final stage = _normalizePhenologicalStage(obj['phenological_stage']);
+    final hazard = _normalizeHazardAssessment(obj['hazard_assessment']);
+    final canopy = _normalizeCanopyDensity(obj['canopy_density']);
+    final structuralIssues = _parseStructuralIssues(obj['structural_issues']);
 
     final notes = obj['notes'];
     List<String>? stressSymptoms;
@@ -619,6 +674,9 @@ class AIService {
       sourceLanguage: sourceLanguage,
       speciesConfidence: conf,
       healthScore: health,
+      hazardAssessment: hazard,
+      canopyDensity: canopy,
+      structuralIssues: structuralIssues,
       stressSymptoms: stressSymptoms,
       phenologicalStage: stage,
       notes: notes is String ? notes : null,

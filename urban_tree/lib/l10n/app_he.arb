@@ -167,6 +167,10 @@
   "assistantNotesHint": "למשל: עלים מצהיבים בחלק העליון של הצמרת…",
   "assistantSuggest": "קבלת הצעה",
   "assistantWorking": "מעבד…",
+  "visionAnalyzingPhoto": "מנתח תמונה עם AI…",
+  "aiFilledByLabel": "ע\"י AI",
+  "assistantConnecting": "מתחבר לעוזר…",
+  "assistantUnavailable": "העוזר אינו זמין כרגע: אין חיבור ל-Supabase.",
   "assistantError": "שגיאה: {message}",
   "@assistantError": {
     "placeholders": {

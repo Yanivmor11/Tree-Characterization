@@ -167,6 +167,10 @@
   "assistantNotesHint": "e.g. yellowing leaves on the upper crown…",
   "assistantSuggest": "Get suggestion",
   "assistantWorking": "Working…",
+  "visionAnalyzingPhoto": "Analyzing photo with AI…",
+  "aiFilledByLabel": "By AI",
+  "assistantConnecting": "Connecting assistant…",
+  "assistantUnavailable": "Assistant temporarily unavailable: no Supabase session.",
   "assistantError": "Error: {message}",
   "@assistantError": {
     "placeholders": {

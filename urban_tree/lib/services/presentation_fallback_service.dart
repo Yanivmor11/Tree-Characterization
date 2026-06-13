@@ -41,6 +41,8 @@ abstract final class PresentationFallbackService {
       sourceLanguage: 'en',
       speciesConfidence: 0.82,
       healthScore: 4,
+      hazardAssessment: 'low',
+      canopyDensity: 'moderate',
       stressSymptoms: const ['none'],
       phenologicalStage: 'open',
       notes: 'Presentation fallback — typical urban street tree, moderate canopy.',

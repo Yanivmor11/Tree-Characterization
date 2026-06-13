@@ -6,9 +6,11 @@ class SpeciesMonograph {
   SpeciesMonograph({
     required this.id,
     required this.hebrewName,
+    required this.englishName,
     required this.scientificName,
     required this.family,
     required this.familyHebrew,
+    required this.familyEnglish,
     required this.tags,
     required this.summary,
     required this.heroImageUrl,
@@ -24,9 +26,11 @@ class SpeciesMonograph {
 
   final String id;
   final String hebrewName;
+  final String englishName;
   final String scientificName;
   final String family;
   final String familyHebrew;
+  final String familyEnglish;
   final List<String> tags;
   final String summary;
   final String heroImageUrl;
@@ -39,13 +43,27 @@ class SpeciesMonograph {
   final List<String> funFacts;
   final List<AnatomyCard> anatomyCards;
 
+  String displayNameFor(String languageCode) {
+    if (languageCode == 'he') return hebrewName;
+    if (englishName.isNotEmpty) return englishName;
+    return scientificName;
+  }
+
+  String familyLabelFor(String languageCode) {
+    if (languageCode == 'he') return familyHebrew;
+    if (familyEnglish.isNotEmpty) return familyEnglish;
+    return family;
+  }
+
   factory SpeciesMonograph.fromJson(Map<String, dynamic> json) {
     return SpeciesMonograph(
       id: json['id'] as String,
       hebrewName: json['hebrewName'] as String,
+      englishName: json['englishName'] as String? ?? '',
       scientificName: json['scientificName'] as String,
       family: json['family'] as String,
       familyHebrew: json['familyHebrew'] as String,
+      familyEnglish: json['familyEnglish'] as String? ?? '',
       tags: (json['tags'] as List).cast<String>(),
       summary: json['summary'] as String,
       heroImageUrl: json['heroImageUrl'] as String,

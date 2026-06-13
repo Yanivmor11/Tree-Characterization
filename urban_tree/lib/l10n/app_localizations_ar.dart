@@ -354,6 +354,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get assistantWorking => 'جارٍ المعالجة…';
 
   @override
+  String get visionAnalyzingPhoto => 'Analyzing photo with AI…';
+
+  @override
+  String get aiFilledByLabel => 'By AI';
+
+  @override
+  String get assistantConnecting => 'Connecting assistant…';
+
+  @override
+  String get assistantUnavailable =>
+      'Assistant temporarily unavailable: no Supabase session.';
+
+  @override
   String assistantError(String message) {
     return 'خطأ: $message';
   }

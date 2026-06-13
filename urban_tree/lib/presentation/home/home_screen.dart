@@ -213,9 +213,10 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(height: 16),
         for (final species in _featured) ...[
           _FeaturedCard(
-            title: species.hebrewName,
+            title: species.displayNameFor(Localizations.localeOf(context).languageCode),
             subtitle: species.scientificName,
-            tag: '${species.family} • ${species.familyHebrew}',
+            tag:
+                '${species.familyLabelFor(Localizations.localeOf(context).languageCode)} • ${species.scientificName}',
             imageUrl: species.thumbnailUrl,
             onTap: () => _openSpeciesById(species.id),
           ),

@@ -75,9 +75,12 @@ function buildSystemPrompt(options: {
     `source_language (BCP-47 code "${languageCode}"), ` +
     "species_confidence (number 0-1 or null), " +
     "health_score (integer 1-5 — provide your best estimate when the tree is visible; typical healthy urban trees are 3-5), " +
+    'hazard_assessment (exactly one of: "low", "medium", "high" — structural/public safety risk from visible defects), ' +
+    'canopy_density (exactly one of: "sparse", "moderate", "dense"), ' +
+    'structural_issues (array with any of: "dead_branches","leaning","cracks","exposed_roots","cavity","other", or empty array if none visible), ' +
     'stress_symptoms (array with any of: "chlorosis","necrosis","wilting","leaf_spot","defoliation","gummosis","pest_damage","none","other", or null), ' +
     'phenological_stage (exactly one of: "bud", "open", "fruit", or null), ' +
-    `notes (40-80 words in ${langName} describing the tree: species cues, crown shape, leaf condition, bark, setting, and visible health — required when the image or text is usable). ` +
+    `notes (10-20 words in ${langName} describing the tree: species cues, crown, leaf condition, and visible health — required when the image or text is usable). ` +
     `Write translated_display_name and notes ONLY in ${langName}. ` +
     "Keep species_common_en and species_scientific_latin in English/Latin. " +
     "Fill every field you can infer; use null only when truly uncertain or not visible. " +
@@ -89,7 +92,9 @@ function buildSystemPrompt(options: {
   if (options.hasImage) {
     prompt +=
       " Analyze the tree photo carefully: identify species from leaves, bark, crown, and fruit if visible; " +
-      "assess overall health (1=very poor, 5=excellent); note stress symptoms; infer phenological stage when clear.";
+      "assess overall health (1=very poor, 5=excellent), hazard_assessment, canopy_density, and visible structural_issues; " +
+      "note stress symptoms; infer phenological stage when clear. " +
+      "Always fill species, notes, health_score, hazard_assessment, and canopy_density when the tree is visible.";
   }
 
   if (options.step === "flower_fruit") {
@@ -242,6 +247,39 @@ Deno.serve(async (req: Request) => {
 
   if (!Array.isArray(parsed.stress_symptoms)) {
     parsed.stress_symptoms = null;
+  }
+
+  const hazard = typeof parsed.hazard_assessment === "string"
+    ? parsed.hazard_assessment.trim().toLowerCase()
+    : "";
+  parsed.hazard_assessment = ["low", "medium", "high"].includes(hazard)
+    ? hazard
+    : null;
+
+  const canopy = typeof parsed.canopy_density === "string"
+    ? parsed.canopy_density.trim().toLowerCase()
+    : "";
+  parsed.canopy_density = ["sparse", "moderate", "dense"].includes(canopy)
+    ? canopy
+    : null;
+
+  if (Array.isArray(parsed.structural_issues)) {
+    const allowed = new Set([
+      "dead_branches",
+      "leaning",
+      "cracks",
+      "exposed_roots",
+      "cavity",
+      "other",
+    ]);
+    parsed.structural_issues = parsed.structural_issues
+      .map((e) => String(e).trim().toLowerCase().replace(/\s+/g, "_"))
+      .filter((e) => allowed.has(e));
+    if ((parsed.structural_issues as string[]).length === 0) {
+      parsed.structural_issues = null;
+    }
+  } else {
+    parsed.structural_issues = null;
   }
 
   return new Response(JSON.stringify(parsed), {
