@@ -46,6 +46,9 @@ Future<void> main() async {
       return true;
     }());
     runApp(_BootstrapFailureApp(error: e));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FlutterNativeSplash.remove();
+    });
   }
 }
 

@@ -19,7 +19,10 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
+  static const _logoAsset = AssetImage('assets/images/logo.png');
+
   late final AnimationController _logoPulse;
+  bool _logoReady = false;
 
   @override
   void initState() {
@@ -29,25 +32,39 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(milliseconds: 1400),
     )..repeat(reverse: true);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      FlutterNativeSplash.remove();
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _bootstrap());
+  }
 
-    scheduleMicrotask(() async {
-      await Future<void>.delayed(const Duration(milliseconds: 1200));
-      if (!mounted) return;
-      try {
-        await ensureSupabaseSignedIn();
-      } catch (_) {
-        // Anonymous auth may be disabled on the project; shell still loads.
-      }
-      if (!mounted) return;
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute<void>(
-          builder: (_) => AuthGateScreen(localeController: widget.localeController),
-        ),
-      );
-    });
+  Future<void> _bootstrap() async {
+    if (!mounted) return;
+
+    try {
+      await precacheImage(_logoAsset, context);
+      if (mounted) setState(() => _logoReady = true);
+    } catch (_) {
+      // Build falls back to the tree icon when the asset is unavailable.
+    }
+
+    // Paint at least one frame with our splash UI before dropping the native/HTML splash.
+    await WidgetsBinding.instance.endOfFrame;
+    if (!mounted) return;
+    await WidgetsBinding.instance.endOfFrame;
+    if (!mounted) return;
+    FlutterNativeSplash.remove();
+
+    await Future<void>.delayed(const Duration(milliseconds: 600));
+    if (!mounted) return;
+    try {
+      await ensureSupabaseSignedIn();
+    } catch (_) {
+      // Anonymous auth may be disabled on the project; shell still loads.
+    }
+    if (!mounted) return;
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute<void>(
+        builder: (_) => AuthGateScreen(localeController: widget.localeController),
+      ),
+    );
   }
 
   @override
@@ -98,16 +115,15 @@ class _SplashScreenState extends State<SplashScreen>
                     ],
                   ),
                   padding: const EdgeInsets.all(12),
-                  child: Image.asset(
-                    'assets/images/logo.png',
-                    fit: BoxFit.contain,
-                    gaplessPlayback: true,
-                    errorBuilder: (context, error, stackTrace) => Icon(
-                      Icons.park_rounded,
-                      size: 72,
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
+                  child: _logoReady
+                      ? Image(
+                          image: _logoAsset,
+                          fit: BoxFit.contain,
+                          gaplessPlayback: true,
+                          errorBuilder: (context, error, stackTrace) =>
+                              _logoFallback(theme),
+                        )
+                      : _logoFallback(theme),
                 ),
               ),
               const SizedBox(height: 24),
@@ -139,6 +155,14 @@ class _SplashScreenState extends State<SplashScreen>
           ),
         ),
       ),
+    );
+  }
+
+  Widget _logoFallback(ThemeData theme) {
+    return Icon(
+      Icons.park_rounded,
+      size: 72,
+      color: theme.colorScheme.primary,
     );
   }
 }
