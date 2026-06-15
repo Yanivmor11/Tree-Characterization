@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/constants.dart';
 import '../models/land_use.dart';
+import 'gis_fallback_service.dart';
 
 /// GIS land-use classification for the **Private Land Black Box** problem.
 ///
@@ -17,10 +18,14 @@ import '../models/land_use.dart';
 /// **Headless GIS (demo):** Classification runs at GPS capture and submit;
 /// map overlays are hidden via [kShowLandUseMapOverlays] for clean presentation UI.
 class LandUseService {
-  LandUseService({SupabaseClient? client})
-      : _client = client ?? Supabase.instance.client;
+  LandUseService({
+    SupabaseClient? client,
+    GisFallbackService? fallbackService,
+  })  : _client = client ?? Supabase.instance.client,
+        _fallback = fallbackService ?? GisFallbackService();
 
   final SupabaseClient _client;
+  final GisFallbackService _fallback;
 
   /// Loads all land-use zones ordered by descending [LandZone.layerPriority].
   ///
@@ -73,6 +78,31 @@ class LandUseService {
       type: best.type,
       automatic: true,
       zoneLabel: best.label,
+      source: LandUseSource.localZone,
+    );
+  }
+
+  /// Classifies a point using local zones, then OSM fallback, then `public` default.
+  Future<LandUseClassification> classifyWithFallback(
+    LatLng point,
+    List<LandZone> zones,
+  ) async {
+    final local = classify(point, zones);
+    if (local != null) return local;
+
+    final osmType = await _fallback.resolve(point);
+    if (osmType != null) {
+      return LandUseClassification(
+        type: osmType,
+        automatic: true,
+        source: LandUseSource.osm,
+      );
+    }
+
+    return LandUseClassification(
+      type: LandUseType.public,
+      automatic: false,
+      source: LandUseSource.defaultSource,
     );
   }
 }

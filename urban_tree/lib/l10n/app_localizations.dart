@@ -2117,6 +2117,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Distribution map'**
   String get distributionMapLabel;
+
+  /// No description provided for @feedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Community feed'**
+  String get feedTitle;
+
+  /// No description provided for @voteUpTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Upvote this report'**
+  String get voteUpTooltip;
+
+  /// No description provided for @voteDownTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Downvote this report'**
+  String get voteDownTooltip;
+
+  /// No description provided for @netVotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} net votes'**
+  String netVotesLabel(int count);
+
+  /// No description provided for @a11yUpvote.
+  ///
+  /// In en, this message translates to:
+  /// **'Upvote report'**
+  String get a11yUpvote;
+
+  /// No description provided for @a11yDownvote.
+  ///
+  /// In en, this message translates to:
+  /// **'Downvote report'**
+  String get a11yDownvote;
+
+  /// No description provided for @socialFeedEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No reports yet. Be the first to share a tree observation!'**
+  String get socialFeedEmpty;
+
+  /// No description provided for @socialFeedHealthScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Health {score}/5'**
+  String socialFeedHealthScore(int score);
+
+  /// No description provided for @voteActionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save your vote. Please try again.'**
+  String get voteActionFailed;
 }
 
 class _AppLocalizationsDelegate

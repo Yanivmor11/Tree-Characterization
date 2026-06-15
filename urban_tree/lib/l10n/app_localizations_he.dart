@@ -1106,4 +1106,36 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get distributionMapLabel => 'מפת תפוצה';
+
+  @override
+  String get feedTitle => 'פיד קהילתי';
+
+  @override
+  String get voteUpTooltip => 'הצבעה חיובית לדיווח';
+
+  @override
+  String get voteDownTooltip => 'הצבעה שלילית לדיווח';
+
+  @override
+  String netVotesLabel(int count) {
+    return '$count הצבעות נטו';
+  }
+
+  @override
+  String get a11yUpvote => 'הצבעה חיובית לדיווח';
+
+  @override
+  String get a11yDownvote => 'הצבעה שלילית לדיווח';
+
+  @override
+  String get socialFeedEmpty =>
+      'אין עדיין דיווחים. היו הראשונים לשתף תצפית על עץ!';
+
+  @override
+  String socialFeedHealthScore(int score) {
+    return 'בריאות $score/5';
+  }
+
+  @override
+  String get voteActionFailed => 'לא ניתן לשמור את ההצבעה. נסו שוב.';
 }

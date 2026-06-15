@@ -515,5 +515,25 @@
   "imageOf": "תמונה של {name}",
   "imageUnavailable": "התמונה אינה זמינה",
   "reportPhotoLabel": "תמונת העץ שדווח",
-  "distributionMapLabel": "מפת תפוצה"
+  "distributionMapLabel": "מפת תפוצה",
+
+  "feedTitle": "פיד קהילתי",
+  "voteUpTooltip": "הצבעה חיובית לדיווח",
+  "voteDownTooltip": "הצבעה שלילית לדיווח",
+  "netVotesLabel": "{count} הצבעות נטו",
+  "@netVotesLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "a11yUpvote": "הצבעה חיובית לדיווח",
+  "a11yDownvote": "הצבעה שלילית לדיווח",
+  "socialFeedEmpty": "אין עדיין דיווחים. היו הראשונים לשתף תצפית על עץ!",
+  "socialFeedHealthScore": "בריאות {score}/5",
+  "@socialFeedHealthScore": {
+    "placeholders": {
+      "score": {"type": "int"}
+    }
+  },
+  "voteActionFailed": "לא ניתן לשמור את ההצבעה. נסו שוב."
 }

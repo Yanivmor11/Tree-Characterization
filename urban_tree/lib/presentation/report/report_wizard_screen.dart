@@ -225,15 +225,16 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     if (!_authReady || _landTypeManuallyEdited) return;
     try {
       final zones = await _landUseService.fetchZones();
-      if (!mounted || zones.isEmpty) return;
-      final classification = _landUseService.classify(
+      if (!mounted) return;
+      final classification = await _landUseService.classifyWithFallback(
         LatLng(_d.latitude, _d.longitude),
         zones,
       );
-      if (!mounted || classification == null) return;
+      if (!mounted || !classification.automatic) return;
       setState(() {
         _d.landType = classification.type;
         _d.landTypeAuto = true;
+        _d.landTypeSource = classification.source.storageValue;
         _aiFilledFields.add(_AiFilledField.landType);
       });
     } catch (_) {
@@ -508,14 +509,13 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
     _d.longitude = pos.longitude;
     _d.accuracyMeters = pos.accuracy;
     final zones = await _landUseService.fetchZones();
-    final classification = _landUseService.classify(
+    final classification = await _landUseService.classifyWithFallback(
       LatLng(pos.latitude, pos.longitude),
       zones,
     );
-    if (classification != null) {
-      _d.landType = classification.type;
-      _d.landTypeAuto = classification.automatic;
-    }
+    _d.landType = classification.type;
+    _d.landTypeAuto = classification.automatic;
+    _d.landTypeSource = classification.source.storageValue;
   }
 
   /// Final submit: live GPS anchor → Tier 1 validator → phenology → repository.
@@ -729,6 +729,7 @@ class _ReportWizardScreenState extends State<ReportWizardScreen> {
                       setState(() {
                         _d.landType = v;
                         _d.landTypeAuto = false;
+                        _d.landTypeSource = LandUseSource.manual.storageValue;
                       });
                     },
                   ),

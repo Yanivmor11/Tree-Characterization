@@ -5,6 +5,8 @@ import '../../l10n/app_localizations.dart';
 import '../../models/land_use.dart';
 import '../../models/tree_report_row.dart';
 import '../../state/report_feed_controller.dart';
+import '../../state/vote_controller.dart';
+import '../widgets/report_social_card.dart';
 import '../widgets/tree_report_actions.dart';
 import '../theme/app_theme.dart';
 import '../widgets/botanical_widgets.dart';
@@ -36,13 +38,6 @@ class _CollectionScreenState extends State<CollectionScreen> {
     super.dispose();
   }
 
-  String _landLabel(AppLocalizations l10n, LandUseType type) => switch (type) {
-        LandUseType.public => l10n.landUsePublic,
-        LandUseType.private => l10n.landUsePrivate,
-        LandUseType.kkl => l10n.landUseKkl,
-        LandUseType.abandoned => l10n.landUseAbandoned,
-      };
-
   List<TreeReportRow> _filtered(List<TreeReportRow> rows) {
     final query = _query.trim().toLowerCase();
     return rows.where((row) {
@@ -64,7 +59,14 @@ class _CollectionScreenState extends State<CollectionScreen> {
     final cs = Theme.of(context).colorScheme;
     final feed = context.watch<ReportFeedController>();
     final reports = _filtered(feed.recentReports);
-    final crossAxis = MediaQuery.sizeOf(context).width >= kDesktopBreakpoint ? 4 : 1;
+    final width = MediaQuery.sizeOf(context).width;
+    final isDesktop = width >= kDesktopBreakpoint;
+    final crossAxisCount = isDesktop ? (width >= 1280 ? 3 : 2) : 1;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || reports.isEmpty) return;
+      context.read<VoteController>().hydrateFromReports(reports);
+    });
 
     final body = ListView(
       padding: EdgeInsets.fromLTRB(24, widget.embedded ? 16 : 8, 24, 120),
@@ -76,7 +78,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
               ),
         ),
         Text(
-          l10n.collectionTitle,
+          l10n.feedTitle,
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 color: cs.primary,
                 fontWeight: FontWeight.w800,
@@ -113,7 +115,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
               ),
               for (final type in LandUseType.values)
                 _FilterChip(
-                  label: _landLabel(l10n, type),
+                  label: landUseLabel(l10n, type),
                   selected: _landFilter == type,
                   onTap: () => setState(() => _landFilter = type),
                 ),
@@ -121,7 +123,12 @@ class _CollectionScreenState extends State<CollectionScreen> {
           ),
         ),
         const SizedBox(height: 24),
-        if (reports.isEmpty)
+        if (feed.loading && reports.isEmpty)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 48),
+            child: Center(child: CircularProgressIndicator()),
+          )
+        else if (reports.isEmpty)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 48),
             child: Center(
@@ -130,7 +137,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
                   Icon(Icons.forest, size: 56, color: cs.outline),
                   const SizedBox(height: 12),
                   Text(
-                    l10n.collectionEmpty,
+                    l10n.socialFeedEmpty,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: cs.onSurfaceVariant,
@@ -140,22 +147,33 @@ class _CollectionScreenState extends State<CollectionScreen> {
               ),
             ),
           )
+        else if (crossAxisCount == 1)
+          ...reports.map(
+            (row) => Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: ReportSocialCard(
+                row: row,
+                landLabel: landUseLabel(l10n, row.landType),
+                onTap: () => _openSpecies(row),
+              ),
+            ),
+          )
         else
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxis,
+              crossAxisCount: crossAxisCount,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
-              childAspectRatio: crossAxis > 1 ? 0.72 : 0.85,
+              childAspectRatio: 0.62,
             ),
             itemCount: reports.length,
             itemBuilder: (context, i) {
               final row = reports[i];
-              return _ReportCollectionCard(
+              return ReportSocialCard(
                 row: row,
-                landLabel: _landLabel(l10n, row.landType),
+                landLabel: landUseLabel(l10n, row.landType),
                 onTap: () => _openSpecies(row),
               );
             },
@@ -163,7 +181,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
         const SizedBox(height: 24),
         Center(
           child: OutlinedButton.icon(
-            onPressed: () => feed.loadInitial(),
+            onPressed: feed.loading ? null : () => feed.loadInitial(),
             icon: const Icon(Icons.refresh),
             label: Text(l10n.collectionLoadMore),
           ),
@@ -214,73 +232,6 @@ class _FilterChip extends StatelessWidget {
           color: selected ? cs.onTertiaryContainer : cs.onSurfaceVariant,
           fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
         ),
-      ),
-    );
-  }
-}
-
-class _ReportCollectionCard extends StatelessWidget {
-  const _ReportCollectionCard({
-    required this.row,
-    required this.landLabel,
-    required this.onTap,
-  });
-
-  final TreeReportRow row;
-  final String landLabel;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final thumb = row.wholeTreeImageUrls.isNotEmpty ? row.wholeTreeImageUrls.first : null;
-    final title = row.species ?? row.speciesScientific ?? '—';
-
-    return BentoCard(
-      leafCorner: true,
-      padding: EdgeInsets.zero,
-      onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: BotanicalNetworkImage(
-              url: thumb,
-              fit: BoxFit.cover,
-              fallbackIcon: Icons.park_rounded,
-              semanticLabel: thumb != null
-                  ? AppLocalizations.of(context).imageOf(title)
-                  : null,
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(16)),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  row.species ?? row.speciesScientific ?? '—',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                ),
-                Text(
-                  row.speciesScientific ?? landLabel,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: cs.onSurfaceVariant,
-                        fontStyle: FontStyle.italic,
-                      ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

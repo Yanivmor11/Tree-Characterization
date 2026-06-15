@@ -16,6 +16,14 @@ class TreeReportRepository {
   final SupabaseClient _client;
   static final _uuid = Uuid();
 
+  static const _reportSelectColumns =
+      'id, created_at, latitude, longitude, accuracy_meters, land_type, '
+      'land_type_auto, land_type_source, health_score, canopy_density, structural_issues, '
+      'whole_tree_image_urls, flower_image_urls, phenological_stage, '
+      'flower_abundance, leaves_image_urls, leaf_condition, damage_extent, '
+      'species, species_scientific, stress_symptoms, hazard_assessment, insights_text, '
+      'ai_suggestion_json, net_votes';
+
   Future<int> countReports() async {
     try {
       return await _client.from('tree_reports').count();
@@ -28,13 +36,7 @@ class TreeReportRepository {
     try {
       final rows = await _client
           .from('tree_reports')
-          .select(
-            'id, created_at, latitude, longitude, accuracy_meters, land_type, '
-            'land_type_auto, health_score, canopy_density, structural_issues, '
-            'whole_tree_image_urls, flower_image_urls, phenological_stage, '
-            'flower_abundance, leaves_image_urls, leaf_condition, damage_extent, '
-            'species, species_scientific, stress_symptoms, hazard_assessment, insights_text, ai_suggestion_json',
-          )
+          .select(_reportSelectColumns)
           .order('created_at', ascending: false)
           .limit(limit);
       final out = <TreeReportRow>[];
@@ -59,13 +61,7 @@ class TreeReportRepository {
     int? healthScore,
   }) async {
     try {
-      var query = _client.from('tree_reports').select(
-            'id, created_at, latitude, longitude, accuracy_meters, land_type, '
-            'land_type_auto, health_score, canopy_density, structural_issues, '
-            'whole_tree_image_urls, flower_image_urls, phenological_stage, '
-            'flower_abundance, leaves_image_urls, leaf_condition, damage_extent, '
-            'species, species_scientific, stress_symptoms, hazard_assessment, insights_text, ai_suggestion_json',
-          );
+      var query = _client.from('tree_reports').select(_reportSelectColumns);
       if (fromDate != null) {
         query = query.gte('created_at', fromDate.toUtc().toIso8601String());
       }
@@ -99,13 +95,7 @@ class TreeReportRepository {
     try {
       final row = await _client
           .from('tree_reports')
-          .select(
-            'id, created_at, latitude, longitude, accuracy_meters, land_type, '
-            'land_type_auto, health_score, canopy_density, structural_issues, '
-            'whole_tree_image_urls, flower_image_urls, phenological_stage, '
-            'flower_abundance, leaves_image_urls, leaf_condition, damage_extent, '
-            'species, species_scientific, stress_symptoms, hazard_assessment, insights_text, ai_suggestion_json',
-          )
+          .select(_reportSelectColumns)
           .eq('id', id)
           .maybeSingle();
       if (row == null) return null;
@@ -123,13 +113,7 @@ class TreeReportRepository {
       const degreeWindow = 0.0003;
       final rows = await _client
           .from('tree_reports')
-          .select(
-            'id, created_at, latitude, longitude, accuracy_meters, land_type, '
-            'land_type_auto, health_score, canopy_density, structural_issues, '
-            'whole_tree_image_urls, flower_image_urls, phenological_stage, '
-            'flower_abundance, leaves_image_urls, leaf_condition, damage_extent, '
-            'species, species_scientific, stress_symptoms, hazard_assessment, insights_text, ai_suggestion_json',
-          )
+          .select(_reportSelectColumns)
           .gte('latitude', anchor.latitude - degreeWindow)
           .lte('latitude', anchor.latitude + degreeWindow)
           .gte('longitude', anchor.longitude - degreeWindow)
@@ -244,6 +228,7 @@ class TreeReportRepository {
       'accuracy_meters': draft.accuracyMeters,
       'land_type': draft.landType.storageValue,
       'land_type_auto': draft.landTypeAuto,
+      if (draft.landTypeSource != null) 'land_type_source': draft.landTypeSource,
       'health_score': draft.healthScore,
       'canopy_density': draft.canopyDensity.storageValue,
       'structural_issues':

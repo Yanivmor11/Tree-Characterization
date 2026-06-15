@@ -1116,4 +1116,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get distributionMapLabel => 'Distribution map';
+
+  @override
+  String get feedTitle => 'Community feed';
+
+  @override
+  String get voteUpTooltip => 'Upvote this report';
+
+  @override
+  String get voteDownTooltip => 'Downvote this report';
+
+  @override
+  String netVotesLabel(int count) {
+    return '$count net votes';
+  }
+
+  @override
+  String get a11yUpvote => 'Upvote report';
+
+  @override
+  String get a11yDownvote => 'Downvote report';
+
+  @override
+  String get socialFeedEmpty =>
+      'No reports yet. Be the first to share a tree observation!';
+
+  @override
+  String socialFeedHealthScore(int score) {
+    return 'Health $score/5';
+  }
+
+  @override
+  String get voteActionFailed => 'Could not save your vote. Please try again.';
 }

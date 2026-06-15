@@ -535,5 +535,25 @@
   },
   "imageUnavailable": "Image unavailable",
   "reportPhotoLabel": "Reported tree photo",
-  "distributionMapLabel": "Distribution map"
+  "distributionMapLabel": "Distribution map",
+
+  "feedTitle": "Community feed",
+  "voteUpTooltip": "Upvote this report",
+  "voteDownTooltip": "Downvote this report",
+  "netVotesLabel": "{count} net votes",
+  "@netVotesLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "a11yUpvote": "Upvote report",
+  "a11yDownvote": "Downvote report",
+  "socialFeedEmpty": "No reports yet. Be the first to share a tree observation!",
+  "socialFeedHealthScore": "Health {score}/5",
+  "@socialFeedHealthScore": {
+    "placeholders": {
+      "score": {"type": "int"}
+    }
+  },
+  "voteActionFailed": "Could not save your vote. Please try again."
 }

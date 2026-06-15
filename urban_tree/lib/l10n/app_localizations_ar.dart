@@ -1110,4 +1110,36 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get distributionMapLabel => 'خريطة الانتشار';
+
+  @override
+  String get feedTitle => 'خلاصة المجتمع';
+
+  @override
+  String get voteUpTooltip => 'تصويت إيجابي على البلاغ';
+
+  @override
+  String get voteDownTooltip => 'تصويت سلبي على البلاغ';
+
+  @override
+  String netVotesLabel(int count) {
+    return '$count صافي الأصوات';
+  }
+
+  @override
+  String get a11yUpvote => 'تصويت إيجابي على البلاغ';
+
+  @override
+  String get a11yDownvote => 'تصويت سلبي على البلاغ';
+
+  @override
+  String get socialFeedEmpty =>
+      'لا توجد بلاغات بعد. كن أول من يشارك ملاحظة عن شجرة!';
+
+  @override
+  String socialFeedHealthScore(int score) {
+    return 'الصحة $score/5';
+  }
+
+  @override
+  String get voteActionFailed => 'تعذّر حفظ تصويتك. حاول مرة أخرى.';
 }

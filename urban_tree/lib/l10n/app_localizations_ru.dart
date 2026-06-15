@@ -1122,4 +1122,37 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get distributionMapLabel => 'Карта распространения';
+
+  @override
+  String get feedTitle => 'Лента сообщества';
+
+  @override
+  String get voteUpTooltip => 'Голосовать за отчёт';
+
+  @override
+  String get voteDownTooltip => 'Голосовать против отчёта';
+
+  @override
+  String netVotesLabel(int count) {
+    return '$count чистых голосов';
+  }
+
+  @override
+  String get a11yUpvote => 'Голосовать за отчёт';
+
+  @override
+  String get a11yDownvote => 'Голосовать против отчёта';
+
+  @override
+  String get socialFeedEmpty =>
+      'Пока нет отчётов. Станьте первым, кто поделится наблюдением за деревом!';
+
+  @override
+  String socialFeedHealthScore(int score) {
+    return 'Здоровье $score/5';
+  }
+
+  @override
+  String get voteActionFailed =>
+      'Не удалось сохранить голос. Попробуйте снова.';
 }

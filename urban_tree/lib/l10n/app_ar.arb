@@ -326,5 +326,25 @@
   "imageOf": "صورة {name}",
   "imageUnavailable": "الصورة غير متاحة",
   "reportPhotoLabel": "صورة الشجرة المُبلّغ عنها",
-  "distributionMapLabel": "خريطة الانتشار"
+  "distributionMapLabel": "خريطة الانتشار",
+
+  "feedTitle": "خلاصة المجتمع",
+  "voteUpTooltip": "تصويت إيجابي على البلاغ",
+  "voteDownTooltip": "تصويت سلبي على البلاغ",
+  "netVotesLabel": "{count} صافي الأصوات",
+  "@netVotesLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "a11yUpvote": "تصويت إيجابي على البلاغ",
+  "a11yDownvote": "تصويت سلبي على البلاغ",
+  "socialFeedEmpty": "لا توجد بلاغات بعد. كن أول من يشارك ملاحظة عن شجرة!",
+  "socialFeedHealthScore": "الصحة {score}/5",
+  "@socialFeedHealthScore": {
+    "placeholders": {
+      "score": {"type": "int"}
+    }
+  },
+  "voteActionFailed": "تعذّر حفظ تصويتك. حاول مرة أخرى."
 }

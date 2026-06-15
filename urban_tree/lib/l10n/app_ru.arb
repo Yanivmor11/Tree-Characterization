@@ -326,5 +326,25 @@
   "imageOf": "Фото: {name}",
   "imageUnavailable": "Изображение недоступно",
   "reportPhotoLabel": "Фото дерева из отчёта",
-  "distributionMapLabel": "Карта распространения"
+  "distributionMapLabel": "Карта распространения",
+
+  "feedTitle": "Лента сообщества",
+  "voteUpTooltip": "Голосовать за отчёт",
+  "voteDownTooltip": "Голосовать против отчёта",
+  "netVotesLabel": "{count} чистых голосов",
+  "@netVotesLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "a11yUpvote": "Голосовать за отчёт",
+  "a11yDownvote": "Голосовать против отчёта",
+  "socialFeedEmpty": "Пока нет отчётов. Станьте первым, кто поделится наблюдением за деревом!",
+  "socialFeedHealthScore": "Здоровье {score}/5",
+  "@socialFeedHealthScore": {
+    "placeholders": {
+      "score": {"type": "int"}
+    }
+  },
+  "voteActionFailed": "Не удалось сохранить голос. Попробуйте снова."
 }

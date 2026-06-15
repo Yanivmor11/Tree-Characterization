@@ -10,6 +10,7 @@ class TreeReportRow {
     this.accuracyMeters,
     required this.landType,
     required this.landTypeAuto,
+    this.landTypeSource,
     required this.healthScore,
     required this.canopyDensity,
     required this.structuralIssues,
@@ -26,6 +27,7 @@ class TreeReportRow {
     this.insightsText,
     this.aiSuggestionAudit,
     required this.hazardAssessment,
+    this.netVotes = 0,
   });
 
   final String id;
@@ -35,6 +37,7 @@ class TreeReportRow {
   final double? accuracyMeters;
   final LandUseType landType;
   final bool landTypeAuto;
+  final String? landTypeSource;
   final int healthScore;
   final String canopyDensity;
   final List<String> structuralIssues;
@@ -51,6 +54,7 @@ class TreeReportRow {
   final String hazardAssessment;
   final String? insightsText;
   final Map<String, dynamic>? aiSuggestionAudit;
+  final int netVotes;
 
   static TreeReportRow? fromMap(Map<String, dynamic> row) {
     final id = row['id']?.toString();
@@ -72,6 +76,7 @@ class TreeReportRow {
       accuracyMeters: (row['accuracy_meters'] as num?)?.toDouble(),
       landType: land,
       landTypeAuto: row['land_type_auto'] as bool? ?? false,
+      landTypeSource: row['land_type_source'] as String?,
       healthScore: (row['health_score'] as num).toInt(),
       canopyDensity: row['canopy_density'] as String? ?? '',
       structuralIssues: _stringList(row['structural_issues']),
@@ -88,6 +93,7 @@ class TreeReportRow {
       hazardAssessment: row['hazard_assessment'] as String? ?? 'low',
       insightsText: row['insights_text'] as String?,
       aiSuggestionAudit: _mapValue(row['ai_suggestion_json']),
+      netVotes: (row['net_votes'] as num?)?.toInt() ?? 0,
     );
   }
 

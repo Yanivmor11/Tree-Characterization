@@ -89,14 +89,35 @@ class LandZone {
   }
 }
 
+/// How land-use was resolved for metadata injection into `tree_reports`.
+enum LandUseSource {
+  localZone('local_zone'),
+  osm('osm'),
+  defaultSource('default'),
+  manual('manual');
+
+  const LandUseSource(this.storageValue);
+  final String storageValue;
+
+  static LandUseSource? fromStorage(String? value) {
+    if (value == null) return null;
+    for (final s in LandUseSource.values) {
+      if (s.storageValue == value) return s;
+    }
+    return null;
+  }
+}
+
 class LandUseClassification {
   LandUseClassification({
     required this.type,
     required this.automatic,
     this.zoneLabel,
+    this.source = LandUseSource.defaultSource,
   });
 
   final LandUseType type;
   final bool automatic;
   final String? zoneLabel;
+  final LandUseSource source;
 }

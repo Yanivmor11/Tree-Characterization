@@ -6,7 +6,6 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
 import '../../l10n/app_localizations.dart';
-import '../../models/land_use.dart';
 import '../../models/tree_report_draft.dart';
 import '../../state/auth_controller.dart';
 import '../../state/report_feed_controller.dart';
@@ -100,13 +99,14 @@ class ReportFlowLauncher {
       }
 
       final point = LatLng(pos.latitude, pos.longitude);
-      final classification = _landUseService.classify(point, zones);
+      final classification = await _landUseService.classifyWithFallback(point, zones);
       final draft = TreeReportDraft(
         latitude: pos.latitude,
         longitude: pos.longitude,
         accuracyMeters: pos.accuracy,
-        landType: classification?.type ?? LandUseType.public,
-        landTypeAuto: classification != null,
+        landType: classification.type,
+        landTypeAuto: classification.automatic,
+        landTypeSource: classification.source.storageValue,
       );
       if (firstImage != null) {
         draft.wholeTreeImages.add(firstImage);

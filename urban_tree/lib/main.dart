@@ -17,6 +17,7 @@ import 'presentation/theme/app_theme.dart';
 import 'state/auth_controller.dart';
 import 'state/map_focus_controller.dart';
 import 'state/report_feed_controller.dart';
+import 'state/vote_controller.dart';
 
 import 'core/constants.dart';
 
@@ -114,6 +115,7 @@ class UrbanTreeApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthController()),
         ChangeNotifierProvider(create: (_) => ReportFeedController()..loadInitial()),
+        ChangeNotifierProvider(create: (_) => VoteController()),
         ChangeNotifierProvider(create: (_) => MapFocusController()),
       ],
       child: ListenableBuilder(

@@ -125,6 +125,7 @@ class TreeReportDraft {
     required this.accuracyMeters,
     required this.landType,
     required this.landTypeAuto,
+    this.landTypeSource,
   });
 
   /// Mutable so live GPS at submit can refresh coordinates (image EXIF never used).
@@ -133,6 +134,7 @@ class TreeReportDraft {
   double? accuracyMeters;
   LandUseType landType;
   bool landTypeAuto;
+  String? landTypeSource;
 
   final List<XFile> wholeTreeImages = [];
   /// Localized/common display value for UI text fields.
