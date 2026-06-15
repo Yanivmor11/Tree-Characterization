@@ -74,6 +74,68 @@ class _HeroPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+
+    if (isDesktop) {
+      return Container(
+        decoration: BoxDecoration(
+          color: AppColors.primary,
+          gradient: AppColors.primaryGradient,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [botanicalTheme(context).primaryShadow],
+        ),
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              l10n.identifyHubTitle,
+              style: theme.textTheme.headlineMedium?.copyWith(
+                color: AppColors.onPrimary,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              l10n.identifyHubBody,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: AppColors.onPrimaryContainer,
+              ),
+            ),
+            const SizedBox(height: 24),
+            FilledButton.icon(
+              onPressed: () => AppRoutes.startIdentifyFlow(context),
+              style: FilledButton.styleFrom(
+                backgroundColor: AppColors.surfaceContainerLowest,
+                foregroundColor: AppColors.primary,
+                minimumSize: const Size.fromHeight(52),
+              ),
+              icon: const Icon(Icons.upload_file),
+              label: Text(l10n.identifyUploadPhoto),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: () => Navigator.of(context).push<void>(
+                MaterialPageRoute<void>(
+                  builder: (_) => const PhotoGuideScreen(),
+                ),
+              ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.onPrimary,
+                side: BorderSide(
+                  color: AppColors.onPrimary.withValues(alpha: 0.85),
+                  width: 2,
+                ),
+                minimumSize: const Size.fromHeight(52),
+              ),
+              icon: const Icon(Icons.help_outline),
+              label: Text(l10n.identifyPhotoGuide),
+            ),
+          ],
+        ),
+      );
+    }
+
     return BentoCard(
       backgroundColor: AppColors.surfaceContainerLow,
       child: Column(
@@ -81,7 +143,7 @@ class _HeroPanel extends StatelessWidget {
         children: [
           Text(
             l10n.identifyHubTitle,
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            style: theme.textTheme.headlineMedium?.copyWith(
                   color: cs.primary,
                   fontWeight: FontWeight.w800,
                 ),
@@ -89,14 +151,14 @@ class _HeroPanel extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             l10n.identifyHubBody,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            style: theme.textTheme.bodyLarge?.copyWith(
                   color: cs.onSurfaceVariant,
                 ),
           ),
           const SizedBox(height: 24),
           GradientButton(
-            label: isDesktop ? l10n.identifyUploadPhoto : l10n.identifyStartCamera,
-            icon: isDesktop ? Icons.upload_file : Icons.photo_camera,
+            label: l10n.identifyStartCamera,
+            icon: Icons.photo_camera,
             onPressed: () => AppRoutes.startIdentifyFlow(context),
           ),
           const SizedBox(height: 12),

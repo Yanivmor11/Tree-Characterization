@@ -169,45 +169,52 @@ class GradientButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final button = Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: AppRadii.button,
-        child: Opacity(
-          opacity: onPressed == null ? 0.5 : 1,
-          child: Ink(
-            decoration: BoxDecoration(
-              gradient: AppColors.primaryGradient,
-              borderRadius: AppRadii.button,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.2),
-                  blurRadius: 16,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              child: Row(
-                mainAxisSize: expanded ? MainAxisSize.max : MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (icon != null) ...[
-                    Icon(icon, color: AppColors.onPrimary, size: 22),
-                    const SizedBox(width: 8),
-                  ],
-                  Text(
-                    label,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: AppColors.onPrimary,
-                          fontWeight: FontWeight.w700,
-                        ),
+    final content = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Row(
+        mainAxisSize: expanded ? MainAxisSize.max : MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (icon != null) ...[
+            Icon(icon, color: AppColors.onPrimary, size: 22),
+            const SizedBox(width: 8),
+          ],
+          Flexible(
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: AppColors.onPrimary,
+                    fontWeight: FontWeight.w700,
                   ),
-                ],
-              ),
             ),
+          ),
+        ],
+      ),
+    );
+
+    final button = DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.primary,
+        gradient: AppColors.primaryGradient,
+        borderRadius: AppRadii.button,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.2),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: AppRadii.button,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: AppRadii.button,
+          child: Opacity(
+            opacity: onPressed == null ? 0.5 : 1,
+            child: content,
           ),
         ),
       ),
