@@ -522,7 +522,7 @@ class _CtaText extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
+        BotanicalHeadlineText(
           title,
           style: theme.textTheme.headlineSmall?.copyWith(
             color: AppColors.onPrimary,

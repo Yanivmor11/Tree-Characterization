@@ -35,10 +35,7 @@ class IdentifyHubScreen extends StatelessWidget {
               children: [
                 Expanded(child: _HeroPanel(l10n: l10n, isDesktop: isWide)),
                 const SizedBox(width: 24),
-                Expanded(
-                  flex: 4,
-                  child: _GuidePanel(l10n: l10n),
-                ),
+                Expanded(child: _GuidePanel(l10n: l10n)),
               ],
             )
           else
@@ -88,7 +85,7 @@ class _HeroPanel extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
+            BotanicalHeadlineText(
               l10n.identifyHubTitle,
               style: theme.textTheme.headlineMedium?.copyWith(
                 color: AppColors.onPrimary,
@@ -141,7 +138,7 @@ class _HeroPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
+          BotanicalHeadlineText(
             l10n.identifyHubTitle,
             style: theme.textTheme.headlineMedium?.copyWith(
                   color: cs.primary,

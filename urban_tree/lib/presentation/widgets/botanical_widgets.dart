@@ -274,6 +274,38 @@ class SpeciesBadge extends StatelessWidget {
 
 enum SpeciesBadgeTint { tertiary, secondary, primary, neutral }
 
+/// Wraps headline text at word boundaries so long words are not split mid-character
+/// (e.g. "identificatio" / "n") in narrow desktop columns.
+class BotanicalHeadlineText extends StatelessWidget {
+  const BotanicalHeadlineText(
+    this.text, {
+    super.key,
+    this.style,
+  });
+
+  final String text;
+  final TextStyle? style;
+
+  @override
+  Widget build(BuildContext context) {
+    final effectiveStyle = style ?? Theme.of(context).textTheme.headlineMedium;
+    final words = text.split(RegExp(r'\s+')).where((word) => word.isNotEmpty);
+    if (words.isEmpty) return const SizedBox.shrink();
+
+    final wordList = words.toList();
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        for (var i = 0; i < wordList.length; i++)
+          Text(
+            i < wordList.length - 1 ? '${wordList[i]} ' : wordList[i],
+            style: effectiveStyle,
+          ),
+      ],
+    );
+  }
+}
+
 class BentoCard extends StatelessWidget {
   const BentoCard({
     super.key,
