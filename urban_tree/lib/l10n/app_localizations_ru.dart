@@ -947,6 +947,59 @@ class AppLocalizationsRu extends AppLocalizations {
       'На этой неделе вы задокументировали новые виды. Продолжайте развивать ботанические исследования в Израиле.';
 
   @override
+  String get journalFilteredSummaryBody =>
+      'Цифры ниже отражают текущие фильтры.';
+
+  @override
+  String journalFilteredCount(int count) {
+    return 'Показано наблюдений: $count';
+  }
+
+  @override
+  String get researchWindowTitle => 'Окно исследования';
+
+  @override
+  String get researchFromDate => 'С даты';
+
+  @override
+  String get researchToDate => 'По дату';
+
+  @override
+  String researchFromDateValue(String date) {
+    return 'С: $date';
+  }
+
+  @override
+  String researchToDateValue(String date) {
+    return 'По: $date';
+  }
+
+  @override
+  String get researchSpeciesLabel => 'Вид (обычное или научное название)';
+
+  @override
+  String get researchLandUseLabel => 'Землепользование';
+
+  @override
+  String get researchHealthScoreLabel => 'Оценка здоровья';
+
+  @override
+  String get researchFilterAll => 'Все';
+
+  @override
+  String get researchClearFilters => 'Сбросить фильтры';
+
+  @override
+  String get researchClearFromDate => 'Сбросить дату начала';
+
+  @override
+  String get researchClearToDate => 'Сбросить дату окончания';
+
+  @override
+  String get researchDateRangeError =>
+      'Дата начала должна быть не позже даты окончания.';
+
+  @override
   String get helpCenterTitle => 'Центр помощи';
 
   @override

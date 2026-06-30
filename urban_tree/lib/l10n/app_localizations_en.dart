@@ -943,6 +943,59 @@ class AppLocalizationsEn extends AppLocalizations {
       'You documented new species this week. Keep advancing botanical research in Israel.';
 
   @override
+  String get journalFilteredSummaryBody =>
+      'Counts below reflect your current filters.';
+
+  @override
+  String journalFilteredCount(int count) {
+    return 'Showing $count observations';
+  }
+
+  @override
+  String get researchWindowTitle => 'Research window';
+
+  @override
+  String get researchFromDate => 'From date';
+
+  @override
+  String get researchToDate => 'To date';
+
+  @override
+  String researchFromDateValue(String date) {
+    return 'From: $date';
+  }
+
+  @override
+  String researchToDateValue(String date) {
+    return 'To: $date';
+  }
+
+  @override
+  String get researchSpeciesLabel => 'Species (common or scientific)';
+
+  @override
+  String get researchLandUseLabel => 'Land use';
+
+  @override
+  String get researchHealthScoreLabel => 'Health score';
+
+  @override
+  String get researchFilterAll => 'All';
+
+  @override
+  String get researchClearFilters => 'Clear filters';
+
+  @override
+  String get researchClearFromDate => 'Clear start date';
+
+  @override
+  String get researchClearToDate => 'Clear end date';
+
+  @override
+  String get researchDateRangeError =>
+      'Start date must be on or before the end date.';
+
+  @override
   String get helpCenterTitle => 'Help center';
 
   @override

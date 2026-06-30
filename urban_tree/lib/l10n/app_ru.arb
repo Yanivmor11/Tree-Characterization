@@ -268,6 +268,38 @@
   "treeActionViewReport": "Полный отчёт",
   "journalWeeklySummary": "Сводка активности за неделю",
   "journalWeeklyBody": "На этой неделе вы задокументировали новые виды. Продолжайте развивать ботанические исследования в Израиле.",
+  "journalFilteredSummaryBody": "Цифры ниже отражают текущие фильтры.",
+  "journalFilteredCount": "Показано наблюдений: {count}",
+  "@journalFilteredCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "researchWindowTitle": "Окно исследования",
+  "researchFromDate": "С даты",
+  "researchToDate": "По дату",
+  "researchFromDateValue": "С: {date}",
+  "@researchFromDateValue": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "researchToDateValue": "По: {date}",
+  "@researchToDateValue": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "researchSpeciesLabel": "Вид (обычное или научное название)",
+  "researchLandUseLabel": "Землепользование",
+  "researchHealthScoreLabel": "Оценка здоровья",
+  "researchFilterAll": "Все",
+  "researchClearFilters": "Сбросить фильтры",
+  "researchClearFromDate": "Сбросить дату начала",
+  "researchClearToDate": "Сбросить дату окончания",
+  "researchDateRangeError": "Дата начала должна быть не позже даты окончания.",
+
   "helpCenterTitle": "Центр помощи",
   "helpHeroTitle": "Чем помочь вашему ботаническому исследованию сегодня?",
   "helpHeroBody": "Откройте секреты мира деревьев с помощью наших подробных руководств.",

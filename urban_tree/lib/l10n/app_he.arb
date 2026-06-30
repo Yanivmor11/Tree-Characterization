@@ -449,6 +449,37 @@
   "treeActionViewReport": "צפייה בדיווח המלא",
   "journalWeeklySummary": "סיכום פעילות שבועית",
   "journalWeeklyBody": "תיעדת מינים חדשים השבוע. המשיכו כך לקידום מחקר הצמחייה בישראל.",
+  "journalFilteredSummaryBody": "המספרים למטה משקפים את הסינון הנוכחי.",
+  "journalFilteredCount": "מוצגות {count} תצפיות",
+  "@journalFilteredCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "researchWindowTitle": "חלון מחקר",
+  "researchFromDate": "מתאריך",
+  "researchToDate": "עד תאריך",
+  "researchFromDateValue": "מ: {date}",
+  "@researchFromDateValue": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "researchToDateValue": "עד: {date}",
+  "@researchToDateValue": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "researchSpeciesLabel": "מין (שם נפוץ או מדעי)",
+  "researchLandUseLabel": "שימוש קרקע",
+  "researchHealthScoreLabel": "ציון בריאות",
+  "researchFilterAll": "הכל",
+  "researchClearFilters": "נקה סינון",
+  "researchClearFromDate": "נקה תאריך התחלה",
+  "researchClearToDate": "נקה תאריך סיום",
+  "researchDateRangeError": "תאריך ההתחלה חייב להיות לפני או בתאריך הסיום.",
 
   "helpCenterTitle": "מרכז העזרה",
   "helpHeroTitle": "איך נוכל לסייע לך במחקר הבוטני שלך היום?",

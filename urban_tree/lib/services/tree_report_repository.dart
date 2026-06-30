@@ -56,39 +56,45 @@ class TreeReportRepository {
     int limit = 500,
     DateTime? fromDate,
     DateTime? toDate,
-    String? speciesEnglish,
+    String? speciesQuery,
     String? landType,
     int? healthScore,
   }) async {
-    try {
-      var query = _client.from('tree_reports').select(_reportSelectColumns);
-      if (fromDate != null) {
-        query = query.gte('created_at', fromDate.toUtc().toIso8601String());
-      }
-      if (toDate != null) {
-        query = query.lte('created_at', toDate.toUtc().toIso8601String());
-      }
-      final trimmedSpecies = speciesEnglish?.trim();
-      if (trimmedSpecies != null && trimmedSpecies.isNotEmpty) {
-        query = query.ilike('species', '%$trimmedSpecies%');
-      }
-      if (landType != null && landType.isNotEmpty) {
-        query = query.eq('land_type', landType);
-      }
-      if (healthScore != null) {
-        query = query.eq('health_score', healthScore);
-      }
-      final rows =
-          await query.order('created_at', ascending: false).limit(limit);
-      final out = <TreeReportRow>[];
-      for (final row in (rows as List<dynamic>)) {
-        final parsed = TreeReportRow.fromMap(Map<String, dynamic>.from(row as Map));
-        if (parsed != null) out.add(parsed);
-      }
-      return out;
-    } catch (_) {
-      return const [];
+    var query = _client.from('tree_reports').select(_reportSelectColumns);
+    if (fromDate != null) {
+      query = query.gte('created_at', fromDate.toUtc().toIso8601String());
     }
+    if (toDate != null) {
+      query = query.lte('created_at', toDate.toUtc().toIso8601String());
+    }
+    final trimmedSpecies = speciesQuery?.trim();
+    if (trimmedSpecies != null && trimmedSpecies.isNotEmpty) {
+      final escaped = _escapeIlikePattern(trimmedSpecies);
+      query = query.or(
+        'species.ilike.%$escaped%,species_scientific.ilike.%$escaped%',
+      );
+    }
+    if (landType != null && landType.isNotEmpty) {
+      query = query.eq('land_type', landType);
+    }
+    if (healthScore != null) {
+      query = query.eq('health_score', healthScore);
+    }
+    final rows =
+        await query.order('created_at', ascending: false).limit(limit);
+    final out = <TreeReportRow>[];
+    for (final row in (rows as List<dynamic>)) {
+      final parsed = TreeReportRow.fromMap(Map<String, dynamic>.from(row as Map));
+      if (parsed != null) out.add(parsed);
+    }
+    return out;
+  }
+
+  static String _escapeIlikePattern(String input) {
+    return input
+        .replaceAll('\\', '\\\\')
+        .replaceAll('%', r'\%')
+        .replaceAll('_', r'\_');
   }
 
   Future<TreeReportRow?> fetchReportById(String id) async {

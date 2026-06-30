@@ -1,10 +1,10 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../l10n/app_localizations.dart';
@@ -13,100 +13,57 @@ import '../models/land_use.dart';
 import '../models/tree_report_row.dart';
 import '../services/data_quality_service.dart';
 import '../services/tree_report_repository.dart';
+import '../state/journal_research_controller.dart';
 import 'report/report_detail_screen.dart';
 
-enum _ResearchMode { reports, quality }
-
-class ResearchDashboardScreen extends StatefulWidget {
+class ResearchDashboardScreen extends StatelessWidget {
   const ResearchDashboardScreen({super.key, this.embedded = false});
 
   final bool embedded;
 
-  @override
-  State<ResearchDashboardScreen> createState() => _ResearchDashboardScreenState();
-}
-
-class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
-  final _repo = TreeReportRepository();
-  final _quality = DataQualityService();
-  _ResearchMode _mode = _ResearchMode.reports;
-  List<TreeReportRow> _rows = [];
-  List<DataQualityFlag> _flags = [];
-  bool _loading = true;
-  String? _error;
-  DateTime? _fromDate;
-  DateTime? _toDate;
-  String _speciesFilter = '';
-  LandUseType? _landUseFilter;
-  int? _healthScoreFilter;
-  final _speciesController = TextEditingController();
-  Timer? _speciesDebounce;
-
-  @override
-  void initState() {
-    super.initState();
-    _speciesController.addListener(_onSpeciesTextChanged);
-    _load();
+  Future<void> _pickFromDate(
+    BuildContext context,
+    JournalResearchController research,
+  ) async {
+    final picked = await showDatePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      initialDate: research.fromDate ??
+          DateTime.now().subtract(const Duration(days: 30)),
+    );
+    if (picked == null) return;
+    await research.setFromDate(picked);
   }
 
-  void _onSpeciesTextChanged() {
-    _speciesDebounce?.cancel();
-    _speciesDebounce = Timer(const Duration(milliseconds: 400), () {
-      if (!mounted) return;
-      final next = _speciesController.text.trim();
-      if (next == _speciesFilter) return;
-      setState(() => _speciesFilter = next);
-      _load();
-    });
+  Future<void> _pickToDate(
+    BuildContext context,
+    JournalResearchController research,
+  ) async {
+    final picked = await showDatePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      initialDate: research.toDate ?? DateTime.now(),
+    );
+    if (picked == null) return;
+    await research.setToDate(picked);
   }
 
-  Future<void> _load() async {
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
-    try {
-      if (_mode == _ResearchMode.reports) {
-        final list = await _repo.fetchFilteredReports(
-          limit: 500,
-          fromDate: _fromDate,
-          toDate: _toDate,
-          speciesEnglish: _speciesFilter,
-          landType: _landUseFilter?.storageValue,
-          healthScore: _healthScoreFilter,
-        );
-        if (!mounted) return;
-        setState(() {
-          _rows = list;
-          _loading = false;
-        });
-      } else {
-        final f = await _quality.fetchOpen(limit: 200);
-        if (!mounted) return;
-        setState(() {
-          _flags = f;
-          _loading = false;
-        });
-      }
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _error = e.toString();
-        _loading = false;
-      });
-    }
-  }
-
-  Future<void> _exportCsv() async {
+  Future<void> _exportCsv(
+    BuildContext context,
+    JournalResearchController research,
+  ) async {
     final l10n = AppLocalizations.of(context);
-    if (_rows.isEmpty) {
+    if (research.filteredReports.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.noReportsYet)),
       );
       return;
     }
-    final csv = _repo.reportsToCsv(_rows);
-    final fileName = _buildExportFileName();
+    final repo = TreeReportRepository();
+    final csv = repo.reportsToCsv(research.filteredReports);
+    final fileName = _buildExportFileName(research);
 
     if (kIsWeb) {
       await Share.share(csv, subject: fileName);
@@ -123,7 +80,28 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
     );
   }
 
-  Future<void> _openReportDetail(String reportId) async {
+  String _buildExportFileName(JournalResearchController research) {
+    final exportDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final segments = <String>[
+      if (research.fromDate != null)
+        'from_${DateFormat('yyyy-MM-dd').format(research.fromDate!)}',
+      if (research.toDate != null)
+        'to_${DateFormat('yyyy-MM-dd').format(research.toDate!)}',
+      if (research.landUseFilter != null)
+        research.landUseFilter!.storageValue,
+      if (research.healthScoreFilter != null)
+        'h${research.healthScoreFilter}',
+      if (research.speciesFilter.trim().isNotEmpty)
+        research.speciesFilter
+            .trim()
+            .toLowerCase()
+            .replaceAll(RegExp(r'[^a-z0-9]+'), '_'),
+    ];
+    final suffix = segments.isEmpty ? 'all' : segments.join('_');
+    return 'urban_tree_export_${exportDate}_$suffix.csv';
+  }
+
+  Future<void> _openReportDetail(BuildContext context, String reportId) async {
     await Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
         builder: (_) => ReportDetailScreen(reportId: reportId),
@@ -131,82 +109,17 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
     );
   }
 
-  Future<void> _pickFromDate() async {
-    final picked = await showDatePicker(
-      context: context,
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-      initialDate: _fromDate ?? DateTime.now().subtract(const Duration(days: 30)),
-    );
-    if (picked == null) return;
-    setState(() => _fromDate = _startOfDay(picked));
-    _load();
-  }
-
-  Future<void> _pickToDate() async {
-    final picked = await showDatePicker(
-      context: context,
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-      initialDate: _toDate ?? DateTime.now(),
-    );
-    if (picked == null) return;
-    setState(() => _toDate = _endOfDay(picked));
-    _load();
-  }
-
-  DateTime _startOfDay(DateTime date) =>
-      DateTime(date.year, date.month, date.day);
-
-  DateTime _endOfDay(DateTime date) =>
-      DateTime(date.year, date.month, date.day, 23, 59, 59, 999);
-
-  void _clearFilters() {
-    _speciesDebounce?.cancel();
-    setState(() {
-      _fromDate = null;
-      _toDate = null;
-      _speciesFilter = '';
-      _landUseFilter = null;
-      _healthScoreFilter = null;
-    });
-    _speciesController.clear();
-    _load();
-  }
-
-  @override
-  void dispose() {
-    _speciesDebounce?.cancel();
-    _speciesController.removeListener(_onSpeciesTextChanged);
-    _speciesController.dispose();
-    super.dispose();
-  }
-
-  String _buildExportFileName() {
-    final exportDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    final segments = <String>[
-      if (_fromDate != null)
-        'from_${DateFormat('yyyy-MM-dd').format(_fromDate!)}',
-      if (_toDate != null) 'to_${DateFormat('yyyy-MM-dd').format(_toDate!)}',
-      if (_landUseFilter != null) _landUseFilter!.storageValue,
-      if (_healthScoreFilter != null) 'h$_healthScoreFilter',
-      if (_speciesFilter.trim().isNotEmpty)
-        _speciesFilter.trim().toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '_'),
-    ];
-    final suffix = segments.isEmpty ? 'all' : segments.join('_');
-    return 'urban_tree_export_${exportDate}_$suffix.csv';
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final lang = Localizations.localeOf(context).languageCode;
     final dateFmt = DateFormat.yMMMd(lang);
+    final research = context.watch<JournalResearchController>();
 
     final content = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (!widget.embedded)
+        if (!embedded)
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
             child: Text(
@@ -214,71 +127,99 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: SegmentedButton<_ResearchMode>(
-              segments: [
-                ButtonSegment(
-                  value: _ResearchMode.reports,
-                  label: Text(l10n.navResearch),
-                ),
-                ButtonSegment(
-                  value: _ResearchMode.quality,
-                  label: Text(l10n.researchQualityTab),
-                ),
-              ],
-              selected: {_mode},
-              onSelectionChanged: (s) {
-                setState(() => _mode = s.first);
-                _load();
-              },
-            ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: SegmentedButton<JournalResearchMode>(
+            segments: [
+              ButtonSegment(
+                value: JournalResearchMode.reports,
+                label: Text(l10n.navResearch),
+              ),
+              ButtonSegment(
+                value: JournalResearchMode.quality,
+                label: Text(l10n.researchQualityTab),
+              ),
+            ],
+            selected: {research.mode},
+            onSelectionChanged: (selection) {
+              research.setMode(selection.first);
+            },
           ),
-          if (_mode == _ResearchMode.reports)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        'Research Window',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+          child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      l10n.researchWindowTitle,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    if (research.hasDateRangeError) ...[
                       const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton(
-                              onPressed: _pickFromDate,
-                              child: Text(
-                                _fromDate == null
-                                    ? 'From date'
-                                    : 'From: ${dateFmt.format(_fromDate!)}',
-                              ),
+                      Text(
+                        l10n.researchDateRangeError,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                      ),
+                    ],
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => _pickFromDate(context, research),
+                            child: Text(
+                              research.fromDate == null
+                                  ? l10n.researchFromDate
+                                  : l10n.researchFromDateValue(
+                                      dateFmt.format(research.fromDate!),
+                                    ),
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: OutlinedButton(
-                              onPressed: _pickToDate,
-                              child: Text(
-                                _toDate == null
-                                    ? 'To date'
-                                    : 'To: ${dateFmt.format(_toDate!)}',
-                              ),
-                            ),
+                        ),
+                        if (research.fromDate != null) ...[
+                          const SizedBox(width: 4),
+                          IconButton(
+                            tooltip: l10n.researchClearFromDate,
+                            onPressed: research.clearFromDate,
+                            icon: const Icon(Icons.close),
                           ),
                         ],
-                      ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => _pickToDate(context, research),
+                            child: Text(
+                              research.toDate == null
+                                  ? l10n.researchToDate
+                                  : l10n.researchToDateValue(
+                                      dateFmt.format(research.toDate!),
+                                    ),
+                            ),
+                          ),
+                        ),
+                        if (research.toDate != null) ...[
+                          const SizedBox(width: 4),
+                          IconButton(
+                            tooltip: l10n.researchClearToDate,
+                            onPressed: research.clearToDate,
+                            icon: const Icon(Icons.close),
+                          ),
+                        ],
+                      ],
+                    ),
+                    if (research.mode == JournalResearchMode.reports) ...[
                       const SizedBox(height: 8),
                       TextField(
-                        controller: _speciesController,
-                        decoration: const InputDecoration(
-                          labelText: 'Species (normalized English)',
-                          border: OutlineInputBorder(),
+                        controller: research.speciesController,
+                        decoration: InputDecoration(
+                          labelText: l10n.researchSpeciesLabel,
+                          border: const OutlineInputBorder(),
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -292,15 +233,15 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
                         children: [
                           DropdownButtonFormField<LandUseType?>(
                             // ignore: deprecated_member_use — controlled field; `initialValue` is not suitable here
-                            value: _landUseFilter,
-                            decoration: const InputDecoration(
-                              labelText: 'Land-use',
-                              border: OutlineInputBorder(),
+                            value: research.landUseFilter,
+                            decoration: InputDecoration(
+                              labelText: l10n.researchLandUseLabel,
+                              border: const OutlineInputBorder(),
                             ),
                             items: [
-                              const DropdownMenuItem<LandUseType?>(
+                              DropdownMenuItem<LandUseType?>(
                                 value: null,
-                                child: Text('All'),
+                                child: Text(l10n.researchFilterAll),
                               ),
                               ...LandUseType.values.map(
                                 (t) => DropdownMenuItem<LandUseType?>(
@@ -309,22 +250,19 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
                                 ),
                               ),
                             ],
-                            onChanged: (v) {
-                              setState(() => _landUseFilter = v);
-                              _load();
-                            },
+                            onChanged: research.setLandUseFilter,
                           ),
                           DropdownButtonFormField<int?>(
                             // ignore: deprecated_member_use — controlled field; `initialValue` is not suitable here
-                            value: _healthScoreFilter,
-                            decoration: const InputDecoration(
-                              labelText: 'Health score',
-                              border: OutlineInputBorder(),
+                            value: research.healthScoreFilter,
+                            decoration: InputDecoration(
+                              labelText: l10n.researchHealthScoreLabel,
+                              border: const OutlineInputBorder(),
                             ),
                             items: [
-                              const DropdownMenuItem<int?>(
+                              DropdownMenuItem<int?>(
                                 value: null,
-                                child: Text('All'),
+                                child: Text(l10n.researchFilterAll),
                               ),
                               ...List.generate(
                                 5,
@@ -334,66 +272,102 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
                                 ),
                               ),
                             ],
-                            onChanged: (v) {
-                              setState(() => _healthScoreFilter = v);
-                              _load();
-                            },
+                            onChanged: research.setHealthScoreFilter,
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: _clearFilters,
-                          child: const Text('Clear filters'),
-                        ),
-                      ),
                     ],
-                  ),
-                ),
-              ),
-            ),
-          const SizedBox(height: 8),
-          if (_loading)
-            const Expanded(
-              child: Center(child: CircularProgressIndicator()),
-            )
-          else if (_error != null)
-            Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(l10n.loadReportsError),
                     const SizedBox(height: 8),
-                    Text(_error!, textAlign: TextAlign.center),
-                    const SizedBox(height: 16),
-                    FilledButton(
-                      onPressed: _load,
-                      child: Text(l10n.retry),
+                    Row(
+                      children: [
+                        TextButton(
+                          onPressed: research.clearAllFilters,
+                          child: Text(l10n.researchClearFilters),
+                        ),
+                        const Spacer(),
+                        if (embedded &&
+                            research.mode == JournalResearchMode.reports)
+                          TextButton.icon(
+                            onPressed: () => _exportCsv(context, research),
+                            icon: const Icon(Icons.ios_share_outlined),
+                            label: Text(l10n.exportCsv),
+                          ),
+                      ],
                     ),
                   ],
                 ),
               ),
-            )
-          else if (_mode == _ResearchMode.reports)
-            _buildReportsList(l10n, dateFmt)
-          else
-            _buildQualityList(l10n, dateFmt),
-        ],
+            ),
+          ),
+        if (research.refreshing)
+          const LinearProgressIndicator(minHeight: 2),
+        const SizedBox(height: 8),
+        if (research.loading)
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: embedded ? 24 : 48),
+            child: const Center(child: CircularProgressIndicator()),
+          )
+        else if (research.error != null)
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(l10n.loadReportsError),
+                const SizedBox(height: 8),
+                Text(
+                  research.error!,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                FilledButton(
+                  onPressed: research.reload,
+                  child: Text(l10n.retry),
+                ),
+              ],
+            ),
+          )
+        else if (research.hasDateRangeError)
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Center(
+              child: Text(
+                l10n.researchDateRangeError,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+              ),
+            ),
+          )
+        else if (research.mode == JournalResearchMode.reports)
+          _ReportsList(
+            embedded: embedded,
+            rows: research.filteredReports,
+            dateFmt: dateFmt,
+            l10n: l10n,
+            onOpen: (id) => _openReportDetail(context, id),
+          )
+        else
+          _QualityList(
+            embedded: embedded,
+            flags: research.filteredQualityFlags,
+            dateFmt: dateFmt,
+            l10n: l10n,
+          ),
+      ],
     );
 
-    if (widget.embedded) return content;
+    if (embedded) return content;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.researchDashboardTitle),
         actions: [
-          if (_mode == _ResearchMode.reports)
+          if (research.mode == JournalResearchMode.reports)
             IconButton(
               tooltip: l10n.exportCsv,
-              onPressed: _exportCsv,
+              onPressed: () => _exportCsv(context, research),
               icon: const Icon(Icons.ios_share_outlined),
             ),
         ],
@@ -401,64 +375,109 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
       body: content,
     );
   }
+}
 
-  Widget _buildReportsList(AppLocalizations l10n, DateFormat dateFmt) {
-    if (_rows.isEmpty) {
-      return Expanded(
+class _ReportsList extends StatelessWidget {
+  const _ReportsList({
+    required this.embedded,
+    required this.rows,
+    required this.dateFmt,
+    required this.l10n,
+    required this.onOpen,
+  });
+
+  final bool embedded;
+  final List<TreeReportRow> rows;
+  final DateFormat dateFmt;
+  final AppLocalizations l10n;
+  final ValueChanged<String> onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    if (rows.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 24),
         child: Center(child: Text(l10n.noReportsYet)),
       );
     }
-    return Expanded(
-      child: ListView.separated(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-        itemCount: _rows.length,
-        separatorBuilder: (context, index) => const SizedBox(height: 8),
-        itemBuilder: (context, i) {
-          final r = _rows[i];
-          return Card(
-            child: ListTile(
-              onTap: () => _openReportDetail(r.id),
-              title: Text(
-                l10n.reportListItemSubtitle(
-                  dateFmt.format(r.createdAt.toLocal()),
-                  l10n.landUseTypeLabel(r.landType),
-                  r.healthScore,
-                ),
-              ),
-              subtitle: Text(
-                '${r.latitude.toStringAsFixed(5)}, ${r.longitude.toStringAsFixed(5)}'
-                '${r.species != null ? ' · ${r.species}' : ''}',
+
+    final listView = ListView.separated(
+      shrinkWrap: embedded,
+      physics: embedded ? const NeverScrollableScrollPhysics() : null,
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+      itemCount: rows.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 8),
+      itemBuilder: (context, i) {
+        final r = rows[i];
+        return Card(
+          child: ListTile(
+            onTap: () => onOpen(r.id),
+            title: Text(
+              l10n.reportListItemSubtitle(
+                dateFmt.format(r.createdAt.toLocal()),
+                l10n.landUseTypeLabel(r.landType),
+                r.healthScore,
               ),
             ),
-          );
-        },
-      ),
+            subtitle: Text(
+              '${r.latitude.toStringAsFixed(5)}, ${r.longitude.toStringAsFixed(5)}'
+              '${r.species != null ? ' · ${r.species}' : ''}'
+              '${r.speciesScientific != null ? ' · ${r.speciesScientific}' : ''}',
+            ),
+          ),
+        );
+      },
     );
-  }
 
-  Widget _buildQualityList(AppLocalizations l10n, DateFormat dateFmt) {
-    if (_flags.isEmpty) {
-      return Expanded(
+    if (embedded) return listView;
+
+    return Expanded(child: listView);
+  }
+}
+
+class _QualityList extends StatelessWidget {
+  const _QualityList({
+    required this.embedded,
+    required this.flags,
+    required this.dateFmt,
+    required this.l10n,
+  });
+
+  final bool embedded;
+  final List<DataQualityFlag> flags;
+  final DateFormat dateFmt;
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    if (flags.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 24),
         child: Center(child: Text(l10n.qualityFlagsEmpty)),
       );
     }
-    return Expanded(
-      child: ListView.separated(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-        itemCount: _flags.length,
-        separatorBuilder: (context, index) => const SizedBox(height: 8),
-        itemBuilder: (context, i) {
-          final f = _flags[i];
-          return Card(
-            child: ListTile(
-              title: Text(
-                l10n.qualityFlagSubtitle(f.reason, f.clusterKey),
-              ),
-              subtitle: Text(dateFmt.format(f.createdAt.toLocal())),
+
+    final listView = ListView.separated(
+      shrinkWrap: embedded,
+      physics: embedded ? const NeverScrollableScrollPhysics() : null,
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+      itemCount: flags.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 8),
+      itemBuilder: (context, i) {
+        final f = flags[i];
+        return Card(
+          child: ListTile(
+            title: Text(
+              l10n.qualityFlagSubtitle(f.reason, f.clusterKey),
             ),
-          );
-        },
-      ),
+            subtitle: Text(dateFmt.format(f.createdAt.toLocal())),
+          ),
+        );
+      },
     );
+
+    if (embedded) return listView;
+
+    return Expanded(child: listView);
   }
 }

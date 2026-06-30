@@ -449,6 +449,37 @@
   "treeActionViewReport": "View full report",
   "journalWeeklySummary": "Weekly activity summary",
   "journalWeeklyBody": "You documented new species this week. Keep advancing botanical research in Israel.",
+  "journalFilteredSummaryBody": "Counts below reflect your current filters.",
+  "journalFilteredCount": "Showing {count} observations",
+  "@journalFilteredCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "researchWindowTitle": "Research window",
+  "researchFromDate": "From date",
+  "researchToDate": "To date",
+  "researchFromDateValue": "From: {date}",
+  "@researchFromDateValue": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "researchToDateValue": "To: {date}",
+  "@researchToDateValue": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "researchSpeciesLabel": "Species (common or scientific)",
+  "researchLandUseLabel": "Land use",
+  "researchHealthScoreLabel": "Health score",
+  "researchFilterAll": "All",
+  "researchClearFilters": "Clear filters",
+  "researchClearFromDate": "Clear start date",
+  "researchClearToDate": "Clear end date",
+  "researchDateRangeError": "Start date must be on or before the end date.",
 
   "helpCenterTitle": "Help center",
   "helpHeroTitle": "How can we help your botanical research today?",

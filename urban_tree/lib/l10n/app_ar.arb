@@ -268,6 +268,38 @@
   "treeActionViewReport": "عرض التقرير الكامل",
   "journalWeeklySummary": "ملخص النشاط الأسبوعي",
   "journalWeeklyBody": "لقد وثّقت أنواعًا جديدة هذا الأسبوع. واصل دفع البحث النباتي في إسرائيل.",
+  "journalFilteredSummaryBody": "الأرقام أدناه تعكس عوامل التصفية الحالية.",
+  "journalFilteredCount": "عرض {count} ملاحظات",
+  "@journalFilteredCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "researchWindowTitle": "نافذة البحث",
+  "researchFromDate": "من تاريخ",
+  "researchToDate": "إلى تاريخ",
+  "researchFromDateValue": "من: {date}",
+  "@researchFromDateValue": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "researchToDateValue": "إلى: {date}",
+  "@researchToDateValue": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "researchSpeciesLabel": "النوع (شائع أو علمي)",
+  "researchLandUseLabel": "استخدام الأرض",
+  "researchHealthScoreLabel": "درجة الصحة",
+  "researchFilterAll": "الكل",
+  "researchClearFilters": "مسح التصفية",
+  "researchClearFromDate": "مسح تاريخ البداية",
+  "researchClearToDate": "مسح تاريخ النهاية",
+  "researchDateRangeError": "يجب أن يكون تاريخ البداية قبل أو يساوي تاريخ النهاية.",
+
   "helpCenterTitle": "مركز المساعدة",
   "helpHeroTitle": "كيف يمكننا مساعدة بحثك النباتي اليوم؟",
   "helpHeroBody": "اكتشف أسرار عالم الأشجار من خلال أدلتنا المفصّلة.",

@@ -939,6 +939,59 @@ class AppLocalizationsAr extends AppLocalizations {
       'لقد وثّقت أنواعًا جديدة هذا الأسبوع. واصل دفع البحث النباتي في إسرائيل.';
 
   @override
+  String get journalFilteredSummaryBody =>
+      'الأرقام أدناه تعكس عوامل التصفية الحالية.';
+
+  @override
+  String journalFilteredCount(int count) {
+    return 'عرض $count ملاحظات';
+  }
+
+  @override
+  String get researchWindowTitle => 'نافذة البحث';
+
+  @override
+  String get researchFromDate => 'من تاريخ';
+
+  @override
+  String get researchToDate => 'إلى تاريخ';
+
+  @override
+  String researchFromDateValue(String date) {
+    return 'من: $date';
+  }
+
+  @override
+  String researchToDateValue(String date) {
+    return 'إلى: $date';
+  }
+
+  @override
+  String get researchSpeciesLabel => 'النوع (شائع أو علمي)';
+
+  @override
+  String get researchLandUseLabel => 'استخدام الأرض';
+
+  @override
+  String get researchHealthScoreLabel => 'درجة الصحة';
+
+  @override
+  String get researchFilterAll => 'الكل';
+
+  @override
+  String get researchClearFilters => 'مسح التصفية';
+
+  @override
+  String get researchClearFromDate => 'مسح تاريخ البداية';
+
+  @override
+  String get researchClearToDate => 'مسح تاريخ النهاية';
+
+  @override
+  String get researchDateRangeError =>
+      'يجب أن يكون تاريخ البداية قبل أو يساوي تاريخ النهاية.';
+
+  @override
   String get helpCenterTitle => 'مركز المساعدة';
 
   @override

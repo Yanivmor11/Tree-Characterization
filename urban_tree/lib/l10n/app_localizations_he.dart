@@ -935,6 +935,59 @@ class AppLocalizationsHe extends AppLocalizations {
       'תיעדת מינים חדשים השבוע. המשיכו כך לקידום מחקר הצמחייה בישראל.';
 
   @override
+  String get journalFilteredSummaryBody =>
+      'המספרים למטה משקפים את הסינון הנוכחי.';
+
+  @override
+  String journalFilteredCount(int count) {
+    return 'מוצגות $count תצפיות';
+  }
+
+  @override
+  String get researchWindowTitle => 'חלון מחקר';
+
+  @override
+  String get researchFromDate => 'מתאריך';
+
+  @override
+  String get researchToDate => 'עד תאריך';
+
+  @override
+  String researchFromDateValue(String date) {
+    return 'מ: $date';
+  }
+
+  @override
+  String researchToDateValue(String date) {
+    return 'עד: $date';
+  }
+
+  @override
+  String get researchSpeciesLabel => 'מין (שם נפוץ או מדעי)';
+
+  @override
+  String get researchLandUseLabel => 'שימוש קרקע';
+
+  @override
+  String get researchHealthScoreLabel => 'ציון בריאות';
+
+  @override
+  String get researchFilterAll => 'הכל';
+
+  @override
+  String get researchClearFilters => 'נקה סינון';
+
+  @override
+  String get researchClearFromDate => 'נקה תאריך התחלה';
+
+  @override
+  String get researchClearToDate => 'נקה תאריך סיום';
+
+  @override
+  String get researchDateRangeError =>
+      'תאריך ההתחלה חייב להיות לפני או בתאריך הסיום.';
+
+  @override
   String get helpCenterTitle => 'מרכז העזרה';
 
   @override

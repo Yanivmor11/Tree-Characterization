@@ -48,21 +48,17 @@ class DataQualityService {
   final SupabaseClient _client;
 
   Future<List<DataQualityFlag>> fetchOpen({int limit = 100}) async {
-    try {
-      final rows = await _client
-          .from('data_quality_flags')
-          .select('id, cluster_key, reason, payload, status, created_at')
-          .eq('status', 'open')
-          .order('created_at', ascending: false)
-          .limit(limit);
-      final out = <DataQualityFlag>[];
-      for (final row in (rows as List<dynamic>)) {
-        final f = DataQualityFlag.fromMap(Map<String, dynamic>.from(row as Map));
-        if (f != null) out.add(f);
-      }
-      return out;
-    } catch (_) {
-      return [];
+    final rows = await _client
+        .from('data_quality_flags')
+        .select('id, cluster_key, reason, payload, status, created_at')
+        .eq('status', 'open')
+        .order('created_at', ascending: false)
+        .limit(limit);
+    final out = <DataQualityFlag>[];
+    for (final row in (rows as List<dynamic>)) {
+      final f = DataQualityFlag.fromMap(Map<String, dynamic>.from(row as Map));
+      if (f != null) out.add(f);
     }
+    return out;
   }
 }

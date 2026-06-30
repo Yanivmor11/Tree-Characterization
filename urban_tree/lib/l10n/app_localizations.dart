@@ -1806,6 +1806,96 @@ abstract class AppLocalizations {
   /// **'You documented new species this week. Keep advancing botanical research in Israel.'**
   String get journalWeeklyBody;
 
+  /// No description provided for @journalFilteredSummaryBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Counts below reflect your current filters.'**
+  String get journalFilteredSummaryBody;
+
+  /// No description provided for @journalFilteredCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing {count} observations'**
+  String journalFilteredCount(int count);
+
+  /// No description provided for @researchWindowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Research window'**
+  String get researchWindowTitle;
+
+  /// No description provided for @researchFromDate.
+  ///
+  /// In en, this message translates to:
+  /// **'From date'**
+  String get researchFromDate;
+
+  /// No description provided for @researchToDate.
+  ///
+  /// In en, this message translates to:
+  /// **'To date'**
+  String get researchToDate;
+
+  /// No description provided for @researchFromDateValue.
+  ///
+  /// In en, this message translates to:
+  /// **'From: {date}'**
+  String researchFromDateValue(String date);
+
+  /// No description provided for @researchToDateValue.
+  ///
+  /// In en, this message translates to:
+  /// **'To: {date}'**
+  String researchToDateValue(String date);
+
+  /// No description provided for @researchSpeciesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Species (common or scientific)'**
+  String get researchSpeciesLabel;
+
+  /// No description provided for @researchLandUseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Land use'**
+  String get researchLandUseLabel;
+
+  /// No description provided for @researchHealthScoreLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Health score'**
+  String get researchHealthScoreLabel;
+
+  /// No description provided for @researchFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get researchFilterAll;
+
+  /// No description provided for @researchClearFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filters'**
+  String get researchClearFilters;
+
+  /// No description provided for @researchClearFromDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear start date'**
+  String get researchClearFromDate;
+
+  /// No description provided for @researchClearToDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear end date'**
+  String get researchClearToDate;
+
+  /// No description provided for @researchDateRangeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Start date must be on or before the end date.'**
+  String get researchDateRangeError;
+
   /// No description provided for @helpCenterTitle.
   ///
   /// In en, this message translates to:
