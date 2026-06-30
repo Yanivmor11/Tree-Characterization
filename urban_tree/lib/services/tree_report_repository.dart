@@ -70,7 +70,7 @@ class TreeReportRepository {
       }
       final trimmedSpecies = speciesEnglish?.trim();
       if (trimmedSpecies != null && trimmedSpecies.isNotEmpty) {
-        query = query.ilike('species', trimmedSpecies);
+        query = query.ilike('species', '%$trimmedSpecies%');
       }
       if (landType != null && landType.isNotEmpty) {
         query = query.eq('land_type', landType);

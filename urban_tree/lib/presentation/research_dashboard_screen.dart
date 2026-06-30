@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -39,11 +40,24 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
   LandUseType? _landUseFilter;
   int? _healthScoreFilter;
   final _speciesController = TextEditingController();
+  Timer? _speciesDebounce;
 
   @override
   void initState() {
     super.initState();
+    _speciesController.addListener(_onSpeciesTextChanged);
     _load();
+  }
+
+  void _onSpeciesTextChanged() {
+    _speciesDebounce?.cancel();
+    _speciesDebounce = Timer(const Duration(milliseconds: 400), () {
+      if (!mounted) return;
+      final next = _speciesController.text.trim();
+      if (next == _speciesFilter) return;
+      setState(() => _speciesFilter = next);
+      _load();
+    });
   }
 
   Future<void> _load() async {
@@ -125,7 +139,7 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
       initialDate: _fromDate ?? DateTime.now().subtract(const Duration(days: 30)),
     );
     if (picked == null) return;
-    setState(() => _fromDate = picked);
+    setState(() => _fromDate = _startOfDay(picked));
     _load();
   }
 
@@ -137,11 +151,18 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
       initialDate: _toDate ?? DateTime.now(),
     );
     if (picked == null) return;
-    setState(() => _toDate = picked.add(const Duration(hours: 23, minutes: 59)));
+    setState(() => _toDate = _endOfDay(picked));
     _load();
   }
 
+  DateTime _startOfDay(DateTime date) =>
+      DateTime(date.year, date.month, date.day);
+
+  DateTime _endOfDay(DateTime date) =>
+      DateTime(date.year, date.month, date.day, 23, 59, 59, 999);
+
   void _clearFilters() {
+    _speciesDebounce?.cancel();
     setState(() {
       _fromDate = null;
       _toDate = null;
@@ -155,6 +176,8 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
 
   @override
   void dispose() {
+    _speciesDebounce?.cancel();
+    _speciesController.removeListener(_onSpeciesTextChanged);
     _speciesController.dispose();
     super.dispose();
   }
@@ -257,10 +280,6 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
                           labelText: 'Species (normalized English)',
                           border: OutlineInputBorder(),
                         ),
-                        onSubmitted: (v) {
-                          setState(() => _speciesFilter = v.trim());
-                          _load();
-                        },
                       ),
                       const SizedBox(height: 8),
                       GridView.count(
@@ -272,7 +291,8 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
                         physics: const NeverScrollableScrollPhysics(),
                         children: [
                           DropdownButtonFormField<LandUseType?>(
-                            initialValue: _landUseFilter,
+                            // ignore: deprecated_member_use — controlled field; `initialValue` is not suitable here
+                            value: _landUseFilter,
                             decoration: const InputDecoration(
                               labelText: 'Land-use',
                               border: OutlineInputBorder(),
@@ -295,7 +315,8 @@ class _ResearchDashboardScreenState extends State<ResearchDashboardScreen> {
                             },
                           ),
                           DropdownButtonFormField<int?>(
-                            initialValue: _healthScoreFilter,
+                            // ignore: deprecated_member_use — controlled field; `initialValue` is not suitable here
+                            value: _healthScoreFilter,
                             decoration: const InputDecoration(
                               labelText: 'Health score',
                               border: OutlineInputBorder(),
